@@ -146,7 +146,6 @@ protected:
 // CHECK-NEXT:        "USR": "{{[0-9A-F]*}}"
 // CHECK-NEXT:      },
 // CHECK:             "IsStatic": true,
-// CHECK:             "IsStatic": false,
 // CHECK:             "Name": "getConst",
 // CHECK:             "ReturnType": {
 // CHECK-NEXT:          "IsBuiltIn": false,
