@@ -18,6 +18,7 @@
 #include "llvm/ADT/Twine.h"
 #include "llvm/Support/AlignOf.h"
 #include "llvm/Support/Allocator.h"
+#include "llvm/Support/Compiler.h"
 #include "llvm/Support/Endian.h"
 #include "llvm/Support/SMLoc.h"
 #include "llvm/Support/SourceMgr.h"
@@ -777,8 +778,8 @@ struct unvalidatedMappingTraits
 // Base class for Input and Output.
 class IO {
 public:
-  IO(void *Ctxt = nullptr);
-  virtual ~IO();
+  LLVM_SUPPORT_ABI IO(void *Ctxt = nullptr);
+  LLVM_SUPPORT_ABI virtual ~IO();
 
   virtual bool outputting() const = 0;
 
@@ -1438,18 +1439,16 @@ public:
   // Construct a yaml Input object from a StringRef and optional
   // user-data. The DiagHandler can be specified to provide
   // alternative error reporting.
-  Input(StringRef InputContent,
-        void *Ctxt = nullptr,
-        SourceMgr::DiagHandlerTy DiagHandler = nullptr,
-        void *DiagHandlerCtxt = nullptr);
-  Input(MemoryBufferRef Input,
-        void *Ctxt = nullptr,
-        SourceMgr::DiagHandlerTy DiagHandler = nullptr,
-        void *DiagHandlerCtxt = nullptr);
-  ~Input() override;
+  LLVM_SUPPORT_ABI Input(StringRef InputContent, void *Ctxt = nullptr,
+                         SourceMgr::DiagHandlerTy DiagHandler = nullptr,
+                         void *DiagHandlerCtxt = nullptr);
+  LLVM_SUPPORT_ABI Input(MemoryBufferRef Input, void *Ctxt = nullptr,
+                         SourceMgr::DiagHandlerTy DiagHandler = nullptr,
+                         void *DiagHandlerCtxt = nullptr);
+  LLVM_SUPPORT_ABI ~Input() override;
 
   // Check if there was an syntax or semantic error during parsing.
-  std::error_code error() override;
+  LLVM_SUPPORT_ABI std::error_code error() override;
 
 private:
   bool outputting() const override;
@@ -1547,28 +1546,29 @@ private:
     std::vector<HNode *> Entries;
   };
 
-  Input::HNode *createHNodes(Node *node);
-  void setError(HNode *hnode, const Twine &message);
-  void setError(Node *node, const Twine &message);
-  void setError(const SMRange &Range, const Twine &message);
+  LLVM_SUPPORT_ABI Input::HNode *createHNodes(Node *node);
+  LLVM_SUPPORT_ABI void setError(HNode *hnode, const Twine &message);
+  LLVM_SUPPORT_ABI void setError(Node *node, const Twine &message);
+  LLVM_SUPPORT_ABI void setError(const SMRange &Range, const Twine &message);
 
-  void reportWarning(HNode *hnode, const Twine &message);
-  void reportWarning(Node *hnode, const Twine &message);
-  void reportWarning(const SMRange &Range, const Twine &message);
+  LLVM_SUPPORT_ABI void reportWarning(HNode *hnode, const Twine &message);
+  LLVM_SUPPORT_ABI void reportWarning(Node *hnode, const Twine &message);
+  LLVM_SUPPORT_ABI void reportWarning(const SMRange &Range,
+                                      const Twine &message);
 
   /// Release memory used by HNodes.
-  void releaseHNodeBuffers();
+  LLVM_SUPPORT_ABI void releaseHNodeBuffers();
 
 public:
   // These are only used by operator>>. They could be private
   // if those templated things could be made friends.
-  bool setCurrentDocument();
-  bool nextDocument();
+  LLVM_SUPPORT_ABI bool setCurrentDocument();
+  LLVM_SUPPORT_ABI bool nextDocument();
 
   /// Returns the current node that's being parsed by the YAML Parser.
-  const Node *getCurrentNode() const;
+  LLVM_SUPPORT_ABI const Node *getCurrentNode() const;
 
-  void setAllowUnknownKeys(bool Allow) override;
+  LLVM_SUPPORT_ABI void setAllowUnknownKeys(bool Allow) override;
 
 private:
   SourceMgr                           SrcMgr; // must be before Strm
@@ -1593,8 +1593,9 @@ private:
 ///
 class Output : public IO {
 public:
-  Output(raw_ostream &, void *Ctxt = nullptr, int WrapColumn = 70);
-  ~Output() override;
+  LLVM_SUPPORT_ABI Output(raw_ostream &, void *Ctxt = nullptr,
+                          int WrapColumn = 70);
+  LLVM_SUPPORT_ABI ~Output() override;
 
   /// Set whether or not to output optional values which are equal
   /// to the default value.  By default, when outputting if you attempt
@@ -1603,44 +1604,44 @@ public:
   /// anyway.
   void setWriteDefaultValues(bool Write) { WriteDefaultValues = Write; }
 
-  bool outputting() const override;
-  bool mapTag(StringRef, bool) override;
-  void beginMapping() override;
-  void endMapping() override;
-  bool preflightKey(const char *key, bool, bool, bool &, void *&) override;
-  void postflightKey(void *) override;
-  std::vector<StringRef> keys() override;
-  void beginFlowMapping() override;
-  void endFlowMapping() override;
-  unsigned beginSequence() override;
-  void endSequence() override;
-  bool preflightElement(unsigned, void *&) override;
-  void postflightElement(void *) override;
-  unsigned beginFlowSequence() override;
-  bool preflightFlowElement(unsigned, void *&) override;
-  void postflightFlowElement(void *) override;
-  void endFlowSequence() override;
-  void beginEnumScalar() override;
-  bool matchEnumScalar(const char*, bool) override;
-  bool matchEnumFallback() override;
-  void endEnumScalar() override;
-  bool beginBitSetScalar(bool &) override;
-  bool bitSetMatch(const char *, bool ) override;
-  void endBitSetScalar() override;
-  void scalarString(StringRef &, QuotingType) override;
-  void blockScalarString(StringRef &) override;
-  void scalarTag(std::string &) override;
-  NodeKind getNodeKind() override;
-  void setError(const Twine &message) override;
-  std::error_code error() override;
-  bool canElideEmptySequence() override;
+  LLVM_SUPPORT_ABI bool outputting() const override;
+  LLVM_SUPPORT_ABI bool mapTag(StringRef, bool) override;
+  LLVM_SUPPORT_ABI void beginMapping() override;
+  LLVM_SUPPORT_ABI void endMapping() override;
+  LLVM_SUPPORT_ABI bool preflightKey(const char *key, bool, bool, bool &, void *&) override;
+  LLVM_SUPPORT_ABI void postflightKey(void *) override;
+  LLVM_SUPPORT_ABI std::vector<StringRef> keys() override;
+  LLVM_SUPPORT_ABI void beginFlowMapping() override;
+  LLVM_SUPPORT_ABI void endFlowMapping() override;
+  LLVM_SUPPORT_ABI unsigned beginSequence() override;
+  LLVM_SUPPORT_ABI void endSequence() override;
+  LLVM_SUPPORT_ABI bool preflightElement(unsigned, void *&) override;
+  LLVM_SUPPORT_ABI void postflightElement(void *) override;
+  LLVM_SUPPORT_ABI unsigned beginFlowSequence() override;
+  LLVM_SUPPORT_ABI bool preflightFlowElement(unsigned, void *&) override;
+  LLVM_SUPPORT_ABI void postflightFlowElement(void *) override;
+  LLVM_SUPPORT_ABI void endFlowSequence() override;
+  LLVM_SUPPORT_ABI void beginEnumScalar() override;
+  LLVM_SUPPORT_ABI bool matchEnumScalar(const char*, bool) override;
+  LLVM_SUPPORT_ABI bool matchEnumFallback() override;
+  LLVM_SUPPORT_ABI void endEnumScalar() override;
+  LLVM_SUPPORT_ABI bool beginBitSetScalar(bool &) override;
+  LLVM_SUPPORT_ABI bool bitSetMatch(const char *, bool ) override;
+  LLVM_SUPPORT_ABI void endBitSetScalar() override;
+  LLVM_SUPPORT_ABI void scalarString(StringRef &, QuotingType) override;
+  LLVM_SUPPORT_ABI void blockScalarString(StringRef &) override;
+  LLVM_SUPPORT_ABI void scalarTag(std::string &) override;
+  LLVM_SUPPORT_ABI NodeKind getNodeKind() override;
+  LLVM_SUPPORT_ABI void setError(const Twine &message) override;
+  LLVM_SUPPORT_ABI std::error_code error() override;
+  LLVM_SUPPORT_ABI bool canElideEmptySequence() override;
 
   // These are only used by operator<<. They could be private
   // if that templated operator could be made a friend.
-  void beginDocuments();
-  bool preflightDocument(unsigned);
-  void postflightDocument();
-  void endDocuments();
+  LLVM_SUPPORT_ABI void beginDocuments();
+  LLVM_SUPPORT_ABI bool preflightDocument(unsigned);
+  LLVM_SUPPORT_ABI void postflightDocument();
+  LLVM_SUPPORT_ABI void endDocuments();
 
 private:
   void output(StringRef s);

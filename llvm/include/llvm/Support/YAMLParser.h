@@ -38,6 +38,7 @@
 
 #include "llvm/ADT/StringRef.h"
 #include "llvm/Support/Allocator.h"
+#include "llvm/Support/Compiler.h"
 #include "llvm/Support/SMLoc.h"
 #include "llvm/Support/SourceMgr.h"
 #include <cassert>
@@ -65,48 +66,52 @@ struct Token;
 
 /// Dump all the tokens in this stream to OS.
 /// \returns true if there was an error, false otherwise.
-bool dumpTokens(StringRef Input, raw_ostream &);
+LLVM_SUPPORT_ABI bool dumpTokens(StringRef Input, raw_ostream &);
 
 /// Scans all tokens in input without outputting anything. This is used
 ///        for benchmarking the tokenizer.
 /// \returns true if there was an error, false otherwise.
-bool scanTokens(StringRef Input);
+LLVM_SUPPORT_ABI bool scanTokens(StringRef Input);
 
 /// Escape \a Input for a double quoted scalar; if \p EscapePrintable
 /// is true, all UTF8 sequences will be escaped, if \p EscapePrintable is
 /// false, those UTF8 sequences encoding printable unicode scalars will not be
 /// escaped, but emitted verbatim.
-std::string escape(StringRef Input, bool EscapePrintable = true);
+LLVM_SUPPORT_ABI std::string escape(StringRef Input,
+                                    bool EscapePrintable = true);
 
 /// Parse \p S as a bool according to https://yaml.org/type/bool.html.
-std::optional<bool> parseBool(StringRef S);
+LLVM_SUPPORT_ABI std::optional<bool> parseBool(StringRef S);
 
 /// This class represents a YAML stream potentially containing multiple
 ///        documents.
 class Stream {
 public:
   /// This keeps a reference to the string referenced by \p Input.
-  Stream(StringRef Input, SourceMgr &, bool ShowColors = true,
-         std::error_code *EC = nullptr);
+  LLVM_SUPPORT_ABI Stream(StringRef Input, SourceMgr &, bool ShowColors = true,
+                          std::error_code *EC = nullptr);
 
-  Stream(MemoryBufferRef InputBuffer, SourceMgr &, bool ShowColors = true,
-         std::error_code *EC = nullptr);
-  ~Stream();
+  LLVM_SUPPORT_ABI Stream(MemoryBufferRef InputBuffer, SourceMgr &,
+                          bool ShowColors = true,
+                          std::error_code *EC = nullptr);
+  LLVM_SUPPORT_ABI ~Stream();
 
-  document_iterator begin();
-  document_iterator end();
-  void skip();
-  bool failed();
+  LLVM_SUPPORT_ABI document_iterator begin();
+  LLVM_SUPPORT_ABI document_iterator end();
+  LLVM_SUPPORT_ABI void skip();
+  LLVM_SUPPORT_ABI bool failed();
 
   bool validate() {
     skip();
     return !failed();
   }
 
-  void printError(Node *N, const Twine &Msg,
-                  SourceMgr::DiagKind Kind = SourceMgr::DK_Error);
-  void printError(const SMRange &Range, const Twine &Msg,
-                  SourceMgr::DiagKind Kind = SourceMgr::DK_Error);
+  LLVM_SUPPORT_ABI void
+  printError(Node *N, const Twine &Msg,
+             SourceMgr::DiagKind Kind = SourceMgr::DK_Error);
+  LLVM_SUPPORT_ABI void
+  printError(const SMRange &Range, const Twine &Msg,
+             SourceMgr::DiagKind Kind = SourceMgr::DK_Error);
 
 private:
   friend class Document;
@@ -130,8 +135,8 @@ public:
     NK_Alias
   };
 
-  Node(unsigned int Type, std::unique_ptr<Document> &, StringRef Anchor,
-       StringRef Tag);
+  LLVM_SUPPORT_ABI Node(unsigned int Type, std::unique_ptr<Document> &,
+                        StringRef Anchor, StringRef Tag);
 
   // It's not safe to copy YAML nodes; the document is streamed and the position
   // is part of the state.
@@ -160,18 +165,18 @@ public:
 
   /// Get the verbatium tag for a given Node. This performs tag resoluton
   ///   and substitution.
-  std::string getVerbatimTag() const;
+  LLVM_SUPPORT_ABI std::string getVerbatimTag() const;
 
   SMRange getSourceRange() const { return SourceRange; }
   void setSourceRange(SMRange SR) { SourceRange = SR; }
 
   // These functions forward to Document and Scanner.
-  Token &peekNext();
-  Token getNext();
-  Node *parseBlockNode();
-  BumpPtrAllocator &getAllocator();
-  void setError(const Twine &Message, Token &Location) const;
-  bool failed() const;
+  LLVM_SUPPORT_ABI Token &peekNext();
+  LLVM_SUPPORT_ABI Token getNext();
+  LLVM_SUPPORT_ABI Node *parseBlockNode();
+  LLVM_SUPPORT_ABI BumpPtrAllocator &getAllocator();
+  LLVM_SUPPORT_ABI void setError(const Twine &Message, Token &Location) const;
+  LLVM_SUPPORT_ABI bool failed() const;
 
   virtual void skip() {}
 
@@ -210,7 +215,7 @@ public:
 /// Example:
 ///   Adena
 class ScalarNode final : public Node {
-  void anchor() override;
+  LLVM_SUPPORT_ABI void anchor() override;
 
 public:
   ScalarNode(std::unique_ptr<Document> &D, StringRef Anchor, StringRef Tag,
@@ -231,7 +236,7 @@ public:
   /// \param Storage is used to store the content of the returned StringRef if
   ///        it requires any modification from how it appeared in the source.
   ///        This happens with escaped characters and multi-line literals.
-  StringRef getValue(SmallVectorImpl<char> &Storage) const;
+  LLVM_SUPPORT_ABI StringRef getValue(SmallVectorImpl<char> &Storage) const;
 
   static bool classof(const Node *N) {
     return N->getType() == NK_Scalar;
@@ -240,14 +245,14 @@ public:
 private:
   StringRef Value;
 
-  StringRef getDoubleQuotedValue(StringRef UnquotedValue,
-                                 SmallVectorImpl<char> &Storage) const;
+  LLVM_SUPPORT_ABI StringRef getDoubleQuotedValue(
+      StringRef UnquotedValue, SmallVectorImpl<char> &Storage) const;
 
-  static StringRef getSingleQuotedValue(StringRef RawValue,
-                                        SmallVectorImpl<char> &Storage);
+  LLVM_SUPPORT_ABI static StringRef
+  getSingleQuotedValue(StringRef RawValue, SmallVectorImpl<char> &Storage);
 
-  static StringRef getPlainValue(StringRef RawValue,
-                                 SmallVectorImpl<char> &Storage);
+  LLVM_SUPPORT_ABI static StringRef
+  getPlainValue(StringRef RawValue, SmallVectorImpl<char> &Storage);
 };
 
 /// A block scalar node is an opaque datum that can be presented as a
@@ -258,7 +263,7 @@ private:
 ///     Hello
 ///     World
 class BlockScalarNode final : public Node {
-  void anchor() override;
+  LLVM_SUPPORT_ABI void anchor() override;
 
 public:
   BlockScalarNode(std::unique_ptr<Document> &D, StringRef Anchor, StringRef Tag,
@@ -288,7 +293,7 @@ private:
 /// Example:
 ///   Section: .text
 class KeyValueNode final : public Node {
-  void anchor() override;
+  LLVM_SUPPORT_ABI void anchor() override;
 
 public:
   KeyValueNode(std::unique_ptr<Document> &D)
@@ -299,14 +304,14 @@ public:
   /// This may be called multiple times.
   ///
   /// \returns The key, or nullptr if failed() == true.
-  Node *getKey();
+  LLVM_SUPPORT_ABI Node *getKey();
 
   /// Parse and return the value.
   ///
   /// This may be called multiple times.
   ///
   /// \returns The value, or nullptr if failed() == true.
-  Node *getValue();
+  LLVM_SUPPORT_ABI Node *getValue();
 
   void skip() override {
     if (Node *Key = getKey()) {
@@ -417,7 +422,7 @@ template <class CollectionType> void skip(CollectionType &C) {
 ///   Name: _main
 ///   Scope: Global
 class MappingNode final : public Node {
-  void anchor() override;
+  LLVM_SUPPORT_ABI void anchor() override;
 
 public:
   enum MappingType {
@@ -453,7 +458,7 @@ private:
   bool IsAtEnd = false;
   KeyValueNode *CurrentEntry = nullptr;
 
-  void increment();
+  LLVM_SUPPORT_ABI void increment();
 };
 
 /// Represents a YAML sequence created from either a block sequence for a
@@ -465,7 +470,7 @@ private:
 ///   - Hello
 ///   - World
 class SequenceNode final : public Node {
-  void anchor() override;
+  LLVM_SUPPORT_ABI void anchor() override;
 
 public:
   enum SequenceType {
@@ -492,7 +497,7 @@ public:
   template <class T> friend typename T::iterator yaml::begin(T &);
   template <class T> friend void yaml::skip(T &);
 
-  void increment();
+  LLVM_SUPPORT_ABI void increment();
 
   iterator begin() { return yaml::begin(*this); }
 
@@ -517,7 +522,7 @@ private:
 /// Example:
 ///   *AnchorName
 class AliasNode final : public Node {
-  void anchor() override;
+  LLVM_SUPPORT_ABI void anchor() override;
 
 public:
   AliasNode(std::unique_ptr<Document> &D, StringRef Val)
@@ -535,14 +540,14 @@ private:
 ///        node.
 class Document {
 public:
-  Document(Stream &ParentStream);
+  LLVM_SUPPORT_ABI Document(Stream &ParentStream);
 
   /// Root for parsing a node. Returns a single node.
-  Node *parseBlockNode();
+  LLVM_SUPPORT_ABI Node *parseBlockNode();
 
   /// Finish parsing the current document and return true if there are
   ///        more. Return false otherwise.
-  bool skip();
+  LLVM_SUPPORT_ABI bool skip();
 
   /// Parse and return the root level node.
   Node *getRoot() {
@@ -571,22 +576,22 @@ private:
   /// Maps tag prefixes to their expansion.
   std::map<StringRef, StringRef> TagMap;
 
-  Token &peekNext();
-  Token getNext();
-  void setError(const Twine &Message, Token &Location) const;
-  bool failed() const;
+  LLVM_SUPPORT_ABI Token &peekNext();
+  LLVM_SUPPORT_ABI Token getNext();
+  LLVM_SUPPORT_ABI void setError(const Twine &Message, Token &Location) const;
+  LLVM_SUPPORT_ABI bool failed() const;
 
   /// Parse %BLAH directives and return true if any were encountered.
-  bool parseDirectives();
+  LLVM_SUPPORT_ABI bool parseDirectives();
 
   /// Parse %YAML
-  void parseYAMLDirective();
+  LLVM_SUPPORT_ABI void parseYAMLDirective();
 
   /// Parse %TAG
-  void parseTAGDirective();
+  LLVM_SUPPORT_ABI void parseTAGDirective();
 
   /// Consume the next token and error if it is not \a TK.
-  bool expectToken(int TK);
+  LLVM_SUPPORT_ABI bool expectToken(int TK);
 };
 
 /// Iterator abstraction for Documents over a Stream.

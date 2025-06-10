@@ -81,7 +81,7 @@ public:
   }
 
 private:
-  virtual void anchor();
+  LLVM_SUPPORT_ABI virtual void anchor();
 
   static char ID;
 };
@@ -186,7 +186,7 @@ protected:
 
 public:
   /// Create a success value.
-  static ErrorSuccess success();
+  LLVM_SUPPORT_ABI static ErrorSuccess success();
 
   // Errors are not copy-constructable.
   Error(const Error &Other) = delete;
@@ -389,7 +389,7 @@ public:
     }
   }
 
-  std::error_code convertToErrorCode() const override;
+  LLVM_SUPPORT_ABI std::error_code convertToErrorCode() const override;
 
   // Used by ErrorInfo::classID.
   static char ID;
@@ -738,7 +738,8 @@ private:
 
 /// Report a serious error, calling any installed error handler. See
 /// ErrorHandling.h.
-[[noreturn]] void report_fatal_error(Error Err, bool gen_crash_diag = true);
+[[noreturn]] LLVM_SUPPORT_ABI void
+report_fatal_error(Error Err, bool gen_crash_diag = true);
 
 /// Report a fatal error if Err is a failure value.
 ///
@@ -1049,15 +1050,16 @@ Expected<T> handleExpected(Expected<T> ValOrErr, RecoveryFtor &&RecoveryPath,
 /// This is useful in the base level of your program to allow clean termination
 /// (allowing clean deallocation of resources, etc.), while reporting error
 /// information to the user.
-void logAllUnhandledErrors(Error E, raw_ostream &OS, Twine ErrorBanner = {});
+LLVM_SUPPORT_ABI void logAllUnhandledErrors(Error E, raw_ostream &OS,
+                                            Twine ErrorBanner = {});
 
 /// Write all error messages (if any) in E to a string. The newline character
 /// is used to separate error messages.
-std::string toString(Error E);
+LLVM_SUPPORT_ABI std::string toString(Error E);
 
 /// Like toString(), but does not consume the error. This can be used to print
 /// a warning while retaining the original error object.
-std::string toStringWithoutConsuming(const Error &E);
+LLVM_SUPPORT_ABI std::string toStringWithoutConsuming(const Error &E);
 
 /// Consume a Error without doing anything. This method should be used
 /// only where an error can be considered a reasonable and expected return
@@ -1177,9 +1179,9 @@ private:
 /// (or Expected) and you want to call code that still returns
 /// std::error_codes.
 class ECError : public ErrorInfo<ECError> {
-  friend Error errorCodeToError(std::error_code);
+  friend LLVM_SUPPORT_ABI Error errorCodeToError(std::error_code);
 
-  void anchor() override;
+  LLVM_SUPPORT_ABI void anchor() override;
 
 public:
   void setErrorCode(std::error_code EC) { this->EC = EC; }
@@ -1202,16 +1204,16 @@ protected:
 /// sensible conversion to std::error_code is available, as attempts to convert
 /// to/from this error will result in a fatal error. (i.e. it is a programmatic
 /// error to try to convert such a value).
-std::error_code inconvertibleErrorCode();
+LLVM_SUPPORT_ABI std::error_code inconvertibleErrorCode();
 
 /// Helper for converting an std::error_code to a Error.
-Error errorCodeToError(std::error_code EC);
+LLVM_SUPPORT_ABI Error errorCodeToError(std::error_code EC);
 
 /// Helper for converting an ECError to a std::error_code.
 ///
 /// This method requires that Err be Error() or an ECError, otherwise it
 /// will trigger a call to abort().
-std::error_code errorToErrorCode(Error Err);
+LLVM_SUPPORT_ABI std::error_code errorToErrorCode(Error Err);
 
 /// Helper to get errno as an std::error_code.
 ///
@@ -1269,14 +1271,15 @@ class StringError : public ErrorInfo<StringError> {
 public:
   static char ID;
 
-  StringError(std::string &&S, std::error_code EC, bool PrintMsgOnly);
+  LLVM_SUPPORT_ABI StringError(std::string &&S, std::error_code EC,
+                               bool PrintMsgOnly);
   /// Prints EC + S and converts to EC.
-  StringError(std::error_code EC, const Twine &S = Twine());
+  LLVM_SUPPORT_ABI StringError(std::error_code EC, const Twine &S = Twine());
   /// Prints S and converts to EC.
-  StringError(const Twine &S, std::error_code EC);
+  LLVM_SUPPORT_ABI StringError(const Twine &S, std::error_code EC);
 
-  void log(raw_ostream &OS) const override;
-  std::error_code convertToErrorCode() const override;
+  LLVM_SUPPORT_ABI void log(raw_ostream &OS) const override;
+  LLVM_SUPPORT_ABI std::error_code convertToErrorCode() const override;
 
   const std::string &getMessage() const { return Msg; }
 

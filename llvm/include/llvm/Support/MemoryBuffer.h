@@ -19,6 +19,7 @@
 #include "llvm/ADT/Twine.h"
 #include "llvm/Support/Alignment.h"
 #include "llvm/Support/CBindingWrapping.h"
+#include "llvm/Support/Compiler.h"
 #include "llvm/Support/ErrorOr.h"
 #include "llvm/Support/MemoryBufferRef.h"
 #include <cstddef>
@@ -55,7 +56,7 @@ class MemoryBuffer {
 protected:
   MemoryBuffer() = default;
 
-  void init(const char *BufStart, const char *BufEnd,
+  LLVM_SUPPORT_ABI void init(const char *BufStart, const char *BufEnd,
             bool RequiresNullTerminator);
 
 public:
@@ -94,7 +95,7 @@ public:
   ///
   /// \param Alignment Set to indicate that the buffer should be aligned to at
   /// least the specified alignment.
-  static ErrorOr<std::unique_ptr<MemoryBuffer>>
+  LLVM_SUPPORT_ABI static ErrorOr<std::unique_ptr<MemoryBuffer>>
   getFile(const Twine &Filename, bool IsText = false,
           bool RequiresNullTerminator = true, bool IsVolatile = false,
           std::optional<Align> Alignment = std::nullopt);
@@ -102,13 +103,13 @@ public:
   /// Read all of the specified file into a MemoryBuffer as a stream
   /// (i.e. until EOF reached). This is useful for special files that
   /// look like a regular file but have 0 size (e.g. /proc/cpuinfo on Linux).
-  static ErrorOr<std::unique_ptr<MemoryBuffer>>
+  LLVM_SUPPORT_ABI static ErrorOr<std::unique_ptr<MemoryBuffer>>
   getFileAsStream(const Twine &Filename);
 
   /// Given an already-open file descriptor, map some slice of it into a
   /// MemoryBuffer. The slice is specified by an \p Offset and \p MapSize.
   /// Since this is in the middle of a file, the buffer is not null terminated.
-  static ErrorOr<std::unique_ptr<MemoryBuffer>>
+  LLVM_SUPPORT_ABI static ErrorOr<std::unique_ptr<MemoryBuffer>>
   getOpenFileSlice(sys::fs::file_t FD, const Twine &Filename, uint64_t MapSize,
                    int64_t Offset, bool IsVolatile = false,
                    std::optional<Align> Alignment = std::nullopt);
@@ -122,37 +123,37 @@ public:
   ///
   /// \param Alignment Set to indicate that the buffer should be aligned to at
   /// least the specified alignment.
-  static ErrorOr<std::unique_ptr<MemoryBuffer>>
+  LLVM_SUPPORT_ABI static ErrorOr<std::unique_ptr<MemoryBuffer>>
   getOpenFile(sys::fs::file_t FD, const Twine &Filename, uint64_t FileSize,
               bool RequiresNullTerminator = true, bool IsVolatile = false,
               std::optional<Align> Alignment = std::nullopt);
 
   /// Open the specified memory range as a MemoryBuffer. Note that InputData
   /// must be null terminated if RequiresNullTerminator is true.
-  static std::unique_ptr<MemoryBuffer>
+  LLVM_SUPPORT_ABI static std::unique_ptr<MemoryBuffer>
   getMemBuffer(StringRef InputData, StringRef BufferName = "",
                bool RequiresNullTerminator = true);
 
-  static std::unique_ptr<MemoryBuffer>
+  LLVM_SUPPORT_ABI static std::unique_ptr<MemoryBuffer>
   getMemBuffer(MemoryBufferRef Ref, bool RequiresNullTerminator = true);
 
   /// Open the specified memory range as a MemoryBuffer, copying the contents
   /// and taking ownership of it. InputData does not have to be null terminated.
-  static std::unique_ptr<MemoryBuffer>
+  LLVM_SUPPORT_ABI static std::unique_ptr<MemoryBuffer>
   getMemBufferCopy(StringRef InputData, const Twine &BufferName = "");
 
   /// Read all of stdin into a file buffer, and return it.
-  static ErrorOr<std::unique_ptr<MemoryBuffer>> getSTDIN();
+  LLVM_SUPPORT_ABI static ErrorOr<std::unique_ptr<MemoryBuffer>> getSTDIN();
 
   /// Open the specified file as a MemoryBuffer, or open stdin if the Filename
   /// is "-".
-  static ErrorOr<std::unique_ptr<MemoryBuffer>>
+  LLVM_SUPPORT_ABI static ErrorOr<std::unique_ptr<MemoryBuffer>>
   getFileOrSTDIN(const Twine &Filename, bool IsText = false,
                  bool RequiresNullTerminator = true,
                  std::optional<Align> Alignment = std::nullopt);
 
   /// Map a subrange of the specified file as a MemoryBuffer.
-  static ErrorOr<std::unique_ptr<MemoryBuffer>>
+  LLVM_SUPPORT_ABI static ErrorOr<std::unique_ptr<MemoryBuffer>>
   getFileSlice(const Twine &Filename, uint64_t MapSize, uint64_t Offset,
                bool IsVolatile = false,
                std::optional<Align> Alignment = std::nullopt);
@@ -171,7 +172,7 @@ public:
   /// MemoryBuffer.
   virtual BufferKind getBufferKind() const = 0;
 
-  MemoryBufferRef getMemBufferRef() const;
+  LLVM_SUPPORT_ABI MemoryBufferRef getMemBufferRef() const;
 };
 
 /// This class is an extension of MemoryBuffer, which allows copy-on-write
@@ -199,12 +200,12 @@ public:
     return {getBufferStart(), getBufferEnd()};
   }
 
-  static ErrorOr<std::unique_ptr<WritableMemoryBuffer>>
+  LLVM_SUPPORT_ABI static ErrorOr<std::unique_ptr<WritableMemoryBuffer>>
   getFile(const Twine &Filename, bool IsVolatile = false,
           std::optional<Align> Alignment = std::nullopt);
 
   /// Map a subrange of the specified file as a WritableMemoryBuffer.
-  static ErrorOr<std::unique_ptr<WritableMemoryBuffer>>
+  LLVM_SUPPORT_ABI static ErrorOr<std::unique_ptr<WritableMemoryBuffer>>
   getFileSlice(const Twine &Filename, uint64_t MapSize, uint64_t Offset,
                bool IsVolatile = false,
                std::optional<Align> Alignment = std::nullopt);
@@ -215,14 +216,14 @@ public:
   ///
   /// \param Alignment Set to indicate that the buffer should be aligned to at
   /// least the specified alignment.
-  static std::unique_ptr<WritableMemoryBuffer>
+  LLVM_SUPPORT_ABI static std::unique_ptr<WritableMemoryBuffer>
   getNewUninitMemBuffer(size_t Size, const Twine &BufferName = "",
                         std::optional<Align> Alignment = std::nullopt);
 
   /// Allocate a new zero-initialized MemoryBuffer of the specified size. Note
   /// that the caller need not initialize the memory allocated by this method.
   /// The memory is owned by the MemoryBuffer object.
-  static std::unique_ptr<WritableMemoryBuffer>
+  LLVM_SUPPORT_ABI static std::unique_ptr<WritableMemoryBuffer>
   getNewMemBuffer(size_t Size, const Twine &BufferName = "");
 
 private:
@@ -263,11 +264,11 @@ public:
     return {getBufferStart(), getBufferEnd()};
   }
 
-  static ErrorOr<std::unique_ptr<WriteThroughMemoryBuffer>>
+  LLVM_SUPPORT_ABI static ErrorOr<std::unique_ptr<WriteThroughMemoryBuffer>>
   getFile(const Twine &Filename, int64_t FileSize = -1);
 
   /// Map a subrange of the specified file as a ReadWriteMemoryBuffer.
-  static ErrorOr<std::unique_ptr<WriteThroughMemoryBuffer>>
+  LLVM_SUPPORT_ABI static ErrorOr<std::unique_ptr<WriteThroughMemoryBuffer>>
   getFileSlice(const Twine &Filename, uint64_t MapSize, uint64_t Offset);
 
 private:

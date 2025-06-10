@@ -77,8 +77,8 @@ toTimePoint(std::time_t T, uint32_t nsec) {
 
 } // namespace sys
 
-raw_ostream &operator<<(raw_ostream &OS, sys::TimePoint<> TP);
-raw_ostream &operator<<(raw_ostream &OS, sys::UtcTime<> TP);
+LLVM_SUPPORT_ABI raw_ostream &operator<<(raw_ostream &OS, sys::TimePoint<> TP);
+LLVM_SUPPORT_ABI raw_ostream &operator<<(raw_ostream &OS, sys::UtcTime<> TP);
 
 /// Format provider for TimePoint<>
 ///

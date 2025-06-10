@@ -19,6 +19,7 @@
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/Support/Chrono.h"
+#include "llvm/Support/Compiler.h"
 #include "llvm/Support/Errc.h"
 #include "llvm/Support/Error.h"
 #include "llvm/Support/ErrorOr.h"
@@ -68,18 +69,21 @@ public:
   bool ExposesExternalVFSPath = false;
 
   Status() = default;
-  Status(const llvm::sys::fs::file_status &Status);
-  Status(const Twine &Name, llvm::sys::fs::UniqueID UID,
-         llvm::sys::TimePoint<> MTime, uint32_t User, uint32_t Group,
-         uint64_t Size, llvm::sys::fs::file_type Type,
-         llvm::sys::fs::perms Perms);
+  LLVM_SUPPORT_ABI Status(const llvm::sys::fs::file_status &Status);
+  LLVM_SUPPORT_ABI Status(const Twine &Name, llvm::sys::fs::UniqueID UID,
+                          llvm::sys::TimePoint<> MTime, uint32_t User,
+                          uint32_t Group, uint64_t Size,
+                          llvm::sys::fs::file_type Type,
+                          llvm::sys::fs::perms Perms);
 
   /// Get a copy of a Status with a different size.
-  static Status copyWithNewSize(const Status &In, uint64_t NewSize);
+  LLVM_SUPPORT_ABI static Status copyWithNewSize(const Status &In,
+                                                 uint64_t NewSize);
   /// Get a copy of a Status with a different name.
-  static Status copyWithNewName(const Status &In, const Twine &NewName);
-  static Status copyWithNewName(const llvm::sys::fs::file_status &In,
-                                const Twine &NewName);
+  LLVM_SUPPORT_ABI static Status copyWithNewName(const Status &In,
+                                                 const Twine &NewName);
+  LLVM_SUPPORT_ABI static Status
+  copyWithNewName(const llvm::sys::fs::file_status &In, const Twine &NewName);
 
   /// Returns the name that should be used for this file or directory.
   StringRef getName() const { return Name; }
@@ -97,13 +101,13 @@ public:
   /// @name Status queries
   /// These are static queries in llvm::sys::fs.
   /// @{
-  bool equivalent(const Status &Other) const;
-  bool isDirectory() const;
-  bool isRegularFile() const;
-  bool isOther() const;
-  bool isSymlink() const;
-  bool isStatusKnown() const;
-  bool exists() const;
+  LLVM_SUPPORT_ABI bool equivalent(const Status &Other) const;
+  LLVM_SUPPORT_ABI bool isDirectory() const;
+  LLVM_SUPPORT_ABI bool isRegularFile() const;
+  LLVM_SUPPORT_ABI bool isOther() const;
+  LLVM_SUPPORT_ABI bool isSymlink() const;
+  LLVM_SUPPORT_ABI bool isStatusKnown() const;
+  LLVM_SUPPORT_ABI bool exists() const;
   /// @}
 };
 
@@ -113,7 +117,7 @@ public:
   /// Destroy the file after closing it (if open).
   /// Sub-classes should generally call close() inside their destructors.  We
   /// cannot do that from the base class, since close is virtual.
-  virtual ~File();
+  LLVM_SUPPORT_ABI virtual ~File();
 
   /// Get the status of the file.
   virtual llvm::ErrorOr<Status> status() = 0;
@@ -135,7 +139,7 @@ public:
   virtual std::error_code close() = 0;
 
   // Get the same file with a different path.
-  static ErrorOr<std::unique_ptr<File>>
+  LLVM_SUPPORT_ABI static ErrorOr<std::unique_ptr<File>>
   getWithPath(ErrorOr<std::unique_ptr<File>> Result, const Twine &P);
 
 protected:
@@ -163,7 +167,7 @@ namespace detail {
 /// An interface for virtual file systems to provide an iterator over the
 /// (non-recursive) contents of a directory.
 struct DirIterImpl {
-  virtual ~DirIterImpl();
+  LLVM_SUPPORT_ABI virtual ~DirIterImpl();
 
   /// Sets \c CurrentEntry to the next entry in the directory on success,
   /// to directory_entry() at end,  or returns a system-defined \c error_code.
@@ -232,14 +236,15 @@ class recursive_directory_iterator {
       State; // Input iterator semantics on copy.
 
 public:
-  recursive_directory_iterator(FileSystem &FS, const Twine &Path,
-                               std::error_code &EC);
+  LLVM_SUPPORT_ABI recursive_directory_iterator(FileSystem &FS,
+                                                const Twine &Path,
+                                                std::error_code &EC);
 
   /// Construct an 'end' iterator.
   recursive_directory_iterator() = default;
 
   /// Equivalent to operator++, with an error code.
-  recursive_directory_iterator &increment(std::error_code &EC);
+  LLVM_SUPPORT_ABI recursive_directory_iterator &increment(std::error_code &EC);
 
   const directory_entry &operator*() const { return *State->Stack.back(); }
   const directory_entry *operator->() const { return &*State->Stack.back(); }
@@ -289,7 +294,7 @@ public:
   /// closes the file.
   /// The IsText parameter is used to distinguish whether the file should be
   /// opened as a binary or text file.
-  llvm::ErrorOr<std::unique_ptr<llvm::MemoryBuffer>>
+  LLVM_SUPPORT_ABI llvm::ErrorOr<std::unique_ptr<llvm::MemoryBuffer>>
   getBufferForFile(const Twine &Name, int64_t FileSize = -1,
                    bool RequiresNullTerminator = true, bool IsVolatile = false,
                    bool IsText = true);
@@ -309,15 +314,16 @@ public:
   /// Gets real path of \p Path e.g. collapse all . and .. patterns, resolve
   /// symlinks. For real file system, this uses `llvm::sys::fs::real_path`.
   /// This returns errc::operation_not_permitted if not implemented by subclass.
-  virtual std::error_code getRealPath(const Twine &Path,
-                                      SmallVectorImpl<char> &Output);
+  LLVM_SUPPORT_ABI virtual std::error_code
+  getRealPath(const Twine &Path, SmallVectorImpl<char> &Output);
 
   /// Check whether \p Path exists. By default this uses \c status(), but
   /// filesystems may provide a more efficient implementation if available.
-  virtual bool exists(const Twine &Path);
+  LLVM_SUPPORT_ABI virtual bool exists(const Twine &Path);
 
   /// Is the file mounted on a local filesystem?
-  virtual std::error_code isLocal(const Twine &Path, bool &Result);
+  LLVM_SUPPORT_ABI virtual std::error_code isLocal(const Twine &Path,
+                                                   bool &Result);
 
   /// Make \a Path an absolute path.
   ///
@@ -330,11 +336,13 @@ public:
   /// \param Path A path that is modified to be an absolute path.
   /// \returns success if \a path has been made absolute, otherwise a
   ///          platform-specific error_code.
-  virtual std::error_code makeAbsolute(SmallVectorImpl<char> &Path) const;
+  LLVM_SUPPORT_ABI virtual std::error_code
+  makeAbsolute(SmallVectorImpl<char> &Path) const;
 
   /// \returns true if \p A and \p B represent the same file, or an error or
   /// false if they do not.
-  llvm::ErrorOr<bool> equivalent(const Twine &A, const Twine &B);
+  LLVM_SUPPORT_ABI llvm::ErrorOr<bool> equivalent(const Twine &A,
+                                                  const Twine &B);
 
   enum class PrintType { Summary, Contents, RecursiveContents };
   void print(raw_ostream &OS, PrintType Type = PrintType::Contents,
@@ -350,7 +358,7 @@ public:
   }
 
 #if !defined(NDEBUG) || defined(LLVM_ENABLE_DUMP)
-  LLVM_DUMP_METHOD void dump() const;
+  LLVM_SUPPORT_ABI LLVM_DUMP_METHOD void dump() const;
 #endif
 
 protected:
@@ -370,13 +378,13 @@ protected:
 /// the operating system.
 /// The working directory is linked to the process's working directory.
 /// (This is usually thread-hostile).
-IntrusiveRefCntPtr<FileSystem> getRealFileSystem();
+LLVM_SUPPORT_ABI IntrusiveRefCntPtr<FileSystem> getRealFileSystem();
 
 /// Create an \p vfs::FileSystem for the 'real' file system, as seen by
 /// the operating system.
 /// It has its own working directory, independent of (but initially equal to)
 /// that of the process.
-std::unique_ptr<FileSystem> createPhysicalFileSystem();
+LLVM_SUPPORT_ABI std::unique_ptr<FileSystem> createPhysicalFileSystem();
 
 /// A file system that allows overlaying one \p AbstractFileSystem on top
 /// of another.
@@ -397,21 +405,25 @@ class OverlayFileSystem : public RTTIExtends<OverlayFileSystem, FileSystem> {
 
 public:
   static const char ID;
-  OverlayFileSystem(IntrusiveRefCntPtr<FileSystem> Base);
+  LLVM_SUPPORT_ABI OverlayFileSystem(IntrusiveRefCntPtr<FileSystem> Base);
 
   /// Pushes a file system on top of the stack.
-  void pushOverlay(IntrusiveRefCntPtr<FileSystem> FS);
+  LLVM_SUPPORT_ABI void pushOverlay(IntrusiveRefCntPtr<FileSystem> FS);
 
-  llvm::ErrorOr<Status> status(const Twine &Path) override;
-  bool exists(const Twine &Path) override;
-  llvm::ErrorOr<std::unique_ptr<File>>
+  LLVM_SUPPORT_ABI llvm::ErrorOr<Status> status(const Twine &Path) override;
+  LLVM_SUPPORT_ABI bool exists(const Twine &Path) override;
+  LLVM_SUPPORT_ABI llvm::ErrorOr<std::unique_ptr<File>>
   openFileForRead(const Twine &Path) override;
-  directory_iterator dir_begin(const Twine &Dir, std::error_code &EC) override;
-  llvm::ErrorOr<std::string> getCurrentWorkingDirectory() const override;
-  std::error_code setCurrentWorkingDirectory(const Twine &Path) override;
-  std::error_code isLocal(const Twine &Path, bool &Result) override;
-  std::error_code getRealPath(const Twine &Path,
-                              SmallVectorImpl<char> &Output) override;
+  LLVM_SUPPORT_ABI directory_iterator dir_begin(const Twine &Dir,
+                                                std::error_code &EC) override;
+  LLVM_SUPPORT_ABI llvm::ErrorOr<std::string>
+  getCurrentWorkingDirectory() const override;
+  LLVM_SUPPORT_ABI std::error_code
+  setCurrentWorkingDirectory(const Twine &Path) override;
+  LLVM_SUPPORT_ABI std::error_code isLocal(const Twine &Path,
+                                           bool &Result) override;
+  LLVM_SUPPORT_ABI std::error_code
+  getRealPath(const Twine &Path, SmallVectorImpl<char> &Output) override;
 
   using iterator = FileSystemList::reverse_iterator;
   using const_iterator = FileSystemList::const_reverse_iterator;
@@ -440,9 +452,10 @@ public:
   const_range overlays_range() const { return llvm::reverse(FSList); }
 
 protected:
-  void printImpl(raw_ostream &OS, PrintType Type,
-                 unsigned IndentLevel) const override;
-  void visitChildFileSystems(VisitCallbackTy Callback) override;
+  LLVM_SUPPORT_ABI void printImpl(raw_ostream &OS, PrintType Type,
+                                  unsigned IndentLevel) const override;
+  LLVM_SUPPORT_ABI void
+  visitChildFileSystems(VisitCallbackTy Callback) override;
 };
 
 /// By default, this delegates all calls to the underlying file system. This
@@ -510,7 +523,7 @@ struct NewInMemoryNodeInfo {
   llvm::sys::fs::file_type Type;
   llvm::sys::fs::perms Perms;
 
-  Status makeStatus() const;
+  LLVM_SUPPORT_ABI Status makeStatus() const;
 };
 
 class NamedNodeOrError {
@@ -547,23 +560,26 @@ private:
       detail::NewInMemoryNodeInfo)>;
 
   /// Create node with \p MakeNode and add it into this filesystem at \p Path.
-  bool addFile(const Twine &Path, time_t ModificationTime,
-               std::unique_ptr<llvm::MemoryBuffer> Buffer,
-               std::optional<uint32_t> User, std::optional<uint32_t> Group,
-               std::optional<llvm::sys::fs::file_type> Type,
-               std::optional<llvm::sys::fs::perms> Perms, MakeNodeFn MakeNode);
+  LLVM_SUPPORT_ABI bool addFile(const Twine &Path, time_t ModificationTime,
+                                std::unique_ptr<llvm::MemoryBuffer> Buffer,
+                                std::optional<uint32_t> User,
+                                std::optional<uint32_t> Group,
+                                std::optional<llvm::sys::fs::file_type> Type,
+                                std::optional<llvm::sys::fs::perms> Perms,
+                                MakeNodeFn MakeNode);
 
   /// Looks up the in-memory node for the path \p P.
   /// If \p FollowFinalSymlink is true, the returned node is guaranteed to
   /// not be a symlink and its path may differ from \p P.
-  detail::NamedNodeOrError lookupNode(const Twine &P, bool FollowFinalSymlink,
-                                      size_t SymlinkDepth = 0) const;
+  LLVM_SUPPORT_ABI detail::NamedNodeOrError
+  lookupNode(const Twine &P, bool FollowFinalSymlink,
+             size_t SymlinkDepth = 0) const;
 
   class DirIterator;
 
 public:
-  explicit InMemoryFileSystem(bool UseNormalizedPaths = true);
-  ~InMemoryFileSystem() override;
+  LLVM_SUPPORT_ABI explicit InMemoryFileSystem(bool UseNormalizedPaths = true);
+  LLVM_SUPPORT_ABI ~InMemoryFileSystem() override;
 
   /// Add a file containing a buffer or a directory to the VFS with a
   /// path. The VFS owns the buffer.  If present, User, Group, Type
@@ -571,12 +587,13 @@ public:
   /// \return true if the file or directory was successfully added,
   /// false if the file or directory already exists in the file system with
   /// different contents.
-  bool addFile(const Twine &Path, time_t ModificationTime,
-               std::unique_ptr<llvm::MemoryBuffer> Buffer,
-               std::optional<uint32_t> User = std::nullopt,
-               std::optional<uint32_t> Group = std::nullopt,
-               std::optional<llvm::sys::fs::file_type> Type = std::nullopt,
-               std::optional<llvm::sys::fs::perms> Perms = std::nullopt);
+  LLVM_SUPPORT_ABI bool
+  addFile(const Twine &Path, time_t ModificationTime,
+          std::unique_ptr<llvm::MemoryBuffer> Buffer,
+          std::optional<uint32_t> User = std::nullopt,
+          std::optional<uint32_t> Group = std::nullopt,
+          std::optional<llvm::sys::fs::file_type> Type = std::nullopt,
+          std::optional<llvm::sys::fs::perms> Perms = std::nullopt);
 
   /// Add a hard link to a file.
   ///
@@ -592,7 +609,7 @@ public:
   /// link which points to the resolved file of \p Target node.
   /// \return true if the above condition is satisfied and hardlink was
   /// successfully created, false otherwise.
-  bool addHardLink(const Twine &NewLink, const Twine &Target);
+  LLVM_SUPPORT_ABI bool addHardLink(const Twine &NewLink, const Twine &Target);
 
   /// Arbitrary max depth to search through symlinks. We can get into problems
   /// if a link links to a link that links back to the link, for example.
@@ -601,7 +618,7 @@ public:
   /// Add a symbolic link. Unlike a HardLink, because \p Target doesn't need
   /// to refer to a file (or refer to anything, as it happens). Also, an
   /// in-memory directory for \p Target isn't automatically created.
-  bool
+  LLVM_SUPPORT_ABI bool
   addSymbolicLink(const Twine &NewLink, const Twine &Target,
                   time_t ModificationTime,
                   std::optional<uint32_t> User = std::nullopt,
@@ -614,22 +631,24 @@ public:
   /// \return true if the file or directory was successfully added,
   /// false if the file or directory already exists in the file system with
   /// different contents.
-  bool addFileNoOwn(const Twine &Path, time_t ModificationTime,
-                    const llvm::MemoryBufferRef &Buffer,
-                    std::optional<uint32_t> User = std::nullopt,
-                    std::optional<uint32_t> Group = std::nullopt,
-                    std::optional<llvm::sys::fs::file_type> Type = std::nullopt,
-                    std::optional<llvm::sys::fs::perms> Perms = std::nullopt);
+  LLVM_SUPPORT_ABI bool
+  addFileNoOwn(const Twine &Path, time_t ModificationTime,
+               const llvm::MemoryBufferRef &Buffer,
+               std::optional<uint32_t> User = std::nullopt,
+               std::optional<uint32_t> Group = std::nullopt,
+               std::optional<llvm::sys::fs::file_type> Type = std::nullopt,
+               std::optional<llvm::sys::fs::perms> Perms = std::nullopt);
 
-  std::string toString() const;
+  LLVM_SUPPORT_ABI std::string toString() const;
 
   /// Return true if this file system normalizes . and .. in paths.
   bool useNormalizedPaths() const { return UseNormalizedPaths; }
 
-  llvm::ErrorOr<Status> status(const Twine &Path) override;
-  llvm::ErrorOr<std::unique_ptr<File>>
+  LLVM_SUPPORT_ABI llvm::ErrorOr<Status> status(const Twine &Path) override;
+  LLVM_SUPPORT_ABI llvm::ErrorOr<std::unique_ptr<File>>
   openFileForRead(const Twine &Path) override;
-  directory_iterator dir_begin(const Twine &Dir, std::error_code &EC) override;
+  LLVM_SUPPORT_ABI directory_iterator dir_begin(const Twine &Dir,
+                                                std::error_code &EC) override;
 
   llvm::ErrorOr<std::string> getCurrentWorkingDirectory() const override {
     return WorkingDirectory;
@@ -640,22 +659,24 @@ public:
   ///
   /// This doesn't resolve symlinks as they are not supported in in-memory file
   /// system.
-  std::error_code getRealPath(const Twine &Path,
-                              SmallVectorImpl<char> &Output) override;
-  std::error_code isLocal(const Twine &Path, bool &Result) override;
-  std::error_code setCurrentWorkingDirectory(const Twine &Path) override;
+  LLVM_SUPPORT_ABI std::error_code
+  getRealPath(const Twine &Path, SmallVectorImpl<char> &Output) override;
+  LLVM_SUPPORT_ABI std::error_code isLocal(const Twine &Path,
+                                           bool &Result) override;
+  LLVM_SUPPORT_ABI std::error_code
+  setCurrentWorkingDirectory(const Twine &Path) override;
 
 protected:
-  void printImpl(raw_ostream &OS, PrintType Type,
-                 unsigned IndentLevel) const override;
+  LLVM_SUPPORT_ABI void printImpl(raw_ostream &OS, PrintType Type,
+                                  unsigned IndentLevel) const override;
 };
 
 /// Get a globally unique ID for a virtual file or directory.
-llvm::sys::fs::UniqueID getNextVirtualUniqueID();
+LLVM_SUPPORT_ABI llvm::sys::fs::UniqueID getNextVirtualUniqueID();
 
 /// Gets a \p FileSystem for a virtual file system described in YAML
 /// format.
-std::unique_ptr<FileSystem>
+LLVM_SUPPORT_ABI std::unique_ptr<FileSystem>
 getVFSFromYAML(std::unique_ptr<llvm::MemoryBuffer> Buffer,
                llvm::SourceMgr::DiagHandlerTy DiagHandler,
                StringRef YAMLFilePath, void *DiagContext = nullptr,
@@ -922,7 +943,7 @@ public:
     std::optional<std::string> ExternalRedirect;
 
   public:
-    LookupResult(Entry *E, sys::path::const_iterator Start,
+    LLVM_SUPPORT_ABI LookupResult(Entry *E, sys::path::const_iterator Start,
                  sys::path::const_iterator End);
 
     /// If the found Entry maps the input path to a path in the external
@@ -938,7 +959,7 @@ public:
 
     /// Get the (canonical) path of the found entry. This uses the as-written
     /// path components from the VFS specification.
-    void getPath(llvm::SmallVectorImpl<char> &Path) const;
+    LLVM_SUPPORT_ABI void getPath(llvm::SmallVectorImpl<char> &Path) const;
   };
 
 private:
@@ -968,8 +989,8 @@ private:
   /// \param Path A path that is modified to be an absolute path.
   /// \returns success if \a path has been made absolute, otherwise a
   ///          platform-specific error_code.
-  std::error_code makeAbsolute(StringRef WorkingDir,
-                               SmallVectorImpl<char> &Path) const;
+  LLVM_SUPPORT_ABI std::error_code
+  makeAbsolute(StringRef WorkingDir, SmallVectorImpl<char> &Path) const;
 
   // In a RedirectingFileSystem, keys can be specified in Posix or Windows
   // style (or even a mixture of both), so this comparison helper allows
@@ -1029,67 +1050,76 @@ private:
   RootRelativeKind RootRelative = RootRelativeKind::CWD;
   /// @}
 
+  LLVM_SUPPORT_ABI
   RedirectingFileSystem(IntrusiveRefCntPtr<FileSystem> ExternalFS);
 
   /// Looks up the path <tt>[Start, End)</tt> in \p From, possibly recursing
   /// into the contents of \p From if it is a directory. Returns a LookupResult
   /// giving the matched entry and, if that entry is a FileEntry or
   /// DirectoryRemapEntry, the path it redirects to in the external file system.
-  ErrorOr<LookupResult>
+  LLVM_SUPPORT_ABI ErrorOr<LookupResult>
   lookupPathImpl(llvm::sys::path::const_iterator Start,
                  llvm::sys::path::const_iterator End, Entry *From,
                  llvm::SmallVectorImpl<Entry *> &Entries) const;
 
   /// Get the status for a path with the provided \c LookupResult.
-  ErrorOr<Status> status(const Twine &LookupPath, const Twine &OriginalPath,
-                         const LookupResult &Result);
+  LLVM_SUPPORT_ABI ErrorOr<Status> status(const Twine &LookupPath,
+                                          const Twine &OriginalPath,
+                                          const LookupResult &Result);
 
 public:
   /// Looks up \p Path in \c Roots and returns a LookupResult giving the
   /// matched entry and, if the entry was a FileEntry or DirectoryRemapEntry,
   /// the path it redirects to in the external file system.
-  ErrorOr<LookupResult> lookupPath(StringRef Path) const;
+  LLVM_SUPPORT_ABI ErrorOr<LookupResult> lookupPath(StringRef Path) const;
 
   /// Parses \p Buffer, which is expected to be in YAML format and
   /// returns a virtual file system representing its contents.
-  static std::unique_ptr<RedirectingFileSystem>
+  LLVM_SUPPORT_ABI static std::unique_ptr<RedirectingFileSystem>
   create(std::unique_ptr<MemoryBuffer> Buffer,
          SourceMgr::DiagHandlerTy DiagHandler, StringRef YAMLFilePath,
          void *DiagContext, IntrusiveRefCntPtr<FileSystem> ExternalFS);
 
   /// Redirect each of the remapped files from first to second.
-  static std::unique_ptr<RedirectingFileSystem>
+  LLVM_SUPPORT_ABI static std::unique_ptr<RedirectingFileSystem>
   create(ArrayRef<std::pair<std::string, std::string>> RemappedFiles,
          bool UseExternalNames, FileSystem &ExternalFS);
 
-  ErrorOr<Status> status(const Twine &Path) override;
-  bool exists(const Twine &Path) override;
-  ErrorOr<std::unique_ptr<File>> openFileForRead(const Twine &Path) override;
+  LLVM_SUPPORT_ABI ErrorOr<Status> status(const Twine &Path) override;
+  LLVM_SUPPORT_ABI bool exists(const Twine &Path) override;
+  LLVM_SUPPORT_ABI ErrorOr<std::unique_ptr<File>>
+  openFileForRead(const Twine &Path) override;
 
-  std::error_code getRealPath(const Twine &Path,
-                              SmallVectorImpl<char> &Output) override;
+  LLVM_SUPPORT_ABI std::error_code
+  getRealPath(const Twine &Path, SmallVectorImpl<char> &Output) override;
 
-  llvm::ErrorOr<std::string> getCurrentWorkingDirectory() const override;
+  LLVM_SUPPORT_ABI llvm::ErrorOr<std::string>
+  getCurrentWorkingDirectory() const override;
 
-  std::error_code setCurrentWorkingDirectory(const Twine &Path) override;
+  LLVM_SUPPORT_ABI std::error_code
+  setCurrentWorkingDirectory(const Twine &Path) override;
 
-  std::error_code isLocal(const Twine &Path, bool &Result) override;
+  LLVM_SUPPORT_ABI std::error_code isLocal(const Twine &Path,
+                                           bool &Result) override;
 
-  std::error_code makeAbsolute(SmallVectorImpl<char> &Path) const override;
+  LLVM_SUPPORT_ABI std::error_code
+  makeAbsolute(SmallVectorImpl<char> &Path) const override;
 
-  directory_iterator dir_begin(const Twine &Dir, std::error_code &EC) override;
+  LLVM_SUPPORT_ABI directory_iterator dir_begin(const Twine &Dir,
+                                                std::error_code &EC) override;
 
-  void setOverlayFileDir(StringRef PrefixDir);
+  LLVM_SUPPORT_ABI void setOverlayFileDir(StringRef PrefixDir);
 
-  StringRef getOverlayFileDir() const;
+  LLVM_SUPPORT_ABI StringRef getOverlayFileDir() const;
 
   /// Sets the redirection kind to \c Fallthrough if true or \c RedirectOnly
   /// otherwise. Will removed in the future, use \c setRedirection instead.
-  void setFallthrough(bool Fallthrough);
+  LLVM_SUPPORT_ABI void setFallthrough(bool Fallthrough);
 
-  void setRedirection(RedirectingFileSystem::RedirectKind Kind);
+  LLVM_SUPPORT_ABI void
+  setRedirection(RedirectingFileSystem::RedirectKind Kind);
 
-  std::vector<llvm::StringRef> getRoots() const;
+  LLVM_SUPPORT_ABI std::vector<llvm::StringRef> getRoots() const;
 
   bool hasBeenUsed() const { return HasBeenUsed; };
   void clearHasBeenUsed() { HasBeenUsed = false; }
@@ -1099,15 +1129,16 @@ public:
   void printEntry(raw_ostream &OS, Entry *E, unsigned IndentLevel = 0) const;
 
 protected:
-  void printImpl(raw_ostream &OS, PrintType Type,
+  LLVM_SUPPORT_ABI void printImpl(raw_ostream &OS, PrintType Type,
                  unsigned IndentLevel) const override;
-  void visitChildFileSystems(VisitCallbackTy Callback) override;
+  LLVM_SUPPORT_ABI void
+  visitChildFileSystems(VisitCallbackTy Callback) override;
 };
 
 /// Collect all pairs of <virtual path, real path> entries from the
 /// \p YAMLFilePath. This is used by the module dependency collector to forward
 /// the entries into the reproducer output VFS YAML file.
-void collectVFSFromYAML(
+LLVM_SUPPORT_ABI void collectVFSFromYAML(
     std::unique_ptr<llvm::MemoryBuffer> Buffer,
     llvm::SourceMgr::DiagHandlerTy DiagHandler, StringRef YAMLFilePath,
     SmallVectorImpl<YAMLVFSEntry> &CollectedEntries,
@@ -1121,13 +1152,16 @@ class YAMLVFSWriter {
   std::optional<bool> UseExternalNames;
   std::string OverlayDir;
 
-  void addEntry(StringRef VirtualPath, StringRef RealPath, bool IsDirectory);
+  LLVM_SUPPORT_ABI void addEntry(StringRef VirtualPath, StringRef RealPath,
+                                 bool IsDirectory);
 
 public:
   YAMLVFSWriter() = default;
 
-  void addFileMapping(StringRef VirtualPath, StringRef RealPath);
-  void addDirectoryMapping(StringRef VirtualPath, StringRef RealPath);
+  LLVM_SUPPORT_ABI void addFileMapping(StringRef VirtualPath,
+                                       StringRef RealPath);
+  LLVM_SUPPORT_ABI void addDirectoryMapping(StringRef VirtualPath,
+                                            StringRef RealPath);
 
   void setCaseSensitivity(bool CaseSensitive) {
     IsCaseSensitive = CaseSensitive;
@@ -1142,7 +1176,7 @@ public:
 
   const std::vector<YAMLVFSEntry> &getMappings() const { return Mappings; }
 
-  void write(llvm::raw_ostream &OS);
+  LLVM_SUPPORT_ABI void write(llvm::raw_ostream &OS);
 };
 
 /// File system that tracks the number of calls to the underlying file system.
@@ -1195,8 +1229,8 @@ public:
   }
 
 protected:
-  void printImpl(raw_ostream &OS, PrintType Type,
-                 unsigned IndentLevel) const override;
+  LLVM_SUPPORT_ABI void printImpl(raw_ostream &OS, PrintType Type,
+                                  unsigned IndentLevel) const override;
 };
 
 } // namespace vfs

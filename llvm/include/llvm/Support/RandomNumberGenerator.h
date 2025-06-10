@@ -41,7 +41,7 @@ public:
   using result_type = generator_type::result_type;
 
   /// Returns a random number in the range [0, Max).
-  result_type operator()();
+  LLVM_SUPPORT_ABI result_type operator()();
 
   static constexpr result_type min() { return generator_type::min(); }
   static constexpr result_type max() { return generator_type::max(); }
@@ -51,7 +51,7 @@ private:
   ///
   /// This constructor should not be used directly. Instead use
   /// Module::createRNG to create a new RNG salted with the Module ID.
-  RandomNumberGenerator(StringRef Salt);
+  LLVM_SUPPORT_ABI RandomNumberGenerator(StringRef Salt);
 
   generator_type Generator;
 
@@ -63,7 +63,7 @@ private:
 };
 
 // Get random vector of specified size
-std::error_code getRandomBytes(void *Buffer, size_t Size);
+LLVM_SUPPORT_ABI std::error_code getRandomBytes(void *Buffer, size_t Size);
 }
 
 #endif

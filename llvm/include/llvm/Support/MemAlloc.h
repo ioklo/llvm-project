@@ -71,6 +71,7 @@ LLVM_ATTRIBUTE_RETURNS_NONNULL inline void *safe_realloc(void *Ptr, size_t Sz) {
 /// like posix_memalign due to portability. It is mostly intended to allow
 /// compatibility with platforms that, after aligned allocation was added, use
 /// reduced default alignment.
+LLVM_SUPPORT_ABI
 LLVM_ATTRIBUTE_RETURNS_NONNULL LLVM_ATTRIBUTE_RETURNS_NOALIAS void *
 allocate_buffer(size_t Size, size_t Alignment);
 
@@ -81,7 +82,8 @@ allocate_buffer(size_t Size, size_t Alignment);
 ///
 /// The pointer must have been allocated with the corresponding new operator,
 /// most likely using the above helper.
-void deallocate_buffer(void *Ptr, size_t Size, size_t Alignment);
+LLVM_SUPPORT_ABI void deallocate_buffer(void *Ptr, size_t Size,
+                                        size_t Alignment);
 
 } // namespace llvm
 #endif

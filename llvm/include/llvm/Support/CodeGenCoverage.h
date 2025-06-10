@@ -12,6 +12,7 @@
 #define LLVM_SUPPORT_CODEGENCOVERAGE_H
 
 #include "llvm/ADT/BitVector.h"
+#include "llvm/Support/Compiler.h"
 
 namespace llvm {
 class MemoryBuffer;
@@ -23,15 +24,15 @@ protected:
 public:
   using const_covered_iterator = BitVector::const_set_bits_iterator;
 
-  CodeGenCoverage();
+  LLVM_SUPPORT_ABI CodeGenCoverage();
 
-  void setCovered(uint64_t RuleID);
-  bool isCovered(uint64_t RuleID) const;
-  iterator_range<const_covered_iterator> covered() const;
+  LLVM_SUPPORT_ABI void setCovered(uint64_t RuleID);
+  LLVM_SUPPORT_ABI bool isCovered(uint64_t RuleID) const;
+  LLVM_SUPPORT_ABI iterator_range<const_covered_iterator> covered() const;
 
-  bool parse(MemoryBuffer &Buffer, StringRef BackendName);
-  bool emit(StringRef FilePrefix, StringRef BackendName) const;
-  void reset();
+  LLVM_SUPPORT_ABI bool parse(MemoryBuffer &Buffer, StringRef BackendName);
+  LLVM_SUPPORT_ABI bool emit(StringRef FilePrefix, StringRef BackendName) const;
+  LLVM_SUPPORT_ABI void reset();
 };
 } // namespace llvm
 

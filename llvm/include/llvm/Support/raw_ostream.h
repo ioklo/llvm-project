@@ -15,6 +15,7 @@
 
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/ADT/StringRef.h"
+#include "llvm/Support/Compiler.h"
 #include "llvm/Support/DataTypes.h"
 #include <cassert>
 #include <cstddef>
@@ -141,7 +142,7 @@ public:
   raw_ostream(const raw_ostream &) = delete;
   void operator=(const raw_ostream &) = delete;
 
-  virtual ~raw_ostream();
+  LLVM_SUPPORT_ABI virtual ~raw_ostream();
 
   /// tell - Return the current offset with the file.
   uint64_t tell() const { return current_pos() + GetNumBytesInBuffer(); }
@@ -161,7 +162,7 @@ public:
 
   /// Set the stream to be buffered, with an automatically determined buffer
   /// size.
-  void SetBuffered();
+  LLVM_SUPPORT_ABI void SetBuffered();
 
   /// Set the stream to be buffered, using the specified buffer size.
   void SetBufferSize(size_t Size) {
@@ -247,7 +248,7 @@ public:
   // e.g.  replace `u8"\u00a0"` by `"\xc2\xa0"`
   // or use `reinterpret_cast`:
   // e.g. replace `u8"\u00a0"` by `reinterpret_cast<const char *>(u8"\u00a0")`
-  raw_ostream &operator<<(const char8_t *Str) = delete;
+  LLVM_SUPPORT_ABI raw_ostream &operator<<(const char8_t *Str) = delete;
 #endif
 
   raw_ostream &operator<<(const char *Str) {
@@ -270,11 +271,11 @@ public:
     return write(Str.data(), Str.size());
   }
 
-  raw_ostream &operator<<(unsigned long N);
-  raw_ostream &operator<<(long N);
-  raw_ostream &operator<<(unsigned long long N);
-  raw_ostream &operator<<(long long N);
-  raw_ostream &operator<<(const void *P);
+  LLVM_SUPPORT_ABI raw_ostream &operator<<(unsigned long N);
+  LLVM_SUPPORT_ABI raw_ostream &operator<<(long N);
+  LLVM_SUPPORT_ABI raw_ostream &operator<<(unsigned long long N);
+  LLVM_SUPPORT_ABI raw_ostream &operator<<(long long N);
+  LLVM_SUPPORT_ABI raw_ostream &operator<<(const void *P);
 
   raw_ostream &operator<<(unsigned int N) {
     return this->operator<<(static_cast<unsigned long>(N));
@@ -284,45 +285,46 @@ public:
     return this->operator<<(static_cast<long>(N));
   }
 
-  raw_ostream &operator<<(double N);
+  LLVM_SUPPORT_ABI raw_ostream &operator<<(double N);
 
   /// Output \p N in hexadecimal, without any prefix or padding.
-  raw_ostream &write_hex(unsigned long long N);
+  LLVM_SUPPORT_ABI raw_ostream &write_hex(unsigned long long N);
 
   // Change the foreground color of text.
-  raw_ostream &operator<<(Colors C);
+  LLVM_SUPPORT_ABI raw_ostream &operator<<(Colors C);
 
   /// Output a formatted UUID with dash separators.
   using uuid_t = uint8_t[16];
-  raw_ostream &write_uuid(const uuid_t UUID);
+  LLVM_SUPPORT_ABI raw_ostream &write_uuid(const uuid_t UUID);
 
   /// Output \p Str, turning '\\', '\t', '\n', '"', and anything that doesn't
   /// satisfy llvm::isPrint into an escape sequence.
-  raw_ostream &write_escaped(StringRef Str, bool UseHexEscapes = false);
+  LLVM_SUPPORT_ABI raw_ostream &write_escaped(StringRef Str,
+                                              bool UseHexEscapes = false);
 
-  raw_ostream &write(unsigned char C);
-  raw_ostream &write(const char *Ptr, size_t Size);
+  LLVM_SUPPORT_ABI raw_ostream &write(unsigned char C);
+  LLVM_SUPPORT_ABI raw_ostream &write(const char *Ptr, size_t Size);
 
   // Formatted output, see the format() function in Support/Format.h.
-  raw_ostream &operator<<(const format_object_base &Fmt);
+  LLVM_SUPPORT_ABI raw_ostream &operator<<(const format_object_base &Fmt);
 
   // Formatted output, see the leftJustify() function in Support/Format.h.
-  raw_ostream &operator<<(const FormattedString &);
+  LLVM_SUPPORT_ABI raw_ostream &operator<<(const FormattedString &);
 
   // Formatted output, see the formatHex() function in Support/Format.h.
-  raw_ostream &operator<<(const FormattedNumber &);
+  LLVM_SUPPORT_ABI raw_ostream &operator<<(const FormattedNumber &);
 
   // Formatted output, see the formatv() function in Support/FormatVariadic.h.
-  raw_ostream &operator<<(const formatv_object_base &);
+  LLVM_SUPPORT_ABI raw_ostream &operator<<(const formatv_object_base &);
 
   // Formatted output, see the format_bytes() function in Support/Format.h.
-  raw_ostream &operator<<(const FormattedBytes &);
+  LLVM_SUPPORT_ABI raw_ostream &operator<<(const FormattedBytes &);
 
   /// indent - Insert 'NumSpaces' spaces.
-  raw_ostream &indent(unsigned NumSpaces);
+  LLVM_SUPPORT_ABI raw_ostream &indent(unsigned NumSpaces);
 
   /// write_zeros - Insert 'NumZeros' nulls.
-  raw_ostream &write_zeros(unsigned NumZeros);
+  LLVM_SUPPORT_ABI raw_ostream &write_zeros(unsigned NumZeros);
 
   /// Changes the foreground color of text that will be output from this point
   /// forward.
@@ -331,15 +333,16 @@ public:
   /// @param Bold bold/brighter text, default false
   /// @param BG if true change the background, default: change foreground
   /// @returns itself so it can be used within << invocations
-  virtual raw_ostream &changeColor(enum Colors Color, bool Bold = false,
+  LLVM_SUPPORT_ABI virtual raw_ostream &
+  changeColor(enum Colors Color, bool Bold = false,
                                    bool BG = false);
 
   /// Resets the colors to terminal defaults. Call this when you are done
   /// outputting colored text, or before program exit.
-  virtual raw_ostream &resetColor();
+  LLVM_SUPPORT_ABI virtual raw_ostream &resetColor();
 
   /// Reverses the foreground and background colors.
-  virtual raw_ostream &reverseColor();
+  LLVM_SUPPORT_ABI virtual raw_ostream &reverseColor();
 
   /// This function determines if this stream is connected to a "tty" or
   /// "console" window. That is, the output would be displayed to the user
@@ -389,7 +392,7 @@ protected:
   }
 
   /// Return an efficient buffer size for the underlying output mechanism.
-  virtual size_t preferred_buffer_size() const;
+  LLVM_SUPPORT_ABI virtual size_t preferred_buffer_size() const;
 
   /// Return the beginning of the current stream buffer, or 0 if the stream is
   /// unbuffered.
@@ -400,21 +403,22 @@ protected:
   //===--------------------------------------------------------------------===//
 private:
   /// Install the given buffer and mode.
-  void SetBufferAndMode(char *BufferStart, size_t Size, BufferKind Mode);
+  LLVM_SUPPORT_ABI void SetBufferAndMode(char *BufferStart, size_t Size,
+                                         BufferKind Mode);
 
   /// Flush the current buffer, which is known to be non-empty. This outputs the
   /// currently buffered data and resets the buffer to empty.
-  void flush_nonempty();
+  LLVM_SUPPORT_ABI void flush_nonempty();
 
   /// Copy data into the buffer. Size must not be greater than the number of
   /// unused bytes in the buffer.
-  void copy_to_buffer(const char *Ptr, size_t Size);
+  LLVM_SUPPORT_ABI void copy_to_buffer(const char *Ptr, size_t Size);
 
   /// Compute whether colors should be used and do the necessary work such as
   /// flushing. The result is affected by calls to enable_color().
-  bool prepare_colors();
+  LLVM_SUPPORT_ABI bool prepare_colors();
 
-  virtual void anchor();
+  LLVM_SUPPORT_ABI virtual void anchor();
 };
 
 /// Call the appropriate insertion operator, given an rvalue reference to a
@@ -433,7 +437,7 @@ operator<<(OStream &&OS, const T &Value) {
 /// but needs to patch in a header that needs to know the output size.
 class raw_pwrite_stream : public raw_ostream {
   virtual void pwrite_impl(const char *Ptr, size_t Size, uint64_t Offset) = 0;
-  void anchor() override;
+  LLVM_SUPPORT_ABI void anchor() override;
 
 public:
   explicit raw_pwrite_stream(bool Unbuffered = false,
@@ -479,18 +483,19 @@ class raw_fd_ostream : public raw_pwrite_stream {
   uint64_t pos = 0;
 
   /// See raw_ostream::write_impl.
-  void write_impl(const char *Ptr, size_t Size) override;
+  LLVM_SUPPORT_ABI void write_impl(const char *Ptr, size_t Size) override;
 
-  void pwrite_impl(const char *Ptr, size_t Size, uint64_t Offset) override;
+  LLVM_SUPPORT_ABI void pwrite_impl(const char *Ptr, size_t Size,
+                                    uint64_t Offset) override;
 
   /// Return the current position within the stream, not counting the bytes
   /// currently in the buffer.
   uint64_t current_pos() const override { return pos; }
 
   /// Determine an efficient buffer size.
-  size_t preferred_buffer_size() const override;
+  LLVM_SUPPORT_ABI size_t preferred_buffer_size() const override;
 
-  void anchor() override;
+  LLVM_SUPPORT_ABI void anchor() override;
 
 protected:
   /// Set the flag indicating that an output error has been encountered.
@@ -511,28 +516,30 @@ public:
   /// As a special case, if Filename is "-", then the stream will use
   /// STDOUT_FILENO instead of opening a file. This will not close the stdout
   /// descriptor.
-  raw_fd_ostream(StringRef Filename, std::error_code &EC);
-  raw_fd_ostream(StringRef Filename, std::error_code &EC,
-                 sys::fs::CreationDisposition Disp);
-  raw_fd_ostream(StringRef Filename, std::error_code &EC,
-                 sys::fs::FileAccess Access);
-  raw_fd_ostream(StringRef Filename, std::error_code &EC,
-                 sys::fs::OpenFlags Flags);
-  raw_fd_ostream(StringRef Filename, std::error_code &EC,
-                 sys::fs::CreationDisposition Disp, sys::fs::FileAccess Access,
-                 sys::fs::OpenFlags Flags);
+  LLVM_SUPPORT_ABI raw_fd_ostream(StringRef Filename, std::error_code &EC);
+  LLVM_SUPPORT_ABI raw_fd_ostream(StringRef Filename, std::error_code &EC,
+                                  sys::fs::CreationDisposition Disp);
+  LLVM_SUPPORT_ABI raw_fd_ostream(StringRef Filename, std::error_code &EC,
+                                  sys::fs::FileAccess Access);
+  LLVM_SUPPORT_ABI raw_fd_ostream(StringRef Filename, std::error_code &EC,
+                                  sys::fs::OpenFlags Flags);
+  LLVM_SUPPORT_ABI raw_fd_ostream(StringRef Filename, std::error_code &EC,
+                                  sys::fs::CreationDisposition Disp,
+                                  sys::fs::FileAccess Access,
+                                  sys::fs::OpenFlags Flags);
 
   /// FD is the file descriptor that this writes to.  If ShouldClose is true,
   /// this closes the file when the stream is destroyed. If FD is for stdout or
   /// stderr, it will not be closed.
-  raw_fd_ostream(int fd, bool shouldClose, bool unbuffered = false,
-                 OStreamKind K = OStreamKind::OK_OStream);
+  LLVM_SUPPORT_ABI raw_fd_ostream(int fd, bool shouldClose,
+                                  bool unbuffered = false,
+                                  OStreamKind K = OStreamKind::OK_OStream);
 
-  ~raw_fd_ostream() override;
+  LLVM_SUPPORT_ABI ~raw_fd_ostream() override;
 
   /// Manually flush the stream and close the file. Note that this does not call
   /// fsync.
-  void close();
+  LLVM_SUPPORT_ABI void close();
 
   bool supportsSeeking() const { return SupportsSeeking; }
 
@@ -540,11 +547,11 @@ public:
 
   /// Flushes the stream and repositions the underlying file descriptor position
   /// to the offset specified from the beginning of the file.
-  uint64_t seek(uint64_t off);
+  LLVM_SUPPORT_ABI uint64_t seek(uint64_t off);
 
-  bool is_displayed() const override;
+  LLVM_SUPPORT_ABI bool is_displayed() const override;
 
-  bool has_colors() const override;
+  LLVM_SUPPORT_ABI bool has_colors() const override;
 
   /// Tie this stream to the specified stream. Replaces any existing tied-to
   /// stream. Specifying a nullptr unties the stream. This is intended for to
@@ -601,23 +608,23 @@ public:
   ///          error code.
   ///
   /// It is used as @ref lock.
-  [[nodiscard]] Expected<sys::fs::FileLocker>
+  LLVM_SUPPORT_ABI [[nodiscard]] Expected<sys::fs::FileLocker>
   tryLockFor(Duration const &Timeout);
 };
 
 /// This returns a reference to a raw_fd_ostream for standard output. Use it
 /// like: outs() << "foo" << "bar";
-raw_fd_ostream &outs();
+LLVM_SUPPORT_ABI raw_fd_ostream &outs();
 
 /// This returns a reference to a raw_ostream for standard error.
 /// Use it like: errs() << "foo" << "bar";
 /// By default, the stream is tied to stdout to ensure stdout is flushed before
 /// stderr is written, to ensure the error messages are written in their
 /// expected place.
-raw_fd_ostream &errs();
+LLVM_SUPPORT_ABI raw_fd_ostream &errs();
 
 /// This returns a reference to a raw_ostream which simply discards output.
-raw_ostream &nulls();
+LLVM_SUPPORT_ABI raw_ostream &nulls();
 
 //===----------------------------------------------------------------------===//
 // File Streams
@@ -630,9 +637,9 @@ public:
   /// Open the specified file for reading/writing/seeking. If an error occurs,
   /// information about the error is put into EC, and the stream should be
   /// immediately destroyed.
-  raw_fd_stream(StringRef Filename, std::error_code &EC);
+  LLVM_SUPPORT_ABI raw_fd_stream(StringRef Filename, std::error_code &EC);
 
-  raw_fd_stream(int fd, bool shouldClose);
+  LLVM_SUPPORT_ABI raw_fd_stream(int fd, bool shouldClose);
 
   /// This reads the \p Size bytes into a buffer pointed by \p Ptr.
   ///
@@ -643,10 +650,10 @@ public:
   /// On success, the number of bytes read is returned, and the file position is
   /// advanced by this number. On error, -1 is returned, use error() to get the
   /// error code.
-  ssize_t read(char *Ptr, size_t Size);
+  LLVM_SUPPORT_ABI ssize_t read(char *Ptr, size_t Size);
 
   /// Check if \p OS is a pointer of type raw_fd_stream*.
-  static bool classof(const raw_ostream *OS);
+  LLVM_SUPPORT_ABI static bool classof(const raw_ostream *OS);
 };
 
 //===----------------------------------------------------------------------===//
@@ -662,7 +669,7 @@ class raw_string_ostream : public raw_ostream {
   std::string &OS;
 
   /// See raw_ostream::write_impl.
-  void write_impl(const char *Ptr, size_t Size) override;
+  LLVM_SUPPORT_ABI void write_impl(const char *Ptr, size_t Size) override;
 
   /// Return the current position within the stream, not counting the bytes
   /// currently in the buffer.
@@ -692,12 +699,13 @@ class raw_svector_ostream : public raw_pwrite_stream {
   SmallVectorImpl<char> &OS;
 
   /// See raw_ostream::write_impl.
-  void write_impl(const char *Ptr, size_t Size) override;
+  LLVM_SUPPORT_ABI void write_impl(const char *Ptr, size_t Size) override;
 
-  void pwrite_impl(const char *Ptr, size_t Size, uint64_t Offset) override;
+  LLVM_SUPPORT_ABI void pwrite_impl(const char *Ptr, size_t Size,
+                                    uint64_t Offset) override;
 
   /// Return the current position within the stream.
-  uint64_t current_pos() const override;
+  LLVM_SUPPORT_ABI uint64_t current_pos() const override;
 
 public:
   /// Construct a new raw_svector_ostream.
@@ -724,29 +732,30 @@ public:
     OS.reserve(tell() + ExtraSize);
   }
 
-  static bool classof(const raw_ostream *OS);
+  LLVM_SUPPORT_ABI static bool classof(const raw_ostream *OS);
 };
 
 /// A raw_ostream that discards all output.
 class raw_null_ostream : public raw_pwrite_stream {
   /// See raw_ostream::write_impl.
-  void write_impl(const char *Ptr, size_t size) override;
-  void pwrite_impl(const char *Ptr, size_t Size, uint64_t Offset) override;
+  LLVM_SUPPORT_ABI void write_impl(const char *Ptr, size_t size) override;
+  LLVM_SUPPORT_ABI void pwrite_impl(const char *Ptr, size_t Size,
+                                    uint64_t Offset) override;
 
   /// Return the current position within the stream, not counting the bytes
   /// currently in the buffer.
-  uint64_t current_pos() const override;
+  LLVM_SUPPORT_ABI uint64_t current_pos() const override;
 
 public:
   explicit raw_null_ostream() = default;
-  ~raw_null_ostream() override;
+  LLVM_SUPPORT_ABI ~raw_null_ostream() override;
 };
 
 class buffer_ostream : public raw_svector_ostream {
   raw_ostream &OS;
   SmallVector<char, 0> Buffer;
 
-  void anchor() override;
+  LLVM_SUPPORT_ABI void anchor() override;
 
 public:
   buffer_ostream(raw_ostream &OS) : raw_svector_ostream(Buffer), OS(OS) {}
@@ -757,7 +766,7 @@ class buffer_unique_ostream : public raw_svector_ostream {
   std::unique_ptr<raw_ostream> OS;
   SmallVector<char, 0> Buffer;
 
-  void anchor() override;
+  LLVM_SUPPORT_ABI void anchor() override;
 
 public:
   buffer_unique_ostream(std::unique_ptr<raw_ostream> OS)
@@ -835,10 +844,10 @@ class Error;
 /// for other names. For raw_fd_ostream instances, the stream writes to
 /// a temporary file. The final output file is atomically replaced with the
 /// temporary file after the \p Write function is finished.
-Error writeToOutput(StringRef OutputFileName,
-                    std::function<Error(raw_ostream &)> Write);
+LLVM_SUPPORT_ABI Error writeToOutput(StringRef OutputFileName,
+                                     std::function<Error(raw_ostream &)> Write);
 
-raw_ostream &operator<<(raw_ostream &OS, std::nullopt_t);
+LLVM_SUPPORT_ABI raw_ostream &operator<<(raw_ostream &OS, std::nullopt_t);
 
 template <typename T, typename = decltype(std::declval<raw_ostream &>()
                                           << std::declval<const T &>())>

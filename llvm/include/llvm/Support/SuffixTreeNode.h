@@ -25,7 +25,9 @@
 
 #ifndef LLVM_SUPPORT_SUFFIXTREE_NODE_H
 #define LLVM_SUPPORT_SUFFIXTREE_NODE_H
+
 #include "llvm/ADT/DenseMap.h"
+#include "llvm/Support/Compiler.h"
 
 namespace llvm {
 
@@ -62,31 +64,31 @@ public:
   NodeKind getKind() const { return Kind; }
 
   /// \return the start index of this node's substring in the entire string.
-  unsigned getStartIdx() const;
+  LLVM_SUPPORT_ABI unsigned getStartIdx() const;
 
   /// \returns the end index of this node.
   virtual unsigned getEndIdx() const = 0;
 
   /// \return the index of this node's left most leaf node.
-  unsigned getLeftLeafIdx() const;
+  LLVM_SUPPORT_ABI unsigned getLeftLeafIdx() const;
 
   /// \return the index of this node's right most leaf node.
-  unsigned getRightLeafIdx() const;
+  LLVM_SUPPORT_ABI unsigned getRightLeafIdx() const;
 
   /// Set the index of the left most leaf node of this node to \p Idx.
-  void setLeftLeafIdx(unsigned Idx);
+  LLVM_SUPPORT_ABI void setLeftLeafIdx(unsigned Idx);
 
   /// Set the index of the right most leaf node of this node to \p Idx.
-  void setRightLeafIdx(unsigned Idx);
+  LLVM_SUPPORT_ABI void setRightLeafIdx(unsigned Idx);
 
   /// Advance this node's StartIdx by \p Inc.
-  void incrementStartIdx(unsigned Inc);
+  LLVM_SUPPORT_ABI void incrementStartIdx(unsigned Inc);
 
   /// Set the length of the string from the root to this node to \p Len.
-  void setConcatLen(unsigned Len);
+  LLVM_SUPPORT_ABI void setConcatLen(unsigned Len);
 
   /// \returns the length of the string from the root to this node.
-  unsigned getConcatLen() const;
+  LLVM_SUPPORT_ABI unsigned getConcatLen() const;
 
   SuffixTreeNode(NodeKind Kind, unsigned StartIdx)
       : Kind(Kind), StartIdx(StartIdx) {}
@@ -131,16 +133,16 @@ public:
   }
 
   /// \returns true if this node is the root of its owning \p SuffixTree.
-  bool isRoot() const;
+  LLVM_SUPPORT_ABI bool isRoot() const;
 
   /// \returns the end index of this node's substring in the entire string.
-  unsigned getEndIdx() const override;
+  LLVM_SUPPORT_ABI unsigned getEndIdx() const override;
 
   /// Sets \p Link to \p L. Assumes \p L is not null.
-  void setLink(SuffixTreeInternalNode *L);
+  LLVM_SUPPORT_ABI void setLink(SuffixTreeInternalNode *L);
 
   /// \returns the pointer to the Link node.
-  SuffixTreeInternalNode *getLink() const;
+  LLVM_SUPPORT_ABI SuffixTreeInternalNode *getLink() const;
 
   /// The children of this node.
   ///
@@ -178,13 +180,13 @@ public:
   }
 
   /// \returns the end index of this node's substring in the entire string.
-  unsigned getEndIdx() const override;
+  LLVM_SUPPORT_ABI unsigned getEndIdx() const override;
 
   /// \returns the start index of the suffix represented by this leaf.
-  unsigned getSuffixIdx() const;
+  LLVM_SUPPORT_ABI unsigned getSuffixIdx() const;
 
   /// Sets the start index of the suffix represented by this leaf to \p Idx.
-  void setSuffixIdx(unsigned Idx);
+  LLVM_SUPPORT_ABI void setSuffixIdx(unsigned Idx);
   SuffixTreeLeafNode(unsigned StartIdx, unsigned *EndIdx)
       : SuffixTreeNode(NodeKind::ST_Leaf, StartIdx), EndIdx(EndIdx) {}
 

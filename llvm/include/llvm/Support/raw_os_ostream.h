@@ -13,6 +13,7 @@
 #ifndef LLVM_SUPPORT_RAW_OS_OSTREAM_H
 #define LLVM_SUPPORT_RAW_OS_OSTREAM_H
 
+#include "llvm/Support/Compiler.h"
 #include "llvm/Support/raw_ostream.h"
 #include <iosfwd>
 
@@ -25,15 +26,15 @@ class raw_os_ostream : public raw_ostream {
   std::ostream &OS;
 
   /// write_impl - See raw_ostream::write_impl.
-  void write_impl(const char *Ptr, size_t Size) override;
+  LLVM_SUPPORT_ABI void write_impl(const char *Ptr, size_t Size) override;
 
   /// current_pos - Return the current position within the stream, not
   /// counting the bytes currently in the buffer.
-  uint64_t current_pos() const override;
+  LLVM_SUPPORT_ABI uint64_t current_pos() const override;
 
 public:
   raw_os_ostream(std::ostream &O) : OS(O) {}
-  ~raw_os_ostream() override;
+  LLVM_SUPPORT_ABI ~raw_os_ostream() override;
 };
 
 } // end llvm namespace

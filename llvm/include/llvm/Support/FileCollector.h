@@ -11,6 +11,7 @@
 
 #include "llvm/ADT/StringMap.h"
 #include "llvm/ADT/StringSet.h"
+#include "llvm/Support/Compiler.h"
 #include "llvm/Support/VirtualFileSystem.h"
 #include <mutex>
 #include <string>
@@ -21,11 +22,11 @@ class Twine;
 
 class FileCollectorBase {
 public:
-  FileCollectorBase();
-  virtual ~FileCollectorBase();
+  LLVM_SUPPORT_ABI FileCollectorBase();
+  LLVM_SUPPORT_ABI virtual ~FileCollectorBase();
 
-  void addFile(const Twine &file);
-  void addDirectory(const Twine &Dir);
+  LLVM_SUPPORT_ABI void addFile(const Twine &file);
+  LLVM_SUPPORT_ABI void addDirectory(const Twine &Dir);
 
 protected:
   bool markAsSeen(StringRef Path) {
@@ -78,7 +79,7 @@ public:
     };
 
     /// Canonicalize a pair of virtual and real paths.
-    PathStorage canonicalize(StringRef SrcPath);
+    LLVM_SUPPORT_ABI PathStorage canonicalize(StringRef SrcPath);
 
   private:
     /// Replace with a (mostly) real path, or don't modify. Resolves symlinks
@@ -92,21 +93,21 @@ public:
   /// \p Root is the directory where collected files are will be stored.
   /// \p OverlayRoot is VFS mapping root.
   /// \p Root directory gets created in copyFiles unless it already exists.
-  FileCollector(std::string Root, std::string OverlayRoot);
+  LLVM_SUPPORT_ABI FileCollector(std::string Root, std::string OverlayRoot);
 
   /// Write the yaml mapping (for the VFS) to the given file.
-  std::error_code writeMapping(StringRef MappingFile);
+  LLVM_SUPPORT_ABI std::error_code writeMapping(StringRef MappingFile);
 
   /// Copy the files into the root directory.
   ///
   /// When StopOnError is true (the default) we abort as soon as one file
   /// cannot be copied. This is relatively common, for example when a file was
   /// removed after it was added to the mapping.
-  std::error_code copyFiles(bool StopOnError = true);
+  LLVM_SUPPORT_ABI std::error_code copyFiles(bool StopOnError = true);
 
   /// Create a VFS that uses \p Collector to collect files accessed via \p
   /// BaseFS.
-  static IntrusiveRefCntPtr<vfs::FileSystem>
+  LLVM_SUPPORT_ABI static IntrusiveRefCntPtr<vfs::FileSystem>
   createCollectorVFS(IntrusiveRefCntPtr<vfs::FileSystem> BaseFS,
                      std::shared_ptr<FileCollector> Collector);
 
@@ -121,9 +122,9 @@ private:
   }
 
 protected:
-  void addFileImpl(StringRef SrcPath) override;
+  LLVM_SUPPORT_ABI void addFileImpl(StringRef SrcPath) override;
 
-  llvm::vfs::directory_iterator
+  LLVM_SUPPORT_ABI llvm::vfs::directory_iterator
   addDirectoryImpl(const llvm::Twine &Dir,
                    IntrusiveRefCntPtr<vfs::FileSystem> FS,
                    std::error_code &EC) override;

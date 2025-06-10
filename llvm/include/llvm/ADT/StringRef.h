@@ -32,14 +32,16 @@ namespace llvm {
   class StringRef;
 
   /// Helper functions for StringRef::getAsInteger.
-  bool getAsUnsignedInteger(StringRef Str, unsigned Radix,
+  LLVM_SUPPORT_ABI bool getAsUnsignedInteger(StringRef Str, unsigned Radix,
                             unsigned long long &Result);
 
-  bool getAsSignedInteger(StringRef Str, unsigned Radix, long long &Result);
+  LLVM_SUPPORT_ABI bool getAsSignedInteger(StringRef Str, unsigned Radix,
+                                           long long &Result);
 
-  bool consumeUnsignedInteger(StringRef &Str, unsigned Radix,
+  LLVM_SUPPORT_ABI bool consumeUnsignedInteger(StringRef &Str, unsigned Radix,
                               unsigned long long &Result);
-  bool consumeSignedInteger(StringRef &Str, unsigned Radix, long long &Result);
+  LLVM_SUPPORT_ABI bool consumeSignedInteger(StringRef &Str, unsigned Radix,
+                                             long long &Result);
 
   /// StringRef - Represent a constant reference to a string, i.e. a character
   /// array and a length, which need not be null terminated.
@@ -48,7 +50,7 @@ namespace llvm {
   /// situations where the character data resides in some other buffer, whose
   /// lifetime extends past that of the StringRef. For this reason, it is not in
   /// general safe to store a StringRef.
-  class LLVM_GSL_POINTER StringRef {
+  class LLVM_GSL_POINTER LLVM_SUPPORT_ABI StringRef {
   public:
     static constexpr size_t npos = ~size_t(0);
 

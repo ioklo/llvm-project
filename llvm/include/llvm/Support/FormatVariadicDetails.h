@@ -11,6 +11,7 @@
 
 #include "llvm/ADT/StringRef.h"
 #include "llvm/ADT/STLExtras.h"
+#include "llvm/Support/Compiler.h"
 #include "llvm/Support/raw_ostream.h"
 
 #include <type_traits>
@@ -22,7 +23,7 @@ class Error;
 namespace support {
 namespace detail {
 class format_adapter {
-  virtual void anchor();
+  LLVM_SUPPORT_ABI virtual void anchor();
 
 protected:
   virtual ~format_adapter() = default;

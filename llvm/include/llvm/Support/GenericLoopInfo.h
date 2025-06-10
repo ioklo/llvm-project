@@ -45,6 +45,7 @@
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/ADT/SetOperations.h"
 #include "llvm/Support/Allocator.h"
+#include "llvm/Support/Compiler.h"
 #include "llvm/Support/GenericDomTree.h"
 
 namespace llvm {
@@ -717,5 +718,7 @@ public:
 };
 
 } // namespace llvm
+
+#include "GenericLoopInfoImpl.h"
 
 #endif // LLVM_SUPPORT_GENERICLOOPINFO_H

@@ -15,6 +15,7 @@
 #define LLVM_SUPPORT_SMALLVECTORMEMORYBUFFER_H
 
 #include "llvm/ADT/SmallVector.h"
+#include "llvm/Support/Compiler.h"
 #include "llvm/Support/MemoryBuffer.h"
 #include "llvm/Support/raw_ostream.h"
 
@@ -47,7 +48,7 @@ public:
   }
 
   // Key function.
-  ~SmallVectorMemoryBuffer() override;
+  LLVM_SUPPORT_ABI ~SmallVectorMemoryBuffer() override;
 
   StringRef getBufferIdentifier() const override { return BufferName; }
 

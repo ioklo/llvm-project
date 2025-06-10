@@ -14,6 +14,7 @@
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/ADT/StringExtras.h"
 #include "llvm/ADT/StringRef.h"
+#include "llvm/Support/Compiler.h"
 #include "llvm/Support/DataTypes.h"
 #include "llvm/Support/Endian.h"
 #include "llvm/Support/JSON.h"
@@ -80,7 +81,8 @@ struct FlagEntry {
   uint64_t Value;
 };
 
-raw_ostream &operator<<(raw_ostream &OS, const HexNumber &Value);
+LLVM_SUPPORT_ABI raw_ostream &operator<<(raw_ostream &OS,
+                                         const HexNumber &Value);
 
 template <class T> std::string to_string(const T &Value) {
   std::string number;
@@ -572,9 +574,10 @@ private:
   std::unique_ptr<DelimitedScope> OuterScope;
 
 public:
+  LLVM_SUPPORT_ABI
   JSONScopedPrinter(raw_ostream &OS, bool PrettyPrint = false,
                     std::unique_ptr<DelimitedScope> &&OuterScope =
-                        std::unique_ptr<DelimitedScope>{});
+                      std::unique_ptr<DelimitedScope>{});
 
   static bool classof(const ScopedPrinter *SP) {
     return SP->getKind() == ScopedPrinter::ScopedPrinterKind::JSON;

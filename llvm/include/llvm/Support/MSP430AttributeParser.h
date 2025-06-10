@@ -14,6 +14,7 @@
 #ifndef LLVM_SUPPORT_MSP430ATTRIBUTEPARSER_H
 #define LLVM_SUPPORT_MSP430ATTRIBUTEPARSER_H
 
+#include "llvm/Support/Compiler.h"
 #include "llvm/Support/ELFAttributeParser.h"
 #include "llvm/Support/MSP430Attributes.h"
 
@@ -23,14 +24,14 @@ class MSP430AttributeParser : public ELFAttributeParser {
     MSP430Attrs::AttrType Attribute;
     Error (MSP430AttributeParser::*Routine)(MSP430Attrs::AttrType);
   };
-  static const std::array<DisplayHandler, 4> DisplayRoutines;
+  LLVM_SUPPORT_ABI static const std::array<DisplayHandler, 4> DisplayRoutines;
 
-  Error parseISA(MSP430Attrs::AttrType Tag);
-  Error parseCodeModel(MSP430Attrs::AttrType Tag);
-  Error parseDataModel(MSP430Attrs::AttrType Tag);
-  Error parseEnumSize(MSP430Attrs::AttrType Tag);
+  LLVM_SUPPORT_ABI Error parseISA(MSP430Attrs::AttrType Tag);
+  LLVM_SUPPORT_ABI Error parseCodeModel(MSP430Attrs::AttrType Tag);
+  LLVM_SUPPORT_ABI Error parseDataModel(MSP430Attrs::AttrType Tag);
+  LLVM_SUPPORT_ABI Error parseEnumSize(MSP430Attrs::AttrType Tag);
 
-  Error handler(uint64_t Tag, bool &Handled) override;
+  LLVM_SUPPORT_ABI Error handler(uint64_t Tag, bool &Handled) override;
 
 public:
   MSP430AttributeParser(ScopedPrinter *SW)

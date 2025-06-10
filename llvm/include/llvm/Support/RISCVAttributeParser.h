@@ -9,6 +9,7 @@
 #ifndef LLVM_SUPPORT_RISCVATTRIBUTEPARSER_H
 #define LLVM_SUPPORT_RISCVATTRIBUTEPARSER_H
 
+#include "llvm/Support/Compiler.h"
 #include "llvm/Support/ELFAttributeParser.h"
 #include "llvm/Support/RISCVAttributes.h"
 
@@ -18,13 +19,13 @@ class RISCVAttributeParser : public ELFAttributeParser {
     RISCVAttrs::AttrType attribute;
     Error (RISCVAttributeParser::*routine)(unsigned);
   };
-  static const DisplayHandler displayRoutines[];
+  LLVM_SUPPORT_ABI static const DisplayHandler displayRoutines[];
 
-  Error handler(uint64_t tag, bool &handled) override;
+  LLVM_SUPPORT_ABI Error handler(uint64_t tag, bool &handled) override;
 
-  Error unalignedAccess(unsigned tag);
-  Error stackAlign(unsigned tag);
-  Error atomicAbi(unsigned tag);
+  LLVM_SUPPORT_ABI Error unalignedAccess(unsigned tag);
+  LLVM_SUPPORT_ABI Error stackAlign(unsigned tag);
+  LLVM_SUPPORT_ABI Error atomicAbi(unsigned tag);
 
 public:
   RISCVAttributeParser(ScopedPrinter *sw)

@@ -661,6 +661,10 @@ function(llvm_add_library name)
     set_target_properties(${name} PROPERTIES LLVM_COMPONENT TRUE)
     if(LLVM_BUILD_LLVM_DYLIB OR BUILD_SHARED_LIBS)
       target_compile_definitions(${name} PRIVATE LLVM_EXPORTS)
+
+      string(REGEX REPLACE "^LLVM" "LLVM_" export_name ${name})
+      string(TOUPPER ${export_name} export_name)
+      target_compile_definitions(${name} PRIVATE ${export_name}_EXPORTS)
     endif()
 
     # When building shared objects for each target there are some internal APIs

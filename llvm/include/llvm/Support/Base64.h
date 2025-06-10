@@ -14,6 +14,7 @@
 #define LLVM_SUPPORT_BASE64_H
 
 #include "llvm/Support/Error.h"
+#include "llvm/Support/Compiler.h"
 #include <cstdint>
 #include <string>
 #include <vector>
@@ -54,7 +55,7 @@ template <class InputBytes> std::string encodeBase64(InputBytes const &Bytes) {
   return Buffer;
 }
 
-llvm::Error decodeBase64(llvm::StringRef Input, std::vector<char> &Output);
+LLVM_SUPPORT_ABI llvm::Error decodeBase64(llvm::StringRef Input, std::vector<char> &Output);
 
 } // end namespace llvm
 

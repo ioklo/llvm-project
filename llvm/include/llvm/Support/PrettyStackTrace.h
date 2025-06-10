@@ -24,7 +24,7 @@ namespace llvm {
   /// Enables dumping a "pretty" stack trace when the program crashes.
   ///
   /// \see PrettyStackTraceEntry
-  void EnablePrettyStackTrace();
+  LLVM_SUPPORT_ABI void EnablePrettyStackTrace();
 
   /// Enables (or disables) dumping a "pretty" stack trace when the user sends
   /// SIGINFO or SIGUSR1 to the current process.
@@ -35,14 +35,15 @@ namespace llvm {
   ///
   /// \see EnablePrettyStackTrace
   /// \see PrettyStackTraceEntry
-  void EnablePrettyStackTraceOnSigInfoForThisThread(bool ShouldEnable = true);
+  LLVM_SUPPORT_ABI void
+  EnablePrettyStackTraceOnSigInfoForThisThread(bool ShouldEnable = true);
 
   /// Replaces the generic bug report message that is output upon
   /// a crash.
-  void setBugReportMsg(const char *Msg);
+  LLVM_SUPPORT_ABI void setBugReportMsg(const char *Msg);
 
   /// Get the bug report message that will be output upon a crash.
-  const char *getBugReportMsg();
+  LLVM_SUPPORT_ABI const char *getBugReportMsg();
 
   /// PrettyStackTraceEntry - This class is used to represent a frame of the
   /// "pretty" stack trace that is dumped when a program crashes. You can define
@@ -56,8 +57,8 @@ namespace llvm {
     PrettyStackTraceEntry(const PrettyStackTraceEntry &) = delete;
     void operator=(const PrettyStackTraceEntry &) = delete;
   public:
-    PrettyStackTraceEntry();
-    virtual ~PrettyStackTraceEntry();
+    LLVM_SUPPORT_ABI PrettyStackTraceEntry();
+    LLVM_SUPPORT_ABI virtual ~PrettyStackTraceEntry();
 
     /// print - Emit information about this stack frame to OS.
     virtual void print(raw_ostream &OS) const = 0;
@@ -73,7 +74,7 @@ namespace llvm {
     const char *Str;
   public:
     PrettyStackTraceString(const char *str) : Str(str) {}
-    void print(raw_ostream &OS) const override;
+    LLVM_SUPPORT_ABI void print(raw_ostream &OS) const override;
   };
 
   /// PrettyStackTraceFormat - This object prints a string (which may use
@@ -82,8 +83,8 @@ namespace llvm {
   class PrettyStackTraceFormat : public PrettyStackTraceEntry {
     llvm::SmallVector<char, 32> Str;
   public:
-    PrettyStackTraceFormat(const char *Format, ...);
-    void print(raw_ostream &OS) const override;
+    LLVM_SUPPORT_ABI PrettyStackTraceFormat(const char *Format, ...);
+    LLVM_SUPPORT_ABI void print(raw_ostream &OS) const override;
   };
 
   /// PrettyStackTraceProgram - This object prints a specified program arguments
@@ -96,11 +97,11 @@ namespace llvm {
       : ArgC(argc), ArgV(argv) {
       EnablePrettyStackTrace();
     }
-    void print(raw_ostream &OS) const override;
+    LLVM_SUPPORT_ABI void print(raw_ostream &OS) const override;
   };
 
   /// Returns the topmost element of the "pretty" stack state.
-  const void *SavePrettyStackState();
+  LLVM_SUPPORT_ABI const void *SavePrettyStackState();
 
   /// Restores the topmost element of the "pretty" stack state to State, which
   /// should come from a previous call to SavePrettyStackState().  This is
@@ -109,7 +110,7 @@ namespace llvm {
   /// happens after a crash that's been recovered by CrashRecoveryContext
   /// doesn't have frames on it that were added in code unwound by the
   /// CrashRecoveryContext.
-  void RestorePrettyStackState(const void *State);
+  LLVM_SUPPORT_ABI void RestorePrettyStackState(const void *State);
 
 } // end namespace llvm
 

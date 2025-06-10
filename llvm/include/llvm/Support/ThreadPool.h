@@ -15,6 +15,7 @@
 
 #include "llvm/ADT/DenseMap.h"
 #include "llvm/Config/llvm-config.h"
+#include "llvm/Support/Compiler.h"
 #include "llvm/Support/RWMutex.h"
 #include "llvm/Support/Threading.h"
 #include "llvm/Support/thread.h"
@@ -55,7 +56,7 @@ class ThreadPoolInterface {
 public:
   /// Destroying the pool will drain the pending tasks and wait. The current
   /// thread may participate in the execution of the pending tasks.
-  virtual ~ThreadPoolInterface();
+  LLVM_SUPPORT_ABI virtual ~ThreadPoolInterface();
 
   /// Blocking wait for all the threads to complete and the queue to be empty.
   /// It is an error to try to add new tasks while blocking on this call.
@@ -127,22 +128,22 @@ public:
   /// execution resources (threads, cores, CPUs)
   /// Defaults to using the maximum execution resources in the system, but
   /// accounting for the affinity mask.
-  StdThreadPool(ThreadPoolStrategy S = hardware_concurrency());
+  LLVM_SUPPORT_ABI StdThreadPool(ThreadPoolStrategy S = hardware_concurrency());
 
   /// Blocking destructor: the pool will wait for all the threads to complete.
-  ~StdThreadPool() override;
+  LLVM_SUPPORT_ABI ~StdThreadPool() override;
 
   /// Blocking wait for all the threads to complete and the queue to be empty.
   /// It is an error to try to add new tasks while blocking on this call.
   /// Calling wait() from a task would deadlock waiting for itself.
-  void wait() override;
+  LLVM_SUPPORT_ABI void wait() override;
 
   /// Blocking wait for only all the threads in the given group to complete.
   /// It is possible to wait even inside a task, but waiting (directly or
   /// indirectly) on itself will deadlock. If called from a task running on a
   /// worker thread, the call may process pending tasks while waiting in order
   /// not to waste the thread.
-  void wait(ThreadPoolTaskGroup &Group) override;
+  LLVM_SUPPORT_ABI void wait(ThreadPoolTaskGroup &Group) override;
 
   /// Returns the maximum number of worker threads in the pool, not the current
   /// number of threads!
@@ -153,12 +154,12 @@ public:
   unsigned getThreadCount() const { return MaxThreadCount; }
 
   /// Returns true if the current thread is a worker thread of this thread pool.
-  bool isWorkerThread() const;
+  LLVM_SUPPORT_ABI bool isWorkerThread() const;
 
 private:
   /// Returns true if all tasks in the given group have finished (nullptr means
   /// all tasks regardless of their group). QueueLock must be locked.
-  bool workCompletedUnlocked(ThreadPoolTaskGroup *Group) const;
+  LLVM_SUPPORT_ABI bool workCompletedUnlocked(ThreadPoolTaskGroup *Group) const;
 
   /// Asynchronous submission of a task to the pool. The returned future can be
   /// used to wait for the task to finish and is *non-blocking* on destruction.
@@ -180,9 +181,9 @@ private:
 
   /// Grow to ensure that we have at least `requested` Threads, but do not go
   /// over MaxThreadCount.
-  void grow(int requested);
+  LLVM_SUPPORT_ABI void grow(int requested);
 
-  void processTasks(ThreadPoolTaskGroup *WaitingForGroup);
+  LLVM_SUPPORT_ABI void processTasks(ThreadPoolTaskGroup *WaitingForGroup);
 
   /// Threads in flight
   std::vector<llvm::thread> Threads;
@@ -218,16 +219,16 @@ private:
 class SingleThreadExecutor : public ThreadPoolInterface {
 public:
   /// Construct a non-threaded pool, ignoring using the hardware strategy.
-  SingleThreadExecutor(ThreadPoolStrategy ignored = {});
+  LLVM_SUPPORT_ABI SingleThreadExecutor(ThreadPoolStrategy ignored = {});
 
   /// Blocking destructor: the pool will first execute the pending tasks.
-  ~SingleThreadExecutor() override;
+  LLVM_SUPPORT_ABI ~SingleThreadExecutor() override;
 
   /// Blocking wait for all the tasks to execute first
-  void wait() override;
+  LLVM_SUPPORT_ABI void wait() override;
 
   /// Blocking wait for only all the tasks in the given group to complete.
-  void wait(ThreadPoolTaskGroup &Group) override;
+  LLVM_SUPPORT_ABI void wait(ThreadPoolTaskGroup &Group) override;
 
   /// Returns always 1: there is no concurrency.
   unsigned getMaxConcurrency() const override { return 1; }
@@ -237,7 +238,7 @@ public:
   unsigned getThreadCount() const { return 1; }
 
   /// Returns true if the current thread is a worker thread of this thread pool.
-  bool isWorkerThread() const;
+  LLVM_SUPPORT_ABI bool isWorkerThread() const;
 
 private:
   /// Asynchronous submission of a task to the pool. The returned future can be

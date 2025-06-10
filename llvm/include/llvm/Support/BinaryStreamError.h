@@ -10,6 +10,7 @@
 #define LLVM_SUPPORT_BINARYSTREAMERROR_H
 
 #include "llvm/ADT/StringRef.h"
+#include "llvm/Support/Compiler.h"
 #include "llvm/Support/Error.h"
 
 #include <string>
@@ -27,16 +28,16 @@ enum class stream_error_code {
 class BinaryStreamError : public ErrorInfo<BinaryStreamError> {
 public:
   static char ID;
-  explicit BinaryStreamError(stream_error_code C);
-  explicit BinaryStreamError(StringRef Context);
-  BinaryStreamError(stream_error_code C, StringRef Context);
+  LLVM_SUPPORT_ABI explicit BinaryStreamError(stream_error_code C);
+  LLVM_SUPPORT_ABI explicit BinaryStreamError(StringRef Context);
+  LLVM_SUPPORT_ABI BinaryStreamError(stream_error_code C, StringRef Context);
 
-  void log(raw_ostream &OS) const override;
-  std::error_code convertToErrorCode() const override;
+  LLVM_SUPPORT_ABI void log(raw_ostream &OS) const override;
+  LLVM_SUPPORT_ABI std::error_code convertToErrorCode() const override;
 
-  StringRef getErrorMessage() const;
+  LLVM_SUPPORT_ABI StringRef getErrorMessage() const;
 
-  stream_error_code getErrorCode() const { return Code; }
+  LLVM_SUPPORT_ABI stream_error_code getErrorCode() const { return Code; }
 
 private:
   std::string ErrMsg;

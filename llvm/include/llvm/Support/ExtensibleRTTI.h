@@ -60,6 +60,8 @@
 #ifndef LLVM_SUPPORT_EXTENSIBLERTTI_H
 #define LLVM_SUPPORT_EXTENSIBLERTTI_H
 
+#include "llvm/Support/Compiler.h"
+
 namespace llvm {
 
 /// Base class for the extensible RTTI hierarchy.
@@ -82,7 +84,7 @@ public:
   }
 
 private:
-  virtual void anchor();
+  LLVM_SUPPORT_ABI virtual void anchor();
 
   static char ID;
 };

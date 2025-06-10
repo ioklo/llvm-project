@@ -11,6 +11,7 @@
 
 #include "ELFAttributes.h"
 #include "llvm/ADT/ArrayRef.h"
+#include "llvm/Support/Compiler.h"
 #include "llvm/Support/DataExtractor.h"
 #include "llvm/Support/Error.h"
 
@@ -34,13 +35,14 @@ protected:
   DataExtractor de{ArrayRef<uint8_t>{}, true, 0};
   DataExtractor::Cursor cursor{0};
 
-  void printAttribute(unsigned tag, unsigned value, StringRef valueDesc);
+  LLVM_SUPPORT_ABI void printAttribute(unsigned tag, unsigned value,
+                                       StringRef valueDesc);
 
-  Error parseStringAttribute(const char *name, unsigned tag,
+  LLVM_SUPPORT_ABI Error parseStringAttribute(const char *name, unsigned tag,
                              ArrayRef<const char *> strings);
-  Error parseAttributeList(uint32_t length);
-  void parseIndexList(SmallVectorImpl<uint8_t> &indexList);
-  Error parseSubsection(uint32_t length);
+  LLVM_SUPPORT_ABI Error parseAttributeList(uint32_t length);
+  LLVM_SUPPORT_ABI void parseIndexList(SmallVectorImpl<uint8_t> &indexList);
+  LLVM_SUPPORT_ABI Error parseSubsection(uint32_t length);
 
   void setAttributeString(unsigned tag, StringRef value) {
     attributesStr.emplace(tag, value);
@@ -48,8 +50,8 @@ protected:
 
 public:
   virtual ~ELFAttributeParser() { static_cast<void>(!cursor.takeError()); }
-  Error integerAttribute(unsigned tag);
-  Error stringAttribute(unsigned tag);
+  LLVM_SUPPORT_ABI Error integerAttribute(unsigned tag);
+  LLVM_SUPPORT_ABI Error stringAttribute(unsigned tag);
 
   ELFAttributeParser(ScopedPrinter *sw, TagNameMap tagNameMap, StringRef vendor)
       : vendor(vendor), sw(sw), tagToStringMap(tagNameMap) {}
@@ -57,7 +59,8 @@ public:
   ELFAttributeParser(TagNameMap tagNameMap, StringRef vendor)
       : vendor(vendor), sw(nullptr), tagToStringMap(tagNameMap) {}
 
-  Error parse(ArrayRef<uint8_t> section, llvm::endianness endian);
+  LLVM_SUPPORT_ABI Error parse(ArrayRef<uint8_t> section,
+                               llvm::endianness endian);
 
   std::optional<unsigned> getAttributeValue(unsigned tag) const {
     auto I = attributes.find(tag);

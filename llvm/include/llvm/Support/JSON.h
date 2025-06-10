@@ -82,11 +82,11 @@ constexpr bool is_uint_64_bit_v =
 
 /// Returns true if \p S is valid UTF-8, which is required for use as JSON.
 /// If it returns false, \p Offset is set to a byte offset near the first error.
-bool isUTF8(llvm::StringRef S, size_t *ErrOffset = nullptr);
+LLVM_SUPPORT_ABI bool isUTF8(llvm::StringRef S, size_t *ErrOffset = nullptr);
 /// Replaces invalid UTF-8 sequences in \p S with the replacement character
 /// (U+FFFD). The returned string is valid UTF-8.
 /// This is much slower than isUTF8, so test that first.
-std::string fixUTF8(llvm::StringRef S);
+LLVM_SUPPORT_ABI std::string fixUTF8(llvm::StringRef S);
 
 class Array;
 class ObjectKey;
@@ -110,7 +110,7 @@ public:
   // KV is a trivial key-value struct for list-initialization.
   // (using std::pair forces extra copies).
   struct KV;
-  explicit Object(std::initializer_list<KV> Properties);
+  LLVM_SUPPORT_ABI explicit Object(std::initializer_list<KV> Properties);
 
   iterator begin() { return M.begin(); }
   const_iterator begin() const { return M.begin(); }
@@ -121,7 +121,7 @@ public:
   size_t size() const { return M.size(); }
 
   void clear() { M.clear(); }
-  std::pair<iterator, bool> insert(KV E);
+  LLVM_SUPPORT_ABI std::pair<iterator, bool> insert(KV E);
   template <typename... Ts>
   std::pair<iterator, bool> try_emplace(const ObjectKey &K, Ts &&... Args) {
     return M.try_emplace(K, std::forward<Ts>(Args)...);
@@ -130,31 +130,31 @@ public:
   std::pair<iterator, bool> try_emplace(ObjectKey &&K, Ts &&... Args) {
     return M.try_emplace(std::move(K), std::forward<Ts>(Args)...);
   }
-  bool erase(StringRef K);
+  LLVM_SUPPORT_ABI bool erase(StringRef K);
   void erase(iterator I) { M.erase(I); }
 
   iterator find(StringRef K) { return M.find_as(K); }
   const_iterator find(StringRef K) const { return M.find_as(K); }
   // operator[] acts as if Value was default-constructible as null.
-  Value &operator[](const ObjectKey &K);
-  Value &operator[](ObjectKey &&K);
+  LLVM_SUPPORT_ABI Value &operator[](const ObjectKey &K);
+  LLVM_SUPPORT_ABI Value &operator[](ObjectKey &&K);
   // Look up a property, returning nullptr if it doesn't exist.
-  Value *get(StringRef K);
-  const Value *get(StringRef K) const;
+  LLVM_SUPPORT_ABI Value *get(StringRef K);
+  LLVM_SUPPORT_ABI const Value *get(StringRef K) const;
   // Typed accessors return std::nullopt/nullptr if
   //   - the property doesn't exist
   //   - or it has the wrong type
-  std::optional<std::nullptr_t> getNull(StringRef K) const;
-  std::optional<bool> getBoolean(StringRef K) const;
-  std::optional<double> getNumber(StringRef K) const;
-  std::optional<int64_t> getInteger(StringRef K) const;
-  std::optional<llvm::StringRef> getString(StringRef K) const;
-  const json::Object *getObject(StringRef K) const;
-  json::Object *getObject(StringRef K);
-  const json::Array *getArray(StringRef K) const;
-  json::Array *getArray(StringRef K);
+  LLVM_SUPPORT_ABI std::optional<std::nullptr_t> getNull(StringRef K) const;
+  LLVM_SUPPORT_ABI std::optional<bool> getBoolean(StringRef K) const;
+  LLVM_SUPPORT_ABI std::optional<double> getNumber(StringRef K) const;
+  LLVM_SUPPORT_ABI std::optional<int64_t> getInteger(StringRef K) const;
+  LLVM_SUPPORT_ABI std::optional<llvm::StringRef> getString(StringRef K) const;
+  LLVM_SUPPORT_ABI const json::Object *getObject(StringRef K) const;
+  LLVM_SUPPORT_ABI json::Object *getObject(StringRef K);
+  LLVM_SUPPORT_ABI const json::Array *getArray(StringRef K) const;
+  LLVM_SUPPORT_ABI json::Array *getArray(StringRef K);
 };
-bool operator==(const Object &LHS, const Object &RHS);
+LLVM_SUPPORT_ABI bool operator==(const Object &LHS, const Object &RHS);
 inline bool operator!=(const Object &LHS, const Object &RHS) {
   return !(LHS == RHS);
 }
@@ -170,7 +170,7 @@ public:
   using const_iterator = std::vector<Value>::const_iterator;
 
   Array() = default;
-  explicit Array(std::initializer_list<Value> Elements);
+  LLVM_SUPPORT_ABI explicit Array(std::initializer_list<Value> Elements);
   template <typename Collection> explicit Array(const Collection &C) {
     for (const auto &V : C)
       emplace_back(V);
@@ -199,8 +199,8 @@ public:
   void push_back(Value &&E);
   template <typename... Args> void emplace_back(Args &&...A);
   void pop_back();
-  iterator insert(const_iterator P, const Value &E);
-  iterator insert(const_iterator P, Value &&E);
+  LLVM_SUPPORT_ABI iterator insert(const_iterator P, const Value &E);
+  LLVM_SUPPORT_ABI iterator insert(const_iterator P, Value &&E);
   template <typename It> iterator insert(const_iterator P, It A, It Z);
   template <typename... Args> iterator emplace(const_iterator P, Args &&...A);
 
@@ -473,12 +473,12 @@ public:
   }
 
 private:
-  void destroy();
-  void copyFrom(const Value &M);
+  LLVM_SUPPORT_ABI void destroy();
+  LLVM_SUPPORT_ABI void copyFrom(const Value &M);
   // We allow moving from *const* Values, by marking all members as mutable!
   // This hack is needed to support initializer-list syntax efficiently.
   // (std::initializer_list<T> is a container of const T).
-  void moveFrom(const Value &&M);
+  LLVM_SUPPORT_ABI void moveFrom(const Value &&M);
   friend class Array;
   friend class Object;
 
@@ -523,10 +523,10 @@ private:
                                       llvm::StringRef, std::string, json::Array,
                                       json::Object>
       Union;
-  friend bool operator==(const Value &, const Value &);
+  friend LLVM_SUPPORT_ABI bool operator==(const Value &, const Value &);
 };
 
-bool operator==(const Value &, const Value &);
+LLVM_SUPPORT_ABI bool operator==(const Value &, const Value &);
 inline bool operator!=(const Value &L, const Value &R) { return !(L == R); }
 
 // Array Methods
@@ -647,7 +647,8 @@ inline bool Object::erase(StringRef K) {
   return M.erase(ObjectKey(K));
 }
 
-std::vector<const Object::value_type *> sortedElements(const Object &O);
+LLVM_SUPPORT_ABI std::vector<const Object::value_type *>
+sortedElements(const Object &O);
 
 /// A "cursor" marking a position within a Value.
 /// The Value is a tree, and this is the path from the root to the current node.
@@ -659,7 +660,7 @@ public:
   /// Records that the value at the current path is invalid.
   /// Message is e.g. "expected number" and becomes part of the final error.
   /// This overwrites any previously written error message in the root.
-  void report(llvm::StringLiteral Message);
+  LLVM_SUPPORT_ABI void report(llvm::StringLiteral Message);
 
   /// The root may be treated as a Path.
   Path(Root &R) : Parent(nullptr), Seg(&R) {}
@@ -715,7 +716,7 @@ public:
   Root &operator=(const Root &) = delete;
 
   /// Returns the last error reported, or else a generic error.
-  Error getError() const;
+  LLVM_SUPPORT_ABI Error getError() const;
   /// Print the root value with the error shown inline as a comment.
   /// Unrelated parts of the value are elided for brevity, e.g.
   ///   {
@@ -723,7 +724,8 @@ public:
   ///      "name": /* expected string */ null,
   ///      "properties": { ... }
   ///   }
-  void printErrorContext(const Value &, llvm::raw_ostream &) const;
+  LLVM_SUPPORT_ABI void printErrorContext(const Value &,
+                                          llvm::raw_ostream &) const;
 };
 
 // Standard deserializers are provided for primitive types.
@@ -998,7 +1000,7 @@ class OStream {
   // or in an array (any number of times).
 
   /// Emit a self-contained value (number, string, vector<string> etc).
-  void value(const Value &V);
+  LLVM_SUPPORT_ABI void value(const Value &V);
   /// Emit an array whose elements are emitted in the provided Block.
   void array(Block Contents) {
     arrayBegin();
@@ -1025,7 +1027,7 @@ class OStream {
   /// Emit a JavaScript comment associated with the next printed value.
   /// The string must be valid until the next attribute or value is emitted.
   /// Comments are not part of standard JSON, and many parsers reject them!
-  void comment(llvm::StringRef);
+  LLVM_SUPPORT_ABI void comment(llvm::StringRef);
 
   // High level functions to output object attributes.
   // Valid only within an object (any number of times).
@@ -1046,14 +1048,14 @@ class OStream {
   // Low-level begin/end functions to output arrays, objects, and attributes.
   // Must be correctly paired. Allowed contexts are as above.
 
-  void arrayBegin();
-  void arrayEnd();
-  void objectBegin();
-  void objectEnd();
-  void attributeBegin(llvm::StringRef Key);
-  void attributeEnd();
-  raw_ostream &rawValueBegin();
-  void rawValueEnd();
+  LLVM_SUPPORT_ABI void arrayBegin();
+  LLVM_SUPPORT_ABI void arrayEnd();
+  LLVM_SUPPORT_ABI void objectBegin();
+  LLVM_SUPPORT_ABI void objectEnd();
+  LLVM_SUPPORT_ABI void attributeBegin(llvm::StringRef Key);
+  LLVM_SUPPORT_ABI void attributeEnd();
+  LLVM_SUPPORT_ABI raw_ostream &rawValueBegin();
+  LLVM_SUPPORT_ABI void rawValueEnd();
 
 private:
   void attributeImpl(llvm::StringRef Key, Block Contents) {

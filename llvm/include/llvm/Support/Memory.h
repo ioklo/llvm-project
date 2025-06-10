@@ -13,6 +13,7 @@
 #ifndef LLVM_SUPPORT_MEMORY_H
 #define LLVM_SUPPORT_MEMORY_H
 
+#include "llvm/Support/Compiler.h"
 #include "llvm/Support/DataTypes.h"
 #include <system_error>
 #include <utility>
@@ -95,10 +96,11 @@ namespace sys {
     /// otherwise a null MemoryBlock is with \p EC describing the error.
     ///
     /// Allocate mapped memory.
-    static MemoryBlock allocateMappedMemory(size_t NumBytes,
-                                            const MemoryBlock *const NearBlock,
-                                            unsigned Flags,
-                                            std::error_code &EC);
+    LLVM_SUPPORT_ABI static MemoryBlock
+    allocateMappedMemory(size_t NumBytes,
+                         const MemoryBlock *const NearBlock,
+                         unsigned Flags,
+                         std::error_code &EC);
 
     /// This method releases a block of memory that was allocated with the
     /// allocateMappedMemory method. It should not be used to release any
@@ -109,7 +111,8 @@ namespace sys {
     /// describing the failure if an error occurred.
     ///
     /// Release mapped memory.
-    static std::error_code releaseMappedMemory(MemoryBlock &Block);
+    LLVM_SUPPORT_ABI static std::error_code
+    releaseMappedMemory(MemoryBlock &Block);
 
     /// This method sets the protection flags for a block of memory to the
     /// state specified by /p Flags.  The behavior is not specified if the
@@ -125,13 +128,14 @@ namespace sys {
     /// describing the failure if an error occurred.
     ///
     /// Set memory protection state.
-    static std::error_code protectMappedMemory(const MemoryBlock &Block,
-                                               unsigned Flags);
+    LLVM_SUPPORT_ABI static std::error_code
+    protectMappedMemory(const MemoryBlock &Block, unsigned Flags);
 
     /// InvalidateInstructionCache - Before the JIT can run a block of code
     /// that has been emitted it must invalidate the instruction cache on some
     /// platforms.
-    static void InvalidateInstructionCache(const void *Addr, size_t Len);
+    LLVM_SUPPORT_ABI static void InvalidateInstructionCache(const void *Addr,
+                                                            size_t Len);
   };
 
   /// Owning version of MemoryBlock.
@@ -171,12 +175,14 @@ namespace sys {
 
 #ifndef NDEBUG
   /// Debugging output for Memory::ProtectionFlags.
-  raw_ostream &operator<<(raw_ostream &OS, const Memory::ProtectionFlags &PF);
+  LLVM_SUPPORT_ABI raw_ostream &operator<<(raw_ostream &OS,
+                                           const Memory::ProtectionFlags &PF);
 
   /// Debugging output for MemoryBlock.
-  raw_ostream &operator<<(raw_ostream &OS, const MemoryBlock &MB);
+  LLVM_SUPPORT_ABI raw_ostream &operator<<(raw_ostream &OS,
+                                           const MemoryBlock &MB);
 #endif // ifndef NDEBUG
   }    // end namespace sys
-  }    // end namespace llvm
+}    // end namespace llvm
 
 #endif

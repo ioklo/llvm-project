@@ -13,6 +13,7 @@
 #ifndef LLVM_SUPPORT_DYNAMICLIBRARY_H
 #define LLVM_SUPPORT_DYNAMICLIBRARY_H
 
+#include "llvm/Support/Compiler.h"
 #include <string>
 
 namespace llvm {
@@ -54,7 +55,7 @@ public:
   /// Use isValid() to distinguish these cases if it is important.
   /// Note that this will \e not search symbols explicitly registered by
   /// AddSymbol().
-  void *getAddressOfSymbol(const char *symbolName);
+  LLVM_SUPPORT_ABI void *getAddressOfSymbol(const char *symbolName);
 
   /// This function permanently loads the dynamic library at the given path
   /// using the library load operation from the host operating system. The
@@ -67,16 +68,16 @@ public:
   ///
   /// It is safe to call this function multiple times for the same library.
   /// Open a dynamic library permanently.
-  static DynamicLibrary getPermanentLibrary(const char *filename,
-                                            std::string *errMsg = nullptr);
+  LLVM_SUPPORT_ABI static DynamicLibrary
+  getPermanentLibrary(const char *filename, std::string *errMsg = nullptr);
 
   /// Registers an externally loaded library. The library will be unloaded
   /// when the program terminates.
   ///
   /// It is safe to call this function multiple times for the same library,
   /// though ownership is only taken if there was no error.
-  static DynamicLibrary addPermanentLibrary(void *handle,
-                                            std::string *errMsg = nullptr);
+  LLVM_SUPPORT_ABI static DynamicLibrary
+  addPermanentLibrary(void *handle, std::string *errMsg = nullptr);
 
   /// This function permanently loads the dynamic library at the given path.
   /// Use this instead of getPermanentLibrary() when you won't need to get
@@ -98,8 +99,8 @@ public:
   /// library fails to load.
   ///
   /// It is safe to call this function multiple times for the same library.
-  static DynamicLibrary getLibrary(const char *FileName,
-                                   std::string *Err = nullptr);
+  LLVM_SUPPORT_ABI static DynamicLibrary getLibrary(
+    const char *FileName, std::string *Err = nullptr);
 
   /// This function closes the dynamic library at the given path, using the
   /// library close operation of the host operating system, and there is no
@@ -107,7 +108,7 @@ public:
   ///
   /// This function should be called only if the library was loaded using the
   /// getLibrary() function.
-  static void closeLibrary(DynamicLibrary &Lib);
+  LLVM_SUPPORT_ABI static void closeLibrary(DynamicLibrary &Lib);
 
   enum SearchOrdering {
     /// SO_Linker - Search as a call to dlsym(dlopen(NULL)) would when
@@ -132,7 +133,8 @@ public:
   /// as explicitly registered symbols (AddSymbol()).
   /// @throws std::string on error.
   /// Search through libraries for address of a symbol
-  static void *SearchForAddressOfSymbol(const char *symbolName);
+  LLVM_SUPPORT_ABI static void *
+  SearchForAddressOfSymbol(const char *symbolName);
 
   /// Convenience function for C++ophiles.
   static void *SearchForAddressOfSymbol(const std::string &symbolName) {
@@ -143,7 +145,8 @@ public:
   /// value \p symbolValue.  These symbols are searched before any
   /// libraries.
   /// Add searchable symbol/value pair.
-  static void AddSymbol(StringRef symbolName, void *symbolValue);
+  LLVM_SUPPORT_ABI static void AddSymbol(StringRef symbolName,
+                                         void *symbolValue);
 
   class HandleSet;
 };

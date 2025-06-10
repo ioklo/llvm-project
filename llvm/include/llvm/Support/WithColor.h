@@ -74,7 +74,7 @@ public:
       : OS(OS), Mode(Mode) {
     changeColor(Color, Bold, BG);
   }
-  ~WithColor();
+  LLVM_SUPPORT_ABI ~WithColor();
 
   raw_ostream &get() { return OS; }
   operator raw_ostream &() { return OS; }
@@ -88,62 +88,63 @@ public:
   }
 
   /// Convenience method for printing "error: " to stderr.
-  static raw_ostream &error();
+  LLVM_SUPPORT_ABI static raw_ostream &error();
   /// Convenience method for printing "warning: " to stderr.
-  static raw_ostream &warning();
+  LLVM_SUPPORT_ABI static raw_ostream &warning();
   /// Convenience method for printing "note: " to stderr.
-  static raw_ostream &note();
+  LLVM_SUPPORT_ABI static raw_ostream &note();
   /// Convenience method for printing "remark: " to stderr.
-  static raw_ostream &remark();
+  LLVM_SUPPORT_ABI static raw_ostream &remark();
 
   /// Convenience method for printing "error: " to the given stream.
-  static raw_ostream &error(raw_ostream &OS, StringRef Prefix = "",
-                            bool DisableColors = false);
+  LLVM_SUPPORT_ABI static raw_ostream &
+  error(raw_ostream &OS, StringRef Prefix = "", bool DisableColors = false);
   /// Convenience method for printing "warning: " to the given stream.
-  static raw_ostream &warning(raw_ostream &OS, StringRef Prefix = "",
-                              bool DisableColors = false);
+  LLVM_SUPPORT_ABI static raw_ostream &
+  warning(raw_ostream &OS, StringRef Prefix = "", bool DisableColors = false);
   /// Convenience method for printing "note: " to the given stream.
-  static raw_ostream &note(raw_ostream &OS, StringRef Prefix = "",
-                           bool DisableColors = false);
+  LLVM_SUPPORT_ABI static raw_ostream &
+  note(raw_ostream &OS, StringRef Prefix = "", bool DisableColors = false);
   /// Convenience method for printing "remark: " to the given stream.
-  static raw_ostream &remark(raw_ostream &OS, StringRef Prefix = "",
-                             bool DisableColors = false);
+  LLVM_SUPPORT_ABI static raw_ostream &
+  remark(raw_ostream &OS, StringRef Prefix = "", bool DisableColors = false);
 
   /// Determine whether colors are displayed.
-  bool colorsEnabled();
+  LLVM_SUPPORT_ABI bool colorsEnabled();
 
   /// Change the color of text that will be output from this point forward.
   /// @param Color ANSI color to use, the special SAVEDCOLOR can be used to
   /// change only the bold attribute, and keep colors untouched
   /// @param Bold Bold/brighter text, default false
   /// @param BG If true, change the background, default: change foreground
-  WithColor &changeColor(raw_ostream::Colors Color, bool Bold = false,
+  LLVM_SUPPORT_ABI WithColor &changeColor(raw_ostream::Colors Color,
+                                          bool Bold = false,
                          bool BG = false);
 
   /// Reset the colors to terminal defaults. Call this when you are done
   /// outputting colored text, or before program exit.
-  WithColor &resetColor();
+  LLVM_SUPPORT_ABI WithColor &resetColor();
 
   /// Implement default handling for Error.
   /// Print "error: " to stderr.
-  static void defaultErrorHandler(Error Err);
+  LLVM_SUPPORT_ABI static void defaultErrorHandler(Error Err);
 
   /// Implement default handling for Warning.
   /// Print "warning: " to stderr.
-  static void defaultWarningHandler(Error Warning);
+  LLVM_SUPPORT_ABI static void defaultWarningHandler(Error Warning);
 
   /// Retrieve the default color auto detection function.
-  static AutoDetectFunctionType defaultAutoDetectFunction();
+  LLVM_SUPPORT_ABI static AutoDetectFunctionType defaultAutoDetectFunction();
 
   /// Change the global auto detection function.
-  static void
+  LLVM_SUPPORT_ABI static void
   setAutoDetectFunction(AutoDetectFunctionType NewAutoDetectFunction);
 
 private:
   raw_ostream &OS;
   ColorMode Mode;
 
-  static AutoDetectFunctionType AutoDetectFunction;
+  LLVM_SUPPORT_ABI static AutoDetectFunctionType AutoDetectFunction;
 };
 
 } // end namespace llvm

@@ -25,6 +25,7 @@
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/ADT/StringRef.h"
+#include "llvm/Support/Compiler.h"
 #include "llvm/Support/DataTypes.h"
 #include <cassert>
 #include <cstdio>
@@ -41,7 +42,7 @@ protected:
   const char *Fmt;
   ~format_object_base() = default; // Disallow polymorphic deletion.
   format_object_base(const format_object_base &) = default;
-  virtual void home(); // Out of line virtual method.
+  LLVM_SUPPORT_ABI virtual void home(); // Out of line virtual method.
 
   /// Call snprintf() for this object, on the given buffer and size.
   virtual int snprint(char *Buffer, unsigned BufferSize) const = 0;

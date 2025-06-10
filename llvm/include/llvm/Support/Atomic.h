@@ -18,6 +18,7 @@
 #define LLVM_SUPPORT_ATOMIC_H
 
 #include "llvm/Support/DataTypes.h"
+#include "llvm/Support/Compiler.h"
 
 // Windows will at times define MemoryFence.
 #ifdef MemoryFence
@@ -26,16 +27,16 @@
 
 namespace llvm {
   namespace sys {
-    void MemoryFence();
+    LLVM_SUPPORT_ABI void MemoryFence();
 
 #ifdef _MSC_VER
     typedef long cas_flag;
 #else
     typedef uint32_t cas_flag;
 #endif
-    cas_flag CompareAndSwap(volatile cas_flag* ptr,
-                            cas_flag new_value,
-                            cas_flag old_value);
+    LLVM_SUPPORT_ABI cas_flag CompareAndSwap(volatile cas_flag *ptr,
+                                             cas_flag new_value,
+                                             cas_flag old_value);
   }
 }
 

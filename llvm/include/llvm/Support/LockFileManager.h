@@ -9,6 +9,7 @@
 #define LLVM_SUPPORT_LOCKFILEMANAGER_H
 
 #include "llvm/ADT/SmallString.h"
+#include "llvm/Support/Compiler.h"
 #include <optional>
 #include <system_error>
 #include <utility> // for std::pair
@@ -61,32 +62,34 @@ private:
   LockFileManager(const LockFileManager &) = delete;
   LockFileManager &operator=(const LockFileManager &) = delete;
 
-  static std::optional<std::pair<std::string, int>>
+  LLVM_SUPPORT_ABI static std::optional<std::pair<std::string, int>>
   readLockFile(StringRef LockFileName);
 
-  static bool processStillExecuting(StringRef Hostname, int PID);
+  LLVM_SUPPORT_ABI static bool processStillExecuting(StringRef Hostname,
+                                                     int PID);
 
 public:
 
-  LockFileManager(StringRef FileName);
-  ~LockFileManager();
+  LLVM_SUPPORT_ABI LockFileManager(StringRef FileName);
+  LLVM_SUPPORT_ABI ~LockFileManager();
 
   /// Determine the state of the lock file.
-  LockFileState getState() const;
+  LLVM_SUPPORT_ABI LockFileState getState() const;
 
   operator LockFileState() const { return getState(); }
 
   /// For a shared lock, wait until the owner releases the lock.
   /// Total timeout for the file to appear is ~1.5 minutes.
   /// \param MaxSeconds the maximum total wait time in seconds.
-  WaitForUnlockResult waitForUnlock(const unsigned MaxSeconds = 90);
+  LLVM_SUPPORT_ABI WaitForUnlockResult
+  waitForUnlock(const unsigned MaxSeconds = 90);
 
   /// Remove the lock file.  This may delete a different lock file than
   /// the one previously read if there is a race.
-  std::error_code unsafeRemoveLockFile();
+  LLVM_SUPPORT_ABI std::error_code unsafeRemoveLockFile();
 
   /// Get error message, or "" if there is no error.
-  std::string getErrorMessage() const;
+  LLVM_SUPPORT_ABI std::string getErrorMessage() const;
 
   /// Set error and error message
   void setError(const std::error_code &EC, StringRef ErrorMsg = "") {

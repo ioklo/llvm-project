@@ -15,6 +15,7 @@
 #define LLVM_SUPPORT_FORMATTEDSTREAM_H
 
 #include "llvm/ADT/SmallString.h"
+#include "llvm/Support/Compiler.h"
 #include "llvm/Support/raw_ostream.h"
 #include <utility>
 
@@ -56,7 +57,7 @@ class formatted_raw_ostream : public raw_ostream {
   /// codes.
   bool DisableScan;
 
-  void write_impl(const char *Ptr, size_t Size) override;
+  LLVM_SUPPORT_ABI void write_impl(const char *Ptr, size_t Size) override;
 
   /// current_pos - Return the current position within the stream,
   /// not counting the bytes currently in the buffer.
@@ -71,12 +72,12 @@ class formatted_raw_ostream : public raw_ostream {
   /// position after output. This is safe to call multiple times on the same
   /// buffer, as it records the most recently scanned character and resumes from
   /// there when the buffer has not been flushed.
-  void ComputePosition(const char *Ptr, size_t size);
+  LLVM_SUPPORT_ABI void ComputePosition(const char *Ptr, size_t size);
 
   /// UpdatePosition - scan the characters in [Ptr, Ptr+Size), and update the
   /// line and column numbers. Unlike ComputePosition, this must be called
   /// exactly once on each region of the buffer.
-  void UpdatePosition(const char *Ptr, size_t Size);
+  LLVM_SUPPORT_ABI void UpdatePosition(const char *Ptr, size_t Size);
 
   void setStream(raw_ostream &Stream) {
     releaseStream();
@@ -206,15 +207,15 @@ private:
 
 /// fouts() - This returns a reference to a formatted_raw_ostream for
 /// standard output.  Use it like: fouts() << "foo" << "bar";
-formatted_raw_ostream &fouts();
+LLVM_SUPPORT_ABI formatted_raw_ostream &fouts();
 
 /// ferrs() - This returns a reference to a formatted_raw_ostream for
 /// standard error.  Use it like: ferrs() << "foo" << "bar";
-formatted_raw_ostream &ferrs();
+LLVM_SUPPORT_ABI formatted_raw_ostream &ferrs();
 
 /// fdbgs() - This returns a reference to a formatted_raw_ostream for
 /// debug output.  Use it like: fdbgs() << "foo" << "bar";
-formatted_raw_ostream &fdbgs();
+LLVM_SUPPORT_ABI formatted_raw_ostream &fdbgs();
 
 } // end llvm namespace
 

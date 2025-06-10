@@ -14,6 +14,7 @@
 #ifndef LLVM_SUPPORT_RAW_SOCKET_STREAM_H
 #define LLVM_SUPPORT_RAW_SOCKET_STREAM_H
 
+#include "llvm/Support/Compiler.h"
 #include "llvm/Support/Threading.h"
 #include "llvm/Support/raw_ostream.h"
 
@@ -30,8 +31,8 @@ class raw_socket_stream;
 /// Make sure that calls to WSAStartup and WSACleanup are balanced.
 class WSABalancer {
 public:
-  WSABalancer();
-  ~WSABalancer();
+  LLVM_SUPPORT_ABI WSABalancer();
+  LLVM_SUPPORT_ABI ~WSABalancer();
 };
 #endif // _WIN32
 
@@ -67,15 +68,16 @@ class ListeningSocket {
   /// after FD is closed so use a self-pipe mechanism to get ::poll to return
   int PipeFD[2]; // Not modified after construction other then move constructor
 
-  ListeningSocket(int SocketFD, StringRef SocketPath, int PipeFD[2]);
+  LLVM_SUPPORT_ABI ListeningSocket(int SocketFD, StringRef SocketPath,
+                                   int PipeFD[2]);
 
 #ifdef _WIN32
   WSABalancer _;
 #endif // _WIN32
 
 public:
-  ~ListeningSocket();
-  ListeningSocket(ListeningSocket &&LS);
+  LLVM_SUPPORT_ABI ~ListeningSocket();
+  LLVM_SUPPORT_ABI ListeningSocket(ListeningSocket &&LS);
   ListeningSocket(const ListeningSocket &LS) = delete;
   ListeningSocket &operator=(const ListeningSocket &) = delete;
 
@@ -87,7 +89,7 @@ public:
   /// a blocking call to ::poll to return.
   ///
   /// Once shutdown is called there is no way to reinitialize ListeningSocket.
-  void shutdown();
+  LLVM_SUPPORT_ABI void shutdown();
 
   /// Accepts an incoming connection on the listening socket. This method can
   /// optionally either block until a connection is available or timeout after a
@@ -98,8 +100,8 @@ public:
   /// \param Timeout An optional timeout duration in milliseconds. Setting
   /// Timeout to a negative number causes ::accept to block indefinitely
   ///
-  Expected<std::unique_ptr<raw_socket_stream>> accept(
-      const std::chrono::milliseconds &Timeout = std::chrono::milliseconds(-1));
+  LLVM_SUPPORT_ABI Expected<std::unique_ptr<raw_socket_stream>> accept(
+    const std::chrono::milliseconds &Timeout = std::chrono::milliseconds(-1));
 
   /// Creates a listening socket bound to the specified file system path.
   /// Handles the socket creation, binding, and immediately starts listening for
@@ -108,9 +110,9 @@ public:
   /// \param SocketPath The file system path where the socket will be created
   /// \param MaxBacklog The max number of connections in a socket's backlog
   ///
-  static Expected<ListeningSocket> createUnix(
-      StringRef SocketPath,
-      int MaxBacklog = llvm::hardware_concurrency().compute_thread_count());
+  LLVM_SUPPORT_ABI static Expected<ListeningSocket> createUnix(
+    StringRef SocketPath,
+    int MaxBacklog = llvm::hardware_concurrency().compute_thread_count());
 };
 
 //===----------------------------------------------------------------------===//
@@ -124,12 +126,12 @@ class raw_socket_stream : public raw_fd_stream {
 #endif // _WIN32
 
 public:
-  raw_socket_stream(int SocketFD);
-  ~raw_socket_stream();
+  LLVM_SUPPORT_ABI raw_socket_stream(int SocketFD);
+  LLVM_SUPPORT_ABI ~raw_socket_stream();
 
   /// Create a \p raw_socket_stream connected to the UNIX domain socket at \p
   /// SocketPath.
-  static Expected<std::unique_ptr<raw_socket_stream>>
+  LLVM_SUPPORT_ABI static Expected<std::unique_ptr<raw_socket_stream>>
   createConnectedUnix(StringRef SocketPath);
 
   /// Attempt to read from the raw_socket_stream's file descriptor.
@@ -144,9 +146,9 @@ public:
   /// \param Size The number of bytes to be read
   /// \param Timeout An optional timeout duration in milliseconds
   ///
-  ssize_t read(
-      char *Ptr, size_t Size,
-      const std::chrono::milliseconds &Timeout = std::chrono::milliseconds(-1));
+  LLVM_SUPPORT_ABI ssize_t read(
+    char *Ptr, size_t Size,
+    const std::chrono::milliseconds &Timeout = std::chrono::milliseconds(-1));
 };
 
 } // end namespace llvm

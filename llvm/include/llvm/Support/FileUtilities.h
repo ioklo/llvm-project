@@ -15,6 +15,7 @@
 #define LLVM_SUPPORT_FILEUTILITIES_H
 
 #include "llvm/ADT/StringRef.h"
+#include "llvm/Support/Compiler.h"
 #include "llvm/Support/Error.h"
 #include "llvm/Support/FileSystem.h"
 
@@ -81,12 +82,13 @@ namespace llvm {
   /// permissions and dates to the output file.
   class FilePermissionsApplier {
   public:
-    static Expected<FilePermissionsApplier> create(StringRef InputFilename);
+    LLVM_SUPPORT_ABI static Expected<FilePermissionsApplier>
+    create(StringRef InputFilename);
 
     /// Apply stored permissions to the \p OutputFilename.
     /// Copy LastAccess and ModificationTime if \p CopyDates is true.
     /// Overwrite stored permissions if \p OverwritePermissions is specified.
-    Error
+    LLVM_SUPPORT_ABI Error
     apply(StringRef OutputFilename, bool CopyDates = false,
           std::optional<sys::fs::perms> OverwritePermissions = std::nullopt);
 

@@ -41,6 +41,7 @@
 
 #include "raw_ostream.h"
 #include "llvm/ADT/ArrayRef.h"
+#include "llvm/Support/Compiler.h"
 
 #include <atomic>
 #include <condition_variable>
@@ -99,10 +100,10 @@ struct BalancedPartitioningConfig {
 
 class BalancedPartitioning {
 public:
-  BalancedPartitioning(const BalancedPartitioningConfig &Config);
+  LLVM_SUPPORT_ABI BalancedPartitioning(const BalancedPartitioningConfig &Config);
 
   /// Run recursive graph partitioning that optimizes a given objective.
-  void run(std::vector<BPFunctionNode> &Nodes) const;
+  LLVM_SUPPORT_ABI void run(std::vector<BPFunctionNode> &Nodes) const;
 
 private:
   struct UtilitySignature;
@@ -192,8 +193,8 @@ private:
 
 protected:
   /// Compute the move gain for uniform log-gap cost
-  static float moveGain(const BPFunctionNode &N, bool FromLeftToRight,
-                        const SignaturesT &Signatures);
+  LLVM_SUPPORT_ABI static float moveGain(const BPFunctionNode &N, bool FromLeftToRight,
+                                         const SignaturesT &Signatures);
   friend class BalancedPartitioningTest_MoveGain_Test;
 };
 
