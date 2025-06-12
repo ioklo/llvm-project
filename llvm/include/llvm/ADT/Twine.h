@@ -1,4 +1,4 @@
-//===- Twine.h - Fast Temporary String Concatenation ------------*- C++ -*-===//
+﻿//===- Twine.h - Fast Temporary String Concatenation ------------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -11,8 +11,8 @@
 
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/ADT/StringRef.h"
-#include "llvm/Support/ErrorHandling.h"
 #include "llvm/Support/Compiler.h"
+#include "llvm/Support/ErrorHandling.h"
 #include <cassert>
 #include <cstdint>
 #include <string>
@@ -502,7 +502,8 @@ namespace llvm {
     /// given SmallVector and a StringRef to the SmallVector's data is returned.
     ///
     /// The returned StringRef's size does not include the null terminator.
-    StringRef toNullTerminatedStringRef(SmallVectorImpl<char> &Out) const;
+    LLVM_SUPPORT_ABI StringRef
+    toNullTerminatedStringRef(SmallVectorImpl<char> &Out) const;
 
     /// Write the concatenated string represented by this twine to the
     /// stream \p OS.

@@ -1,4 +1,4 @@
-//===- llvm/ADT/FoldingSet.h - Uniquing Hash Set ----------------*- C++ -*-===//
+﻿//===- llvm/ADT/FoldingSet.h - Uniquing Hash Set ----------------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -312,13 +312,13 @@ public:
         reinterpret_cast<const uint8_t *>(Data), sizeof(unsigned) * Size)));
   }
 
-  bool operator==(FoldingSetNodeIDRef) const;
+  LLVM_SUPPORT_ABI bool operator==(FoldingSetNodeIDRef) const;
 
   bool operator!=(FoldingSetNodeIDRef RHS) const { return !(*this == RHS); }
 
   /// Used to compare the "ordering" of two nodes as defined by the
   /// profiled bits and their ordering defined by memcmp().
-  bool operator<(FoldingSetNodeIDRef) const;
+  LLVM_SUPPORT_ABI bool operator<(FoldingSetNodeIDRef) const;
 
   const unsigned *getData() const { return Data; }
   size_t getSize() const { return Size; }
@@ -713,9 +713,9 @@ class FoldingSetIteratorImpl {
 protected:
   FoldingSetNode *NodePtr;
 
-  FoldingSetIteratorImpl(void **Bucket);
+  LLVM_SUPPORT_ABI FoldingSetIteratorImpl(void **Bucket);
 
-  void advance();
+  LLVM_SUPPORT_ABI void advance();
 
 public:
   bool operator==(const FoldingSetIteratorImpl &RHS) const {
@@ -755,7 +755,7 @@ class FoldingSetBucketIteratorImpl {
 protected:
   void *Ptr;
 
-  explicit FoldingSetBucketIteratorImpl(void **Bucket);
+  LLVM_SUPPORT_ABI explicit FoldingSetBucketIteratorImpl(void **Bucket);
 
   FoldingSetBucketIteratorImpl(void **Bucket, bool) : Ptr(Bucket) {}
 

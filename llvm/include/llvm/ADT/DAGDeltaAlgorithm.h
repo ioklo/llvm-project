@@ -1,4 +1,4 @@
-//===- DAGDeltaAlgorithm.h - A DAG Minimization Algorithm ------*- C++ -*--===//
+﻿//===- DAGDeltaAlgorithm.h - A DAG Minimization Algorithm ------*- C++ -*--===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -8,6 +8,7 @@
 #ifndef LLVM_ADT_DAGDELTAALGORITHM_H
 #define LLVM_ADT_DAGDELTAALGORITHM_H
 
+#include "llvm/Support/Compiler.h"
 #include <set>
 #include <utility>
 #include <vector>
@@ -36,7 +37,7 @@ namespace llvm {
 /// for more information on the properties which the predicate function itself
 /// should satisfy.
 class DAGDeltaAlgorithm {
-  virtual void anchor();
+  LLVM_SUPPORT_ABI virtual void anchor();
 
 public:
   using change_ty = unsigned;
@@ -70,7 +71,7 @@ public:
                                   const changeset_ty &Required) {}
 
   /// ExecuteOneTest - Execute a single test predicate on the change set \p S.
-  virtual bool ExecuteOneTest(const changeset_ty &S) = 0;
+  LLVM_SUPPORT_ABI virtual bool ExecuteOneTest(const changeset_ty &S) = 0;
 };
 
 } // end namespace llvm

@@ -1,4 +1,4 @@
-//===-- llvm/Support/Timer.h - Interval Timing Support ----------*- C++ -*-===//
+﻿//===-- llvm/Support/Timer.h - Interval Timing Support ----------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -255,7 +255,7 @@ public:
 
 private:
   friend class Timer;
-  friend void PrintStatisticsJSON(raw_ostream &OS);
+  friend LLVM_SUPPORT_ABI void PrintStatisticsJSON(raw_ostream &OS);
   void addTimer(Timer &T);
   void removeTimer(Timer &T);
   void prepareToPrintList(bool reset_time = false);

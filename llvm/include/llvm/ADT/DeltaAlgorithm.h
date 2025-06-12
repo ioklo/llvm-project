@@ -1,4 +1,4 @@
-//===- DeltaAlgorithm.h - A Set Minimization Algorithm ---------*- C++ -*--===//
+﻿//===- DeltaAlgorithm.h - A Set Minimization Algorithm ---------*- C++ -*--===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -8,6 +8,7 @@
 #ifndef LLVM_ADT_DELTAALGORITHM_H
 #define LLVM_ADT_DELTAALGORITHM_H
 
+#include "llvm/Support/Compiler.h"
 #include <set>
 #include <vector>
 
@@ -49,15 +50,15 @@ private:
   ///
   /// \param Changes - The change set to test.
   /// \return - The test result.
-  bool GetTestResult(const changeset_ty &Changes);
+  LLVM_SUPPORT_ABI bool GetTestResult(const changeset_ty &Changes);
 
   /// Split - Partition a set of changes \p S into one or two subsets.
   void Split(const changeset_ty &S, changesetlist_ty &Res);
 
   /// Delta - Minimize a set of \p Changes which has been partitioned into
   /// smaller sets, by attempting to remove individual subsets.
-  changeset_ty Delta(const changeset_ty &Changes,
-                     const changesetlist_ty &Sets);
+  LLVM_SUPPORT_ABI changeset_ty Delta(const changeset_ty &Changes,
+                                      const changesetlist_ty &Sets);
 
   /// Search - Search for a subset (or subsets) in \p Sets which can be
   /// removed from \p Changes while still satisfying the predicate.
@@ -65,8 +66,8 @@ private:
   /// \param Res - On success, a subset of Changes which satisfies the
   /// predicate.
   /// \return - True on success.
-  bool Search(const changeset_ty &Changes, const changesetlist_ty &Sets,
-              changeset_ty &Res);
+  LLVM_SUPPORT_ABI bool Search(const changeset_ty &Changes,
+                               const changesetlist_ty &Sets, changeset_ty &Res);
 
 protected:
   /// UpdatedSearchState - Callback used when the search state changes.
@@ -79,12 +80,12 @@ protected:
   DeltaAlgorithm& operator=(const DeltaAlgorithm&) = default;
 
 public:
-  virtual ~DeltaAlgorithm();
+  LLVM_SUPPORT_ABI virtual ~DeltaAlgorithm();
 
   /// Run - Minimize the set \p Changes by executing \see ExecuteOneTest() on
   /// subsets of changes and returning the smallest set which still satisfies
   /// the test predicate.
-  changeset_ty Run(const changeset_ty &Changes);
+  LLVM_SUPPORT_ABI changeset_ty Run(const changeset_ty &Changes);
 };
 
 } // end namespace llvm

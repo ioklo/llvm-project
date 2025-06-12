@@ -1,4 +1,4 @@
-//===- DynamicAPInt.h - DynamicAPInt Class ----------------------*- C++ -*-===//
+﻿//===- DynamicAPInt.h - DynamicAPInt Class ----------------------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -17,6 +17,7 @@
 #define LLVM_ADT_DYNAMICAPINT_H
 
 #include "llvm/ADT/SlowDynamicAPInt.h"
+#include "llvm/Support/Compiler.h"
 #include "llvm/Support/MathExtras.h"
 #include <numeric>
 
@@ -211,12 +212,12 @@ public:
   friend DynamicAPInt operator/(int64_t A, const DynamicAPInt &B);
   friend DynamicAPInt operator%(int64_t A, const DynamicAPInt &B);
 
-  friend hash_code hash_value(const DynamicAPInt &x); // NOLINT
+  LLVM_SUPPORT_ABI friend hash_code hash_value(const DynamicAPInt &x); // NOLINT
 
-  void static_assert_layout(); // NOLINT
+  LLVM_SUPPORT_ABI void static_assert_layout(); // NOLINT
 
-  raw_ostream &print(raw_ostream &OS) const;
-  LLVM_DUMP_METHOD void dump() const;
+  LLVM_SUPPORT_ABI raw_ostream &print(raw_ostream &OS) const;
+  LLVM_SUPPORT_ABI LLVM_DUMP_METHOD void dump() const;
 };
 
 inline raw_ostream &operator<<(raw_ostream &OS, const DynamicAPInt &X) {
@@ -226,7 +227,7 @@ inline raw_ostream &operator<<(raw_ostream &OS, const DynamicAPInt &X) {
 
 /// Redeclarations of friend declaration above to
 /// make it discoverable by lookups.
-hash_code hash_value(const DynamicAPInt &X); // NOLINT
+LLVM_SUPPORT_ABI hash_code hash_value(const DynamicAPInt &X); // NOLINT
 
 /// This just calls through to the operator int64_t, but it's useful when a
 /// function pointer is required. (Although this is marked inline, it is still
