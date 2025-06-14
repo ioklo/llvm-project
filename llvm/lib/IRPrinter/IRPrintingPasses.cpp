@@ -1,4 +1,4 @@
-//===--- IRPrintingPasses.cpp - Module and Function printing passes -------===//
+﻿//===--- IRPrintingPasses.cpp - Module and Function printing passes -------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -22,7 +22,7 @@
 
 using namespace llvm;
 
-extern cl::opt<bool> WriteNewDbgInfoFormat;
+LLVM_CORE_ABI extern cl::opt<bool> WriteNewDbgInfoFormat;
 
 PrintModulePass::PrintModulePass() : OS(dbgs()) {}
 PrintModulePass::PrintModulePass(raw_ostream &OS, const std::string &Banner,

@@ -1,4 +1,4 @@
-//===- Local.cpp - Unit tests for Local -----------------------------------===//
+﻿//===- Local.cpp - Unit tests for Local -----------------------------------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -14,6 +14,7 @@
 #include "llvm/Analysis/TargetTransformInfo.h"
 #include "llvm/AsmParser/Parser.h"
 #include "llvm/IR/BasicBlock.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/DIBuilder.h"
 #include "llvm/IR/DebugInfo.h"
 #include "llvm/IR/DebugProgramInstruction.h"
@@ -28,10 +29,10 @@
 
 using namespace llvm;
 
-extern llvm::cl::opt<bool> UseNewDbgInfoFormat;
-extern cl::opt<cl::boolOrDefault> PreserveInputDbgFormat;
-extern bool WriteNewDbgInfoFormatToBitcode;
-extern cl::opt<bool> WriteNewDbgInfoFormat;
+LLVM_CORE_ABI extern llvm::cl::opt<bool> UseNewDbgInfoFormat;
+LLVM_CORE_ABI extern cl::opt<cl::boolOrDefault> PreserveInputDbgFormat;
+LLVM_CORE_ABI extern bool WriteNewDbgInfoFormatToBitcode;
+LLVM_CORE_ABI extern cl::opt<bool> WriteNewDbgInfoFormat;
 
 // Backup all of the existing settings that may be modified when
 // PreserveInputDbgFormat=true, so that when the test is finished we return them

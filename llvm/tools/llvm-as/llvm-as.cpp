@@ -1,4 +1,4 @@
-//===--- llvm-as.cpp - The low-level LLVM assembler -----------------------===//
+﻿//===--- llvm-as.cpp - The low-level LLVM assembler -----------------------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -16,6 +16,7 @@
 
 #include "llvm/AsmParser/Parser.h"
 #include "llvm/Bitcode/BitcodeWriter.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/LLVMContext.h"
 #include "llvm/IR/Module.h"
 #include "llvm/IR/ModuleSummaryIndex.h"
@@ -66,8 +67,8 @@ static cl::opt<std::string> ClDataLayout("data-layout",
                                          cl::desc("data layout string to use"),
                                          cl::value_desc("layout-string"),
                                          cl::init(""), cl::cat(AsCat));
-extern cl::opt<bool> UseNewDbgInfoFormat;
-extern bool WriteNewDbgInfoFormatToBitcode;
+LLVM_CORE_ABI extern cl::opt<bool> UseNewDbgInfoFormat;
+LLVM_CORE_ABI extern bool WriteNewDbgInfoFormatToBitcode;
 
 static void WriteOutputFile(const Module *M, const ModuleSummaryIndex *Index) {
   // Infer the output filename if needed.

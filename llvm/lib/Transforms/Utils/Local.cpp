@@ -1,4 +1,4 @@
-//===- Local.cpp - Functions to perform local transformations -------------===//
+﻿//===- Local.cpp - Functions to perform local transformations -------------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -39,6 +39,7 @@
 #include "llvm/IR/Constant.h"
 #include "llvm/IR/ConstantRange.h"
 #include "llvm/IR/Constants.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/DIBuilder.h"
 #include "llvm/IR/DataLayout.h"
 #include "llvm/IR/DebugInfo.h"
@@ -88,7 +89,7 @@
 using namespace llvm;
 using namespace llvm::PatternMatch;
 
-extern cl::opt<bool> UseNewDbgInfoFormat;
+LLVM_CORE_ABI extern cl::opt<bool> UseNewDbgInfoFormat;
 
 #define DEBUG_TYPE "local"
 

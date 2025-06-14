@@ -42,6 +42,7 @@
 #include "llvm/ADT/StringRef.h"
 #include "llvm/ADT/TinyPtrVector.h"
 #include "llvm/IR/Analysis.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/PassManagerInternal.h"
 #include "llvm/Support/TypeName.h"
 #include <cassert>
@@ -187,8 +188,8 @@ public:
 
   /// Run all of the passes in this manager over the given unit of IR.
   /// ExtraArgs are passed to each pass.
-  PreservedAnalyses run(IRUnitT &IR, AnalysisManagerT &AM,
-                        ExtraArgTs... ExtraArgs);
+  LLVM_CORE_ABI PreservedAnalyses run(IRUnitT &IR, AnalysisManagerT &AM,
+                                      ExtraArgTs... ExtraArgs);
 
   template <typename PassT>
   LLVM_ATTRIBUTE_MINSIZE std::enable_if_t<!std::is_same_v<PassT, PassManager>>
@@ -229,7 +230,7 @@ template <typename IRUnitT>
 void printIRUnitNameForStackTrace(raw_ostream &OS, const IRUnitT &IR);
 
 template <>
-void printIRUnitNameForStackTrace<Module>(raw_ostream &OS, const Module &IR);
+LLVM_CORE_ABI void printIRUnitNameForStackTrace<Module>(raw_ostream &OS, const Module &IR);
 
 extern template class PassManager<Module>;
 
@@ -237,7 +238,7 @@ extern template class PassManager<Module>;
 using ModulePassManager = PassManager<Module>;
 
 template <>
-void printIRUnitNameForStackTrace<Function>(raw_ostream &OS,
+LLVM_CORE_ABI void printIRUnitNameForStackTrace<Function>(raw_ostream &OS,
                                             const Function &IR);
 
 extern template class PassManager<Function>;
@@ -275,9 +276,8 @@ private:
   /// Map type from a pair of analysis ID and IRUnitT pointer to an
   /// iterator into a particular result list (which is where the actual analysis
   /// result is stored).
-  using AnalysisResultMapT =
-      DenseMap<std::pair<AnalysisKey *, IRUnitT *>,
-               typename AnalysisResultListT::iterator>;
+  using AnalysisResultMapT = DenseMap<std::pair<AnalysisKey *, IRUnitT *>,
+                                      typename AnalysisResultListT::iterator>;
 
 public:
   /// API to communicate dependencies between analyses during invalidation.
@@ -834,9 +834,10 @@ public:
       : Pass(std::move(Pass)), EagerlyInvalidate(EagerlyInvalidate) {}
 
   /// Runs the function pass across every function in the module.
-  PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM);
-  void printPipeline(raw_ostream &OS,
-                     function_ref<StringRef(StringRef)> MapClassName2PassName);
+  LLVM_CORE_ABI PreservedAnalyses run(Module &M, ModuleAnalysisManager &AM);
+  LLVM_CORE_ABI void
+  printPipeline(raw_ostream &OS,
+                function_ref<StringRef(StringRef)> MapClassName2PassName);
 
   static bool isRequired() { return true; }
 
@@ -883,7 +884,7 @@ struct RequireAnalysisPass
   /// created, these methods can be instantiated to satisfy whatever the
   /// context requires.
   PreservedAnalyses run(IRUnitT &Arg, AnalysisManagerT &AM,
-                        ExtraArgTs &&... Args) {
+                        ExtraArgTs &&...Args) {
     (void)AM.template getResult<AnalysisT>(Arg,
                                            std::forward<ExtraArgTs>(Args)...);
 

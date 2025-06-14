@@ -16,6 +16,7 @@
 #ifndef LLVM_IR_LEGACYPASSMANAGER_H
 #define LLVM_IR_LEGACYPASSMANAGER_H
 
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/Support/CBindingWrapping.h"
 
 namespace llvm {
@@ -28,7 +29,7 @@ namespace legacy {
 
 // Whether or not -debug-pass has been specified. For use to check if it's
 // specified alongside the new PM.
-bool debugPassSpecified();
+LLVM_CORE_ABI bool debugPassSpecified();
 
 class PassManagerImpl;
 class FunctionPassManagerImpl;
@@ -38,7 +39,7 @@ class FunctionPassManagerImpl;
 /// it is.
 class PassManagerBase {
 public:
-  virtual ~PassManagerBase();
+  LLVM_CORE_ABI virtual ~PassManagerBase();
 
   /// Add a pass to the queue of passes to run.  This passes ownership of
   /// the Pass to the PassManager.  When the PassManager is destroyed, the pass
@@ -52,14 +53,14 @@ public:
 class PassManager : public PassManagerBase {
 public:
 
-  PassManager();
-  ~PassManager() override;
+  LLVM_CORE_ABI PassManager();
+  LLVM_CORE_ABI ~PassManager() override;
 
-  void add(Pass *P) override;
+  LLVM_CORE_ABI void add(Pass *P) override;
 
   /// run - Execute all of the passes scheduled for execution.  Keep track of
   /// whether any of the passes modifies the module, and if so, return true.
-  bool run(Module &M);
+  LLVM_CORE_ABI bool run(Module &M);
 
 private:
   /// PassManagerImpl_New is the actual class. PassManager is just the
@@ -72,24 +73,24 @@ class FunctionPassManager : public PassManagerBase {
 public:
   /// FunctionPassManager ctor - This initializes the pass manager.  It needs,
   /// but does not take ownership of, the specified Module.
-  explicit FunctionPassManager(Module *M);
-  ~FunctionPassManager() override;
+  LLVM_CORE_ABI explicit FunctionPassManager(Module *M);
+  LLVM_CORE_ABI ~FunctionPassManager() override;
 
-  void add(Pass *P) override;
+  LLVM_CORE_ABI void add(Pass *P) override;
 
   /// run - Execute all of the passes scheduled for execution.  Keep
   /// track of whether any of the passes modifies the function, and if
   /// so, return true.
   ///
-  bool run(Function &F);
+  LLVM_CORE_ABI bool run(Function &F);
 
   /// doInitialization - Run all of the initializers for the function passes.
   ///
-  bool doInitialization();
+  LLVM_CORE_ABI bool doInitialization();
 
   /// doFinalization - Run all of the finalizers for the function passes.
   ///
-  bool doFinalization();
+  LLVM_CORE_ABI bool doFinalization();
 
 private:
   FunctionPassManagerImpl *FPM;

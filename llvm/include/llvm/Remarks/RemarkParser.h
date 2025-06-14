@@ -1,4 +1,4 @@
-//===-- llvm/Remarks/Remark.h - The remark type -----------------*- C++/-*-===//
+﻿//===-- llvm/Remarks/Remark.h - The remark type -----------------*- C++/-*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -15,6 +15,7 @@
 
 #include "llvm/ADT/StringRef.h"
 #include "llvm/Remarks/RemarkFormat.h"
+#include "llvm/Remarks/RemarksConfig.h"
 #include "llvm/Support/Error.h"
 #include <memory>
 #include <optional>
@@ -64,7 +65,7 @@ struct ParsedStringTable {
   /// SmallVector for once.
   std::vector<size_t> Offsets;
 
-  ParsedStringTable(StringRef Buffer);
+  LLVM_REMARKS_ABI ParsedStringTable(StringRef Buffer);
   /// Disable copy.
   ParsedStringTable(const ParsedStringTable &) = delete;
   ParsedStringTable &operator=(const ParsedStringTable &) = delete;
@@ -73,17 +74,18 @@ struct ParsedStringTable {
   ParsedStringTable &operator=(ParsedStringTable &&) = default;
 
   size_t size() const { return Offsets.size(); }
-  Expected<StringRef> operator[](size_t Index) const;
+  LLVM_REMARKS_ABI Expected<StringRef> operator[](size_t Index) const;
 };
 
-Expected<std::unique_ptr<RemarkParser>> createRemarkParser(Format ParserFormat,
-                                                           StringRef Buf);
+LLVM_REMARKS_ABI Expected<std::unique_ptr<RemarkParser>>
+createRemarkParser(Format ParserFormat, StringRef Buf);
 
-Expected<std::unique_ptr<RemarkParser>>
+LLVM_REMARKS_ABI Expected<std::unique_ptr<RemarkParser>>
 createRemarkParser(Format ParserFormat, StringRef Buf,
                    ParsedStringTable StrTab);
 
-Expected<std::unique_ptr<RemarkParser>> createRemarkParserFromMeta(
+LLVM_REMARKS_ABI Expected<std::unique_ptr<RemarkParser>>
+createRemarkParserFromMeta(
     Format ParserFormat, StringRef Buf,
     std::optional<ParsedStringTable> StrTab = std::nullopt,
     std::optional<StringRef> ExternalFilePrependPath = std::nullopt);

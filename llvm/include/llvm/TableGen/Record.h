@@ -1,4 +1,4 @@
-//===- llvm/TableGen/Record.h - Classes for Table Records -------*- C++ -*-===//
+﻿//===- llvm/TableGen/Record.h - Classes for Table Records -------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -28,6 +28,7 @@
 #include "llvm/Support/Timer.h"
 #include "llvm/Support/TrailingObjects.h"
 #include "llvm/Support/raw_ostream.h"
+#include "llvm/TableGen/TableGenConfig.h"
 #include <cassert>
 #include <cstddef>
 #include <cstdint>
@@ -93,14 +94,14 @@ public:
 
   /// Return true if all values of 'this' type can be converted to the specified
   /// type.
-  virtual bool typeIsConvertibleTo(const RecTy *RHS) const;
+  LLVM_TABLEGEN_ABI virtual bool typeIsConvertibleTo(const RecTy *RHS) const;
 
   /// Return true if 'this' type is equal to or a subtype of RHS. For example,
   /// a bit set is not an int, but they are convertible.
-  virtual bool typeIsA(const RecTy *RHS) const;
+  LLVM_TABLEGEN_ABI virtual bool typeIsA(const RecTy *RHS) const;
 
   /// Returns the type representing list<thistype>.
-  const ListRecTy *getListTy() const;
+  LLVM_TABLEGEN_ABI const ListRecTy *getListTy() const;
 };
 
 inline raw_ostream &operator<<(raw_ostream &OS, const RecTy &Ty) {
@@ -119,11 +120,11 @@ public:
     return RT->getRecTyKind() == BitRecTyKind;
   }
 
-  static const BitRecTy *get(RecordKeeper &RK);
+  LLVM_TABLEGEN_ABI static const BitRecTy *get(RecordKeeper &RK);
 
   std::string getAsString() const override { return "bit"; }
 
-  bool typeIsConvertibleTo(const RecTy *RHS) const override;
+  LLVM_TABLEGEN_ABI bool typeIsConvertibleTo(const RecTy *RHS) const override;
 };
 
 /// 'bits<n>' - Represent a fixed number of bits
@@ -138,13 +139,13 @@ public:
     return RT->getRecTyKind() == BitsRecTyKind;
   }
 
-  static const BitsRecTy *get(RecordKeeper &RK, unsigned Sz);
+  LLVM_TABLEGEN_ABI static const BitsRecTy *get(RecordKeeper &RK, unsigned Sz);
 
   unsigned getNumBits() const { return Size; }
 
-  std::string getAsString() const override;
+  LLVM_TABLEGEN_ABI std::string getAsString() const override;
 
-  bool typeIsConvertibleTo(const RecTy *RHS) const override;
+  LLVM_TABLEGEN_ABI bool typeIsConvertibleTo(const RecTy *RHS) const override;
 };
 
 /// 'int' - Represent an integer value of no particular size
@@ -162,7 +163,7 @@ public:
 
   std::string getAsString() const override { return "int"; }
 
-  bool typeIsConvertibleTo(const RecTy *RHS) const override;
+  LLVM_TABLEGEN_ABI bool typeIsConvertibleTo(const RecTy *RHS) const override;
 };
 
 /// 'string' - Represent an string value
@@ -178,9 +179,9 @@ public:
 
   static const StringRecTy *get(RecordKeeper &RK);
 
-  std::string getAsString() const override;
+  LLVM_TABLEGEN_ABI std::string getAsString() const override;
 
-  bool typeIsConvertibleTo(const RecTy *RHS) const override;
+  LLVM_TABLEGEN_ABI bool typeIsConvertibleTo(const RecTy *RHS) const override;
 };
 
 /// 'list<Ty>' - Represent a list of element values, all of which must be of
@@ -201,11 +202,11 @@ public:
   static const ListRecTy *get(const RecTy *T) { return T->getListTy(); }
   const RecTy *getElementType() const { return ElementTy; }
 
-  std::string getAsString() const override;
+  LLVM_TABLEGEN_ABI std::string getAsString() const override;
 
-  bool typeIsConvertibleTo(const RecTy *RHS) const override;
+  LLVM_TABLEGEN_ABI bool typeIsConvertibleTo(const RecTy *RHS) const override;
 
-  bool typeIsA(const RecTy *RHS) const override;
+  LLVM_TABLEGEN_ABI bool typeIsA(const RecTy *RHS) const override;
 };
 
 /// 'dag' - Represent a dag fragment
@@ -219,9 +220,9 @@ public:
     return RT->getRecTyKind() == DagRecTyKind;
   }
 
-  static const DagRecTy *get(RecordKeeper &RK);
+  LLVM_TABLEGEN_ABI static const DagRecTy *get(RecordKeeper &RK);
 
-  std::string getAsString() const override;
+  LLVM_TABLEGEN_ABI std::string getAsString() const override;
 };
 
 /// '[classname]' - Type of record values that have zero or more superclasses.
@@ -251,11 +252,12 @@ public:
   }
 
   /// Get the record type with the given non-redundant list of superclasses.
-  static const RecordRecTy *get(RecordKeeper &RK,
+  LLVM_TABLEGEN_ABI static const RecordRecTy *
+  get(RecordKeeper &RK,
                                 ArrayRef<const Record *> Classes);
-  static const RecordRecTy *get(const Record *Class);
+  LLVM_TABLEGEN_ABI static const RecordRecTy *get(const Record *Class);
 
-  void Profile(FoldingSetNodeID &ID) const;
+  LLVM_TABLEGEN_ABI void Profile(FoldingSetNodeID &ID) const;
 
   ArrayRef<const Record *> getClasses() const {
     return ArrayRef(getTrailingObjects<const Record *>(), NumClasses);
@@ -266,17 +268,17 @@ public:
   const_record_iterator classes_begin() const { return getClasses().begin(); }
   const_record_iterator classes_end() const { return getClasses().end(); }
 
-  std::string getAsString() const override;
+  LLVM_TABLEGEN_ABI std::string getAsString() const override;
 
-  bool isSubClassOf(const Record *Class) const;
-  bool typeIsConvertibleTo(const RecTy *RHS) const override;
+  LLVM_TABLEGEN_ABI bool isSubClassOf(const Record *Class) const;
+  LLVM_TABLEGEN_ABI bool typeIsConvertibleTo(const RecTy *RHS) const override;
 
-  bool typeIsA(const RecTy *RHS) const override;
+  LLVM_TABLEGEN_ABI bool typeIsA(const RecTy *RHS) const override;
 };
 
 /// Find a common type that T1 and T2 convert to.
 /// Return 0 if no such type exists.
-const RecTy *resolveTypes(const RecTy *T1, const RecTy *T2);
+LLVM_TABLEGEN_ABI const RecTy *resolveTypes(const RecTy *T1, const RecTy *T2);
 
 //===----------------------------------------------------------------------===//
 //  Initializer Classes
@@ -435,16 +437,18 @@ public:
   /// Get the record keeper that initialized this Init.
   RecordKeeper &getRecordKeeper() const { return ValueTy->getRecordKeeper(); }
 
-  const Init *getCastTo(const RecTy *Ty) const override;
-  const Init *convertInitializerTo(const RecTy *Ty) const override;
+  LLVM_TABLEGEN_ABI const Init *getCastTo(const RecTy *Ty) const override;
+  LLVM_TABLEGEN_ABI const Init *
+  convertInitializerTo(const RecTy *Ty) const override;
 
-  const Init *
+  LLVM_TABLEGEN_ABI const Init *
   convertInitializerBitRange(ArrayRef<unsigned> Bits) const override;
 
   /// This method is used to implement the FieldInit class.
   /// Implementors of this method should return the type of the named field if
   /// they are of type record.
-  const RecTy *getFieldType(const StringInit *FieldName) const override;
+  LLVM_TABLEGEN_ABI const RecTy *
+  getFieldType(const StringInit *FieldName) const override;
 };
 
 /// '?' - Represents an uninitialized value.
@@ -465,7 +469,7 @@ public:
   }
 
   /// Get the singleton unset Init.
-  static UnsetInit *get(RecordKeeper &RK);
+  LLVM_TABLEGEN_ABI static UnsetInit *get(RecordKeeper &RK);
 
   /// Get the record keeper that initialized this Init.
   RecordKeeper &getRecordKeeper() const { return RK; }
@@ -527,9 +531,9 @@ public:
     return get(Value, Aux);
   }
 
-  void Profile(FoldingSetNodeID &ID) const;
+  LLVM_TABLEGEN_ABI void Profile(FoldingSetNodeID &ID) const;
 
-  const Init *resolveReferences(Resolver &R) const override;
+  LLVM_TABLEGEN_ABI const Init *resolveReferences(Resolver &R) const override;
   std::string getAsString() const override {
     if (isPositional())
       return utostr(getIndex()) + ": " + Value->getAsString();
@@ -571,7 +575,8 @@ public:
 
   bool getValue() const { return Value; }
 
-  const Init *convertInitializerTo(const RecTy *Ty) const override;
+  LLVM_TABLEGEN_ABI const Init *
+  convertInitializerTo(const RecTy *Ty) const override;
 
   const Init *getBit(unsigned Bit) const override {
     assert(Bit < 1 && "Bit index out of range!");
@@ -603,16 +608,18 @@ public:
     return I->getKind() == IK_BitsInit;
   }
 
-  static BitsInit *get(RecordKeeper &RK, ArrayRef<const Init *> Range);
+  LLVM_TABLEGEN_ABI static BitsInit *get(RecordKeeper &RK,
+                                         ArrayRef<const Init *> Range);
 
-  void Profile(FoldingSetNodeID &ID) const;
+  LLVM_TABLEGEN_ABI void Profile(FoldingSetNodeID &ID) const;
 
   unsigned getNumBits() const { return NumBits; }
 
-  const Init *convertInitializerTo(const RecTy *Ty) const override;
-  const Init *
+  LLVM_TABLEGEN_ABI const Init *
+  convertInitializerTo(const RecTy *Ty) const override;
+  LLVM_TABLEGEN_ABI const Init *
   convertInitializerBitRange(ArrayRef<unsigned> Bits) const override;
-  std::optional<int64_t> convertInitializerToInt() const;
+  LLVM_TABLEGEN_ABI std::optional<int64_t> convertInitializerToInt() const;
 
   bool isComplete() const override {
     for (unsigned i = 0; i != getNumBits(); ++i)
@@ -626,10 +633,10 @@ public:
     return true;
   }
 
-  bool isConcrete() const override;
-  std::string getAsString() const override;
+  LLVM_TABLEGEN_ABI bool isConcrete() const override;
+  LLVM_TABLEGEN_ABI std::string getAsString() const override;
 
-  const Init *resolveReferences(Resolver &R) const override;
+  LLVM_TABLEGEN_ABI const Init *resolveReferences(Resolver &R) const override;
 
   const Init *getBit(unsigned Bit) const override {
     assert(Bit < NumBits && "Bit index out of range!");
@@ -652,16 +659,17 @@ public:
     return I->getKind() == IK_IntInit;
   }
 
-  static IntInit *get(RecordKeeper &RK, int64_t V);
+  LLVM_TABLEGEN_ABI static IntInit *get(RecordKeeper &RK, int64_t V);
 
   int64_t getValue() const { return Value; }
 
-  const Init *convertInitializerTo(const RecTy *Ty) const override;
-  const Init *
+  LLVM_TABLEGEN_ABI const Init *
+  convertInitializerTo(const RecTy *Ty) const override;
+  LLVM_TABLEGEN_ABI const Init *
   convertInitializerBitRange(ArrayRef<unsigned> Bits) const override;
 
   bool isConcrete() const override { return true; }
-  std::string getAsString() const override;
+  LLVM_TABLEGEN_ABI std::string getAsString() const override;
 
   const Init *getBit(unsigned Bit) const override {
     return BitInit::get(getRecordKeeper(), (Value & (1ULL << Bit)) != 0);
@@ -683,13 +691,13 @@ public:
     return I->getKind() == IK_AnonymousNameInit;
   }
 
-  static AnonymousNameInit *get(RecordKeeper &RK, unsigned);
+  LLVM_TABLEGEN_ABI static AnonymousNameInit *get(RecordKeeper &RK, unsigned);
 
   unsigned getValue() const { return Value; }
 
-  const StringInit *getNameInit() const;
+  LLVM_TABLEGEN_ABI const StringInit *getNameInit() const;
 
-  std::string getAsString() const override;
+  LLVM_TABLEGEN_ABI std::string getAsString() const override;
 
   const Init *resolveReferences(Resolver &R) const override;
 
@@ -721,8 +729,8 @@ public:
     return I->getKind() == IK_StringInit;
   }
 
-  static const StringInit *get(RecordKeeper &RK, StringRef,
-                               StringFormat Fmt = SF_String);
+  LLVM_TABLEGEN_ABI static const StringInit *get(RecordKeeper &RK, StringRef,
+                                                 StringFormat Fmt = SF_String);
 
   static StringFormat determineFormat(StringFormat Fmt1, StringFormat Fmt2) {
     return (Fmt1 == SF_Code || Fmt2 == SF_Code) ? SF_Code : SF_String;
@@ -732,7 +740,8 @@ public:
   StringFormat getFormat() const { return Format; }
   bool hasCodeFormat() const { return Format == SF_Code; }
 
-  const Init *convertInitializerTo(const RecTy *Ty) const override;
+  LLVM_TABLEGEN_ABI const Init *
+  convertInitializerTo(const RecTy *Ty) const override;
 
   bool isConcrete() const override { return true; }
 
@@ -776,9 +785,10 @@ public:
   static bool classof(const Init *I) {
     return I->getKind() == IK_ListInit;
   }
-  static const ListInit *get(ArrayRef<const Init *> Range, const RecTy *EltTy);
+  LLVM_TABLEGEN_ABI static const ListInit *get(ArrayRef<const Init *> Range,
+                                               const RecTy *EltTy);
 
-  void Profile(FoldingSetNodeID &ID) const;
+  LLVM_TABLEGEN_ABI void Profile(FoldingSetNodeID &ID) const;
 
   const Init *getElement(unsigned i) const {
     assert(i < NumValues && "List element index out of range!");
@@ -788,20 +798,21 @@ public:
     return cast<ListRecTy>(getType())->getElementType();
   }
 
-  const Record *getElementAsRecord(unsigned i) const;
+  LLVM_TABLEGEN_ABI const Record *getElementAsRecord(unsigned i) const;
 
-  const Init *convertInitializerTo(const RecTy *Ty) const override;
+  LLVM_TABLEGEN_ABI const Init *
+  convertInitializerTo(const RecTy *Ty) const override;
 
   /// This method is used by classes that refer to other
   /// variables which may not be defined at the time they expression is formed.
   /// If a value is set for the variable later, this method will be called on
   /// users of the value to allow the value to propagate out.
   ///
-  const Init *resolveReferences(Resolver &R) const override;
+  LLVM_TABLEGEN_ABI const Init *resolveReferences(Resolver &R) const override;
 
-  bool isComplete() const override;
-  bool isConcrete() const override;
-  std::string getAsString() const override;
+  LLVM_TABLEGEN_ABI bool isComplete() const override;
+  LLVM_TABLEGEN_ABI bool isConcrete() const override;
+  LLVM_TABLEGEN_ABI std::string getAsString() const override;
 
   ArrayRef<const Init *> getValues() const {
     return ArrayRef(getTrailingObjects<const Init *>(), NumValues);
@@ -834,7 +845,7 @@ public:
            I->getKind() <= IK_LastOpInit;
   }
 
-  const Init *getBit(unsigned Bit) const final;
+  LLVM_TABLEGEN_ABI const Init *getBit(unsigned Bit) const final;
 };
 
 /// !op (X) - Transform an init.
@@ -871,9 +882,10 @@ public:
     return I->getKind() == IK_UnOpInit;
   }
 
-  static const UnOpInit *get(UnaryOp opc, const Init *lhs, const RecTy *Type);
+  LLVM_TABLEGEN_ABI static const UnOpInit *get(UnaryOp opc, const Init *lhs,
+                                               const RecTy *Type);
 
-  void Profile(FoldingSetNodeID &ID) const;
+  LLVM_TABLEGEN_ABI void Profile(FoldingSetNodeID &ID) const;
 
   UnaryOp getOpcode() const { return (UnaryOp)Opc; }
   const Init *getOperand() const { return LHS; }
@@ -882,9 +894,9 @@ public:
   // possible to fold.
   const Init *Fold(const Record *CurRec, bool IsFinal = false) const;
 
-  const Init *resolveReferences(Resolver &R) const override;
+  LLVM_TABLEGEN_ABI const Init *resolveReferences(Resolver &R) const override;
 
-  std::string getAsString() const override;
+  LLVM_TABLEGEN_ABI std::string getAsString() const override;
 };
 
 /// !op (X, Y) - Combine two inits.
@@ -935,27 +947,29 @@ public:
     return I->getKind() == IK_BinOpInit;
   }
 
-  static const BinOpInit *get(BinaryOp opc, const Init *lhs, const Init *rhs,
-                              const RecTy *Type);
-  static const Init *getStrConcat(const Init *lhs, const Init *rhs);
-  static const Init *getListConcat(const TypedInit *lhs, const Init *rhs);
+  LLVM_TABLEGEN_ABI static const BinOpInit *
+  get(BinaryOp opc, const Init *lhs, const Init *rhs, const RecTy *Type);
+  LLVM_TABLEGEN_ABI static const Init *getStrConcat(const Init *lhs,
+                                                    const Init *rhs);
+  LLVM_TABLEGEN_ABI static const Init *getListConcat(const TypedInit *lhs,
+                                                     const Init *rhs);
 
-  void Profile(FoldingSetNodeID &ID) const;
+  LLVM_TABLEGEN_ABI void Profile(FoldingSetNodeID &ID) const;
 
   BinaryOp getOpcode() const { return (BinaryOp)Opc; }
   const Init *getLHS() const { return LHS; }
   const Init *getRHS() const { return RHS; }
 
-  std::optional<bool> CompareInit(unsigned Opc, const Init *LHS,
-                                  const Init *RHS) const;
+  LLVM_TABLEGEN_ABI std::optional<bool>
+  CompareInit(unsigned Opc, const Init *LHS, const Init *RHS) const;
 
   // Fold - If possible, fold this to a simpler init.  Return this if not
   // possible to fold.
-  const Init *Fold(const Record *CurRec) const;
+  LLVM_TABLEGEN_ABI const Init *Fold(const Record *CurRec) const;
 
-  const Init *resolveReferences(Resolver &R) const override;
+  LLVM_TABLEGEN_ABI const Init *resolveReferences(Resolver &R) const override;
 
-  std::string getAsString() const override;
+  LLVM_TABLEGEN_ABI std::string getAsString() const override;
 };
 
 /// !op (X, Y, Z) - Combine two inits.
@@ -989,10 +1003,11 @@ public:
     return I->getKind() == IK_TernOpInit;
   }
 
-  static const TernOpInit *get(TernaryOp opc, const Init *lhs, const Init *mhs,
+  LLVM_TABLEGEN_ABI static const TernOpInit *get(TernaryOp opc, const Init *lhs,
+                                                 const Init *mhs,
                                const Init *rhs, const RecTy *Type);
 
-  void Profile(FoldingSetNodeID &ID) const;
+  LLVM_TABLEGEN_ABI void Profile(FoldingSetNodeID &ID) const;
 
   TernaryOp getOpcode() const { return (TernaryOp)Opc; }
   const Init *getLHS() const { return LHS; }
@@ -1001,15 +1016,15 @@ public:
 
   // Fold - If possible, fold this to a simpler init.  Return this if not
   // possible to fold.
-  const Init *Fold(const Record *CurRec) const;
+  LLVM_TABLEGEN_ABI const Init *Fold(const Record *CurRec) const;
 
-  bool isComplete() const override {
+  LLVM_TABLEGEN_ABI bool isComplete() const override {
     return LHS->isComplete() && MHS->isComplete() && RHS->isComplete();
   }
 
-  const Init *resolveReferences(Resolver &R) const override;
+  LLVM_TABLEGEN_ABI const Init *resolveReferences(Resolver &R) const override;
 
-  std::string getAsString() const override;
+  LLVM_TABLEGEN_ABI std::string getAsString() const override;
 };
 
 /// !cond(condition_1: value1, ... , condition_n: value)
@@ -1036,10 +1051,10 @@ public:
     return I->getKind() == IK_CondOpInit;
   }
 
-  static const CondOpInit *get(ArrayRef<const Init *> C,
-                               ArrayRef<const Init *> V, const RecTy *Type);
+  LLVM_TABLEGEN_ABI static const CondOpInit *
+  get(ArrayRef<const Init *> C, ArrayRef<const Init *> V, const RecTy *Type);
 
-  void Profile(FoldingSetNodeID &ID) const;
+  LLVM_TABLEGEN_ABI void Profile(FoldingSetNodeID &ID) const;
 
   const RecTy *getValType() const { return ValType; }
 
@@ -1063,13 +1078,13 @@ public:
     return ArrayRef(getTrailingObjects<const Init *>() + NumConds, NumConds);
   }
 
-  const Init *Fold(const Record *CurRec) const;
+  LLVM_TABLEGEN_ABI const Init *Fold(const Record *CurRec) const;
 
-  const Init *resolveReferences(Resolver &R) const override;
+  LLVM_TABLEGEN_ABI const Init *resolveReferences(Resolver &R) const override;
 
-  bool isConcrete() const override;
-  bool isComplete() const override;
-  std::string getAsString() const override;
+  LLVM_TABLEGEN_ABI bool isConcrete() const override;
+  LLVM_TABLEGEN_ABI bool isComplete() const override;
+  LLVM_TABLEGEN_ABI std::string getAsString() const override;
 
   using const_case_iterator = SmallVectorImpl<const Init *>::const_iterator;
   using const_val_iterator = SmallVectorImpl<const Init *>::const_iterator;
@@ -1086,7 +1101,7 @@ public:
   inline size_t              val_size () const { return NumConds; }
   inline bool                val_empty() const { return NumConds == 0; }
 
-  const Init *getBit(unsigned Bit) const override;
+  LLVM_TABLEGEN_ABI const Init *getBit(unsigned Bit) const override;
 };
 
 /// !foldl (a, b, expr, start, lst) - Fold over a list.
@@ -1105,23 +1120,23 @@ public:
 
   static bool classof(const Init *I) { return I->getKind() == IK_FoldOpInit; }
 
-  static const FoldOpInit *get(const Init *Start, const Init *List,
-                               const Init *A, const Init *B, const Init *Expr,
-                               const RecTy *Type);
+  LLVM_TABLEGEN_ABI static const FoldOpInit *
+  get(const Init *Start, const Init *List, const Init *A, const Init *B,
+      const Init *Expr, const RecTy *Type);
 
-  void Profile(FoldingSetNodeID &ID) const;
+  LLVM_TABLEGEN_ABI void Profile(FoldingSetNodeID &ID) const;
 
   // Fold - If possible, fold this to a simpler init.  Return this if not
   // possible to fold.
-  const Init *Fold(const Record *CurRec) const;
+  LLVM_TABLEGEN_ABI const Init *Fold(const Record *CurRec) const;
 
   bool isComplete() const override { return false; }
 
-  const Init *resolveReferences(Resolver &R) const override;
+  LLVM_TABLEGEN_ABI const Init *resolveReferences(Resolver &R) const override;
 
-  const Init *getBit(unsigned Bit) const override;
+  LLVM_TABLEGEN_ABI const Init *getBit(unsigned Bit) const override;
 
-  std::string getAsString() const override;
+  LLVM_TABLEGEN_ABI std::string getAsString() const override;
 };
 
 /// !isa<type>(expr) - Dynamically determine the type of an expression.
@@ -1140,21 +1155,22 @@ public:
 
   static bool classof(const Init *I) { return I->getKind() == IK_IsAOpInit; }
 
-  static const IsAOpInit *get(const RecTy *CheckType, const Init *Expr);
+  LLVM_TABLEGEN_ABI static const IsAOpInit *get(const RecTy *CheckType,
+                                                const Init *Expr);
 
-  void Profile(FoldingSetNodeID &ID) const;
+  LLVM_TABLEGEN_ABI void Profile(FoldingSetNodeID &ID) const;
 
   // Fold - If possible, fold this to a simpler init.  Return this if not
   // possible to fold.
-  const Init *Fold() const;
+  LLVM_TABLEGEN_ABI const Init *Fold() const;
 
   bool isComplete() const override { return false; }
 
-  const Init *resolveReferences(Resolver &R) const override;
+  LLVM_TABLEGEN_ABI const Init *resolveReferences(Resolver &R) const override;
 
-  const Init *getBit(unsigned Bit) const override;
+  LLVM_TABLEGEN_ABI const Init *getBit(unsigned Bit) const override;
 
-  std::string getAsString() const override;
+  LLVM_TABLEGEN_ABI std::string getAsString() const override;
 };
 
 /// !exists<type>(expr) - Dynamically determine if a record of `type` named
@@ -1174,21 +1190,23 @@ public:
 
   static bool classof(const Init *I) { return I->getKind() == IK_ExistsOpInit; }
 
-  static const ExistsOpInit *get(const RecTy *CheckType, const Init *Expr);
+  LLVM_TABLEGEN_ABI static const ExistsOpInit *get(const RecTy *CheckType,
+                                                   const Init *Expr);
 
-  void Profile(FoldingSetNodeID &ID) const;
+  LLVM_TABLEGEN_ABI void Profile(FoldingSetNodeID &ID) const;
 
   // Fold - If possible, fold this to a simpler init.  Return this if not
   // possible to fold.
-  const Init *Fold(const Record *CurRec, bool IsFinal = false) const;
+  LLVM_TABLEGEN_ABI const Init *Fold(const Record *CurRec,
+                                     bool IsFinal = false) const;
 
   bool isComplete() const override { return false; }
 
-  const Init *resolveReferences(Resolver &R) const override;
+  LLVM_TABLEGEN_ABI const Init *resolveReferences(Resolver &R) const override;
 
-  const Init *getBit(unsigned Bit) const override;
+  LLVM_TABLEGEN_ABI const Init *getBit(unsigned Bit) const override;
 
-  std::string getAsString() const override;
+  LLVM_TABLEGEN_ABI std::string getAsString() const override;
 };
 
 /// 'Opcode' - Represent a reference to an entire variable object.
@@ -1206,10 +1224,10 @@ public:
     return I->getKind() == IK_VarInit;
   }
 
-  static const VarInit *get(StringRef VN, const RecTy *T);
-  static const VarInit *get(const Init *VN, const RecTy *T);
+  LLVM_TABLEGEN_ABI static const VarInit *get(StringRef VN, const RecTy *T);
+  LLVM_TABLEGEN_ABI static const VarInit *get(const Init *VN, const RecTy *T);
 
-  StringRef getName() const;
+  LLVM_TABLEGEN_ABI StringRef getName() const;
   const Init *getNameInit() const { return VarName; }
 
   std::string getNameInitAsString() const {
@@ -1221,9 +1239,9 @@ public:
   /// If a value is set for the variable later, this method will be called on
   /// users of the value to allow the value to propagate out.
   ///
-  const Init *resolveReferences(Resolver &R) const override;
+  LLVM_TABLEGEN_ABI const Init *resolveReferences(Resolver &R) const override;
 
-  const Init *getBit(unsigned Bit) const override;
+  LLVM_TABLEGEN_ABI const Init *getBit(unsigned Bit) const override;
 
   std::string getAsString() const override { return std::string(getName()); }
 };
@@ -1251,7 +1269,8 @@ public:
     return I->getKind() == IK_VarBitInit;
   }
 
-  static const VarBitInit *get(const TypedInit *T, unsigned B);
+  LLVM_TABLEGEN_ABI static const VarBitInit *get(const TypedInit *T,
+                                                 unsigned B);
 
   const Init *getBitVar() const { return TI; }
   unsigned getBitNum() const { return Bit; }
@@ -1281,14 +1300,16 @@ public:
     return I->getKind() == IK_DefInit;
   }
 
-  const Init *convertInitializerTo(const RecTy *Ty) const override;
+  LLVM_TABLEGEN_ABI const Init *
+  convertInitializerTo(const RecTy *Ty) const override;
 
   const Record *getDef() const { return Def; }
 
-  const RecTy *getFieldType(const StringInit *FieldName) const override;
+  LLVM_TABLEGEN_ABI const RecTy *
+  getFieldType(const StringInit *FieldName) const override;
 
   bool isConcrete() const override { return true; }
-  std::string getAsString() const override;
+  LLVM_TABLEGEN_ABI std::string getAsString() const override;
 
   const Init *getBit(unsigned Bit) const override {
     llvm_unreachable("Illegal bit reference off def");
@@ -1306,9 +1327,10 @@ class VarDefInit final
   const DefInit *Def = nullptr; // after instantiation
   unsigned NumArgs;
 
-  explicit VarDefInit(SMLoc Loc, const Record *Class, unsigned N);
+  LLVM_TABLEGEN_ABI explicit VarDefInit(SMLoc Loc, const Record *Class,
+                                        unsigned N);
 
-  const DefInit *instantiate();
+  LLVM_TABLEGEN_ABI const DefInit *instantiate();
 
 public:
   VarDefInit(const VarDefInit &) = delete;
@@ -1320,15 +1342,15 @@ public:
   static bool classof(const Init *I) {
     return I->getKind() == IK_VarDefInit;
   }
-  static const VarDefInit *get(SMLoc Loc, const Record *Class,
-                               ArrayRef<const ArgumentInit *> Args);
+  LLVM_TABLEGEN_ABI static const VarDefInit *
+  get(SMLoc Loc, const Record *Class, ArrayRef<const ArgumentInit *> Args);
 
-  void Profile(FoldingSetNodeID &ID) const;
+  LLVM_TABLEGEN_ABI void Profile(FoldingSetNodeID &ID) const;
 
-  const Init *resolveReferences(Resolver &R) const override;
-  const Init *Fold() const;
+  LLVM_TABLEGEN_ABI const Init *resolveReferences(Resolver &R) const override;
+  LLVM_TABLEGEN_ABI const Init *Fold() const;
 
-  std::string getAsString() const override;
+  LLVM_TABLEGEN_ABI std::string getAsString() const override;
 
   const ArgumentInit *getArg(unsigned i) const {
     assert(i < NumArgs && "Argument index out of range!");
@@ -1379,17 +1401,18 @@ public:
     return I->getKind() == IK_FieldInit;
   }
 
-  static const FieldInit *get(const Init *R, const StringInit *FN);
+  LLVM_TABLEGEN_ABI static const FieldInit *get(const Init *R,
+                                                const StringInit *FN);
 
   const Init *getRecord() const { return Rec; }
   const StringInit *getFieldName() const { return FieldName; }
 
-  const Init *getBit(unsigned Bit) const override;
+  LLVM_TABLEGEN_ABI const Init *getBit(unsigned Bit) const override;
 
-  const Init *resolveReferences(Resolver &R) const override;
-  const Init *Fold(const Record *CurRec) const;
+  LLVM_TABLEGEN_ABI const Init *resolveReferences(Resolver &R) const override;
+  LLVM_TABLEGEN_ABI const Init *Fold(const Record *CurRec) const;
 
-  bool isConcrete() const override;
+  LLVM_TABLEGEN_ABI bool isConcrete() const override;
   std::string getAsString() const override {
     return Rec->getAsString() + "." + FieldName->getValue().str();
   }
@@ -1426,17 +1449,18 @@ public:
     return I->getKind() == IK_DagInit;
   }
 
-  static const DagInit *get(const Init *V, const StringInit *VN,
+  LLVM_TABLEGEN_ABI static const DagInit *
+  get(const Init *V, const StringInit *VN,
                             ArrayRef<const Init *> ArgRange,
                             ArrayRef<const StringInit *> NameRange);
-  static const DagInit *
+  LLVM_TABLEGEN_ABI static const DagInit *
   get(const Init *V, const StringInit *VN,
       ArrayRef<std::pair<const Init *, const StringInit *>> Args);
 
-  void Profile(FoldingSetNodeID &ID) const;
+  LLVM_TABLEGEN_ABI void Profile(FoldingSetNodeID &ID) const;
 
   const Init *getOperator() const { return Val; }
-  const Record *getOperatorAsDef(ArrayRef<SMLoc> Loc) const;
+  LLVM_TABLEGEN_ABI const Record *getOperatorAsDef(ArrayRef<SMLoc> Loc) const;
 
   const StringInit *getName() const { return ValName; }
 
@@ -1453,7 +1477,7 @@ public:
 
   /// This method looks up the specified argument name and returns its argument
   /// number or std::nullopt if that argument name does not exist.
-  std::optional<unsigned> getArgNo(StringRef Name) const;
+  LLVM_TABLEGEN_ABI std::optional<unsigned> getArgNo(StringRef Name) const;
 
   const StringInit *getArgName(unsigned Num) const {
     assert(Num < NumArgNames && "Arg number out of range!");
@@ -1473,10 +1497,10 @@ public:
     return ArrayRef(getTrailingObjects<const StringInit *>(), NumArgNames);
   }
 
-  const Init *resolveReferences(Resolver &R) const override;
+  LLVM_TABLEGEN_ABI const Init *resolveReferences(Resolver &R) const override;
 
-  bool isConcrete() const override;
-  std::string getAsString() const override;
+  LLVM_TABLEGEN_ABI bool isConcrete() const override;
+  LLVM_TABLEGEN_ABI std::string getAsString() const override;
 
   using const_arg_iterator = SmallVectorImpl<const Init *>::const_iterator;
   using const_name_iterator =
@@ -1526,14 +1550,15 @@ private:
   SmallVector<SMRange, 0> ReferenceLocs;
 
 public:
-  RecordVal(const Init *N, const RecTy *T, FieldKind K);
-  RecordVal(const Init *N, SMLoc Loc, const RecTy *T, FieldKind K);
+  LLVM_TABLEGEN_ABI RecordVal(const Init *N, const RecTy *T, FieldKind K);
+  LLVM_TABLEGEN_ABI RecordVal(const Init *N, SMLoc Loc, const RecTy *T,
+                              FieldKind K);
 
   /// Get the record keeper used to unique this value.
   RecordKeeper &getRecordKeeper() const { return Name->getRecordKeeper(); }
 
   /// Get the name of the field as a StringRef.
-  StringRef getName() const;
+  LLVM_TABLEGEN_ABI StringRef getName() const;
 
   /// Get the name of the field as an Init.
   const Init *getNameInit() const { return Name; }
@@ -1544,7 +1569,7 @@ public:
   }
 
   /// Get the source location of the point where the field was defined.
-  const SMLoc &getLoc() const { return Loc; }
+  LLVM_TABLEGEN_ABI const SMLoc &getLoc() const { return Loc; }
 
   /// Is this a field where nonconcrete values are okay?
   bool isNonconcreteOK() const {
@@ -1560,16 +1585,16 @@ public:
   const RecTy *getType() const { return TyAndKind.getPointer(); }
 
   /// Get the type of the field for printing purposes.
-  std::string getPrintType() const;
+  LLVM_TABLEGEN_ABI std::string getPrintType() const;
 
   /// Get the value of the field as an Init.
   const Init *getValue() const { return Value; }
 
   /// Set the value of the field from an Init.
-  bool setValue(const Init *V);
+  LLVM_TABLEGEN_ABI bool setValue(const Init *V);
 
   /// Set the value and source location of the field.
-  bool setValue(const Init *V, SMLoc NewLoc);
+  LLVM_TABLEGEN_ABI bool setValue(const Init *V, SMLoc NewLoc);
 
   /// Add a reference to this record value.
   void addReferenceLoc(SMRange Loc) { ReferenceLocs.push_back(Loc); }
@@ -1582,10 +1607,10 @@ public:
   void setUsed(bool Used) { IsUsed = Used; }
   bool isUsed() const { return IsUsed; }
 
-  void dump() const;
+  LLVM_TABLEGEN_ABI void dump() const;
 
   /// Print the value to an output stream, possibly with a semicolon.
-  void print(raw_ostream &OS, bool PrintSem = true) const;
+  LLVM_TABLEGEN_ABI void print(raw_ostream &OS, bool PrintSem = true) const;
 };
 
 inline raw_ostream &operator<<(raw_ostream &OS, const RecordVal &RV) {
@@ -1669,7 +1694,7 @@ public:
         SuperClasses(O.SuperClasses), TrackedRecords(O.TrackedRecords),
         ID(getNewUID(O.getRecords())), Kind(O.Kind) {}
 
-  static unsigned getNewUID(RecordKeeper &RK);
+  LLVM_TABLEGEN_ABI static unsigned getNewUID(RecordKeeper &RK);
 
   unsigned getID() const { return ID; }
 
@@ -1681,7 +1706,8 @@ public:
     return getNameInit()->getAsUnquotedString();
   }
 
-  void setName(const Init *Name); // Also updates RecordKeeper.
+  LLVM_TABLEGEN_ABI void
+  setName(const Init *Name); // Also updates RecordKeeper.
 
   ArrayRef<SMLoc> getLoc() const { return Locs; }
   void appendLoc(SMLoc Loc) { Locs.push_back(Loc); }
@@ -1697,13 +1723,13 @@ public:
   ArrayRef<SMRange> getReferenceLocs() const { return ReferenceLocs; }
 
   // Update a class location when encountering a (re-)definition.
-  void updateClassLoc(SMLoc Loc);
+  LLVM_TABLEGEN_ABI void updateClassLoc(SMLoc Loc);
 
   // Make the type that this record should have based on its superclasses.
-  const RecordRecTy *getType() const;
+  LLVM_TABLEGEN_ABI const RecordRecTy *getType() const;
 
   /// get the corresponding DefInit.
-  DefInit *getDefInit() const;
+  LLVM_TABLEGEN_ABI DefInit *getDefInit() const;
 
   bool isClass() const { return Kind == RK_Class; }
 
@@ -1723,10 +1749,11 @@ public:
   }
 
   /// Determine whether this record has the specified direct superclass.
-  bool hasDirectSuperClass(const Record *SuperClass) const;
+  LLVM_TABLEGEN_ABI bool hasDirectSuperClass(const Record *SuperClass) const;
 
   /// Append the direct superclasses of this record to Classes.
-  void getDirectSuperClasses(SmallVectorImpl<const Record *> &Classes) const;
+  LLVM_TABLEGEN_ABI void
+  getDirectSuperClasses(SmallVectorImpl<const Record *> &Classes) const;
 
   bool isTemplateArg(const Init *Name) const {
     return llvm::is_contained(TemplateArgs, Name);
@@ -1789,9 +1816,9 @@ public:
 
   void appendDumps(const Record *Rec) { Dumps.append(Rec->Dumps); }
 
-  void checkRecordAssertions();
-  void emitRecordDumps();
-  void checkUnusedTemplateArgs();
+  LLVM_TABLEGEN_ABI void checkRecordAssertions();
+  LLVM_TABLEGEN_ABI void emitRecordDumps();
+  LLVM_TABLEGEN_ABI void checkUnusedTemplateArgs();
 
   bool isSubClassOf(const Record *R) const {
     for (const auto &[SC, _] : SuperClasses)
@@ -1824,31 +1851,32 @@ public:
   ///
   /// This is a final resolve: any error messages, e.g. due to undefined !cast
   /// references, are generated now.
-  void resolveReferences(const Init *NewName = nullptr);
+  LLVM_TABLEGEN_ABI void resolveReferences(const Init *NewName = nullptr);
 
   /// Apply the resolver to the name of the record as well as to the
   /// initializers of all fields of the record except SkipVal.
   ///
   /// The resolver should not resolve any of the fields itself, to avoid
   /// recursion / infinite loops.
-  void resolveReferences(Resolver &R, const RecordVal *SkipVal = nullptr);
+  LLVM_TABLEGEN_ABI void resolveReferences(Resolver &R,
+                                           const RecordVal *SkipVal = nullptr);
 
   RecordKeeper &getRecords() const {
     return TrackedRecords;
   }
 
-  void dump() const;
+  LLVM_TABLEGEN_ABI void dump() const;
 
   //===--------------------------------------------------------------------===//
   // High-level methods useful to tablegen back-ends
   //
 
   /// Return the source location for the named field.
-  SMLoc getFieldLoc(StringRef FieldName) const;
+  LLVM_TABLEGEN_ABI SMLoc getFieldLoc(StringRef FieldName) const;
 
   /// Return the initializer for a value with the specified name, or throw an
   /// exception if the field does not exist.
-  const Init *getValueInit(StringRef FieldName) const;
+  LLVM_TABLEGEN_ABI const Init *getValueInit(StringRef FieldName) const;
 
   /// Return true if the named field is unset.
   bool isValueUnset(StringRef FieldName) const {
@@ -1858,78 +1886,86 @@ public:
   /// This method looks up the specified field and returns its value as a
   /// string, throwing an exception if the field does not exist or if the value
   /// is not a string.
-  StringRef getValueAsString(StringRef FieldName) const;
+  LLVM_TABLEGEN_ABI StringRef getValueAsString(StringRef FieldName) const;
 
   /// This method looks up the specified field and returns its value as a
   /// string, throwing an exception if the value is not a string and
   /// std::nullopt if the field does not exist.
-  std::optional<StringRef> getValueAsOptionalString(StringRef FieldName) const;
+  LLVM_TABLEGEN_ABI std::optional<StringRef>
+  getValueAsOptionalString(StringRef FieldName) const;
 
   /// This method looks up the specified field and returns its value as a
   /// BitsInit, throwing an exception if the field does not exist or if the
   /// value is not the right type.
-  const BitsInit *getValueAsBitsInit(StringRef FieldName) const;
+  LLVM_TABLEGEN_ABI const BitsInit *
+  getValueAsBitsInit(StringRef FieldName) const;
 
   /// This method looks up the specified field and returns its value as a
   /// ListInit, throwing an exception if the field does not exist or if the
   /// value is not the right type.
-  const ListInit *getValueAsListInit(StringRef FieldName) const;
+  LLVM_TABLEGEN_ABI const ListInit *
+  getValueAsListInit(StringRef FieldName) const;
 
   /// This method looks up the specified field and returns its value as a
   /// vector of records, throwing an exception if the field does not exist or
   /// if the value is not the right type.
-  std::vector<const Record *> getValueAsListOfDefs(StringRef FieldName) const;
+  LLVM_TABLEGEN_ABI std::vector<const Record *>
+  getValueAsListOfDefs(StringRef FieldName) const;
 
   /// This method looks up the specified field and returns its value as a
   /// vector of integers, throwing an exception if the field does not exist or
   /// if the value is not the right type.
-  std::vector<int64_t> getValueAsListOfInts(StringRef FieldName) const;
+  LLVM_TABLEGEN_ABI std::vector<int64_t>
+  getValueAsListOfInts(StringRef FieldName) const;
 
   /// This method looks up the specified field and returns its value as a
   /// vector of strings, throwing an exception if the field does not exist or
   /// if the value is not the right type.
-  std::vector<StringRef> getValueAsListOfStrings(StringRef FieldName) const;
+  LLVM_TABLEGEN_ABI std::vector<StringRef>
+  getValueAsListOfStrings(StringRef FieldName) const;
 
   /// This method looks up the specified field and returns its value as a
   /// Record, throwing an exception if the field does not exist or if the value
   /// is not the right type.
-  const Record *getValueAsDef(StringRef FieldName) const;
+  LLVM_TABLEGEN_ABI const Record *getValueAsDef(StringRef FieldName) const;
 
   /// This method looks up the specified field and returns its value as a
   /// Record, returning null if the field exists but is "uninitialized" (i.e.
   /// set to `?`), and throwing an exception if the field does not exist or if
   /// its value is not the right type.
-  const Record *getValueAsOptionalDef(StringRef FieldName) const;
+  LLVM_TABLEGEN_ABI const Record *
+  getValueAsOptionalDef(StringRef FieldName) const;
 
   /// This method looks up the specified field and returns its value as a bit,
   /// throwing an exception if the field does not exist or if the value is not
   /// the right type.
-  bool getValueAsBit(StringRef FieldName) const;
+  LLVM_TABLEGEN_ABI bool getValueAsBit(StringRef FieldName) const;
 
   /// This method looks up the specified field and returns its value as a bit.
   /// If the field is unset, sets Unset to true and returns false.
-  bool getValueAsBitOrUnset(StringRef FieldName, bool &Unset) const;
+  LLVM_TABLEGEN_ABI bool getValueAsBitOrUnset(StringRef FieldName,
+                                              bool &Unset) const;
 
   /// This method looks up the specified field and returns its value as an
   /// int64_t, throwing an exception if the field does not exist or if the
   /// value is not the right type.
-  int64_t getValueAsInt(StringRef FieldName) const;
+  LLVM_TABLEGEN_ABI int64_t getValueAsInt(StringRef FieldName) const;
 
   /// This method looks up the specified field and returns its value as an Dag,
   /// throwing an exception if the field does not exist or if the value is not
   /// the right type.
-  const DagInit *getValueAsDag(StringRef FieldName) const;
+  LLVM_TABLEGEN_ABI const DagInit *getValueAsDag(StringRef FieldName) const;
 };
 
-raw_ostream &operator<<(raw_ostream &OS, const Record &R);
+LLVM_TABLEGEN_ABI raw_ostream &operator<<(raw_ostream &OS, const Record &R);
 
 class RecordKeeper {
   using RecordMap = std::map<std::string, std::unique_ptr<Record>, std::less<>>;
   using GlobalMap = std::map<std::string, const Init *, std::less<>>;
 
 public:
-  RecordKeeper();
-  ~RecordKeeper();
+  LLVM_TABLEGEN_ABI RecordKeeper();
+  LLVM_TABLEGEN_ABI ~RecordKeeper();
 
   /// Return the internal implementation of the RecordKeeper.
   detail::RecordKeeperImpl &getImpl() { return *Impl; }
@@ -1990,7 +2026,7 @@ public:
     assert(Ins && "Global already exists");
   }
 
-  const Init *getNewAnonymousName();
+  LLVM_TABLEGEN_ABI const Init *getNewAnonymousName();
 
   TGTimer &getTimer() const { return *Timer; }
 
@@ -1999,21 +2035,22 @@ public:
 
   /// Get all the concrete records that inherit from the one specified
   /// class. The class must be defined.
-  ArrayRef<const Record *> getAllDerivedDefinitions(StringRef ClassName) const;
+  LLVM_TABLEGEN_ABI ArrayRef<const Record *>
+  getAllDerivedDefinitions(StringRef ClassName) const;
 
   /// Get all the concrete records that inherit from all the specified
   /// classes. The classes must be defined.
-  std::vector<const Record *>
+  LLVM_TABLEGEN_ABI std::vector<const Record *>
   getAllDerivedDefinitions(ArrayRef<StringRef> ClassNames) const;
 
   /// Get all the concrete records that inherit from specified class, if the
   /// class is defined. Returns an empty vector if the class is not defined.
-  ArrayRef<const Record *>
+  LLVM_TABLEGEN_ABI ArrayRef<const Record *>
   getAllDerivedDefinitionsIfDefined(StringRef ClassName) const;
 
-  void dump() const;
+  LLVM_TABLEGEN_ABI void dump() const;
 
-  void dumpAllocationStats(raw_ostream &OS) const;
+  LLVM_TABLEGEN_ABI void dumpAllocationStats(raw_ostream &OS) const;
 
 private:
   RecordKeeper(RecordKeeper &&) = delete;
@@ -2137,7 +2174,8 @@ struct LessRecordRegister {
   }
 };
 
-raw_ostream &operator<<(raw_ostream &OS, const RecordKeeper &RK);
+LLVM_TABLEGEN_ABI raw_ostream &operator<<(raw_ostream &OS,
+                                          const RecordKeeper &RK);
 
 //===----------------------------------------------------------------------===//
 //  Resolvers
@@ -2195,7 +2233,7 @@ public:
     return It->second.V->isComplete();
   }
 
-  const Init *resolve(const Init *VarName) override;
+  LLVM_TABLEGEN_ABI const Init *resolve(const Init *VarName) override;
 };
 
 /// Resolve all variables from a record except for unset variables.
@@ -2209,7 +2247,7 @@ public:
 
   void setName(const Init *NewName) { Name = NewName; }
 
-  const Init *resolve(const Init *VarName) override;
+  LLVM_TABLEGEN_ABI const Init *resolve(const Init *VarName) override;
 
   bool keepUnsetBits() const override { return true; }
 };
@@ -2246,7 +2284,7 @@ public:
 
   bool foundUnresolved() const { return FoundUnresolved; }
 
-  const Init *resolve(const Init *VarName) override;
+  LLVM_TABLEGEN_ABI const Init *resolve(const Init *VarName) override;
 };
 
 /// Do not resolve anything, but keep track of whether a given variable was
@@ -2261,11 +2299,12 @@ public:
 
   bool found() const { return Found; }
 
-  const Init *resolve(const Init *VarName) override;
+  LLVM_TABLEGEN_ABI const Init *resolve(const Init *VarName) override;
 };
 
-void EmitDetailedRecords(const RecordKeeper &RK, raw_ostream &OS);
-void EmitJSON(const RecordKeeper &RK, raw_ostream &OS);
+LLVM_TABLEGEN_ABI void EmitDetailedRecords(const RecordKeeper &RK,
+                                           raw_ostream &OS);
+LLVM_TABLEGEN_ABI void EmitJSON(const RecordKeeper &RK, raw_ostream &OS);
 
 } // end namespace llvm
 

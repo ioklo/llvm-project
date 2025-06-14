@@ -2020,75 +2020,77 @@ private:
                      WordType *Remainder);
 
   /// out-of-line slow case for inline constructor
-  void initSlowCase(uint64_t val, bool isSigned);
+  LLVM_SUPPORT_ABI void initSlowCase(uint64_t val, bool isSigned);
 
   /// shared code between two array constructors
-  void initFromArray(ArrayRef<uint64_t> array);
+  LLVM_SUPPORT_ABI void initFromArray(ArrayRef<uint64_t> array);
 
   /// out-of-line slow case for inline copy constructor
-  void initSlowCase(const APInt &that);
+  LLVM_SUPPORT_ABI void initSlowCase(const APInt &that);
 
   /// out-of-line slow case for shl
-  void shlSlowCase(unsigned ShiftAmt);
+  LLVM_SUPPORT_ABI void shlSlowCase(unsigned ShiftAmt);
 
   /// out-of-line slow case for lshr.
-  void lshrSlowCase(unsigned ShiftAmt);
+  LLVM_SUPPORT_ABI void lshrSlowCase(unsigned ShiftAmt);
 
   /// out-of-line slow case for ashr.
-  void ashrSlowCase(unsigned ShiftAmt);
+  LLVM_SUPPORT_ABI void ashrSlowCase(unsigned ShiftAmt);
 
   /// out-of-line slow case for operator=
-  void assignSlowCase(const APInt &RHS);
+  LLVM_SUPPORT_ABI void assignSlowCase(const APInt &RHS);
 
   /// out-of-line slow case for operator==
-  bool equalSlowCase(const APInt &RHS) const LLVM_READONLY;
+  LLVM_SUPPORT_ABI bool equalSlowCase(const APInt &RHS) const LLVM_READONLY;
 
   /// out-of-line slow case for countLeadingZeros
-  unsigned countLeadingZerosSlowCase() const LLVM_READONLY;
+  LLVM_SUPPORT_ABI unsigned countLeadingZerosSlowCase() const LLVM_READONLY;
 
   /// out-of-line slow case for countLeadingOnes.
-  unsigned countLeadingOnesSlowCase() const LLVM_READONLY;
+  LLVM_SUPPORT_ABI unsigned countLeadingOnesSlowCase() const LLVM_READONLY;
 
   /// out-of-line slow case for countTrailingZeros.
-  unsigned countTrailingZerosSlowCase() const LLVM_READONLY;
+  LLVM_SUPPORT_ABI unsigned countTrailingZerosSlowCase() const LLVM_READONLY;
 
   /// out-of-line slow case for countTrailingOnes
-  unsigned countTrailingOnesSlowCase() const LLVM_READONLY;
+  LLVM_SUPPORT_ABI unsigned countTrailingOnesSlowCase() const LLVM_READONLY;
 
   /// out-of-line slow case for countPopulation
-  unsigned countPopulationSlowCase() const LLVM_READONLY;
+  LLVM_SUPPORT_ABI unsigned countPopulationSlowCase() const LLVM_READONLY;
 
   /// out-of-line slow case for intersects.
-  bool intersectsSlowCase(const APInt &RHS) const LLVM_READONLY;
+  LLVM_SUPPORT_ABI bool
+  intersectsSlowCase(const APInt &RHS) const LLVM_READONLY;
 
   /// out-of-line slow case for isSubsetOf.
-  bool isSubsetOfSlowCase(const APInt &RHS) const LLVM_READONLY;
+  LLVM_SUPPORT_ABI bool
+  isSubsetOfSlowCase(const APInt &RHS) const LLVM_READONLY;
 
   /// out-of-line slow case for setBits.
-  void setBitsSlowCase(unsigned loBit, unsigned hiBit);
+  LLVM_SUPPORT_ABI void setBitsSlowCase(unsigned loBit, unsigned hiBit);
 
   /// out-of-line slow case for flipAllBits.
-  void flipAllBitsSlowCase();
+  LLVM_SUPPORT_ABI void flipAllBitsSlowCase();
 
   /// out-of-line slow case for concat.
-  APInt concatSlowCase(const APInt &NewLSB) const;
+  LLVM_SUPPORT_ABI APInt concatSlowCase(const APInt &NewLSB) const;
 
   /// out-of-line slow case for operator&=.
-  void andAssignSlowCase(const APInt &RHS);
+  LLVM_SUPPORT_ABI void andAssignSlowCase(const APInt &RHS);
 
   /// out-of-line slow case for operator|=.
-  void orAssignSlowCase(const APInt &RHS);
+  LLVM_SUPPORT_ABI void orAssignSlowCase(const APInt &RHS);
 
   /// out-of-line slow case for operator^=.
-  void xorAssignSlowCase(const APInt &RHS);
+  LLVM_SUPPORT_ABI void xorAssignSlowCase(const APInt &RHS);
 
   /// Unsigned comparison. Returns -1, 0, or 1 if this APInt is less than, equal
   /// to, or greater than RHS.
-  int compare(const APInt &RHS) const LLVM_READONLY;
+  LLVM_SUPPORT_ABI int compare(const APInt &RHS) const LLVM_READONLY;
 
   /// Signed comparison. Returns -1, 0, or 1 if this APInt is less than, equal
   /// to, or greater than RHS.
-  int compareSigned(const APInt &RHS) const LLVM_READONLY;
+  LLVM_SUPPORT_ABI int compareSigned(const APInt &RHS) const LLVM_READONLY;
 
   /// @}
 };

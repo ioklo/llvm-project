@@ -1,4 +1,4 @@
-//===-- llvm-dis.cpp - The low-level LLVM disassembler --------------------===//
+﻿//===-- llvm-dis.cpp - The low-level LLVM disassembler --------------------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -32,7 +32,9 @@
 //===----------------------------------------------------------------------===//
 
 #include "llvm/Bitcode/BitcodeReader.h"
+#include "llvm/Bitcode/BitReaderConfig.h"
 #include "llvm/IR/AssemblyAnnotationWriter.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/DebugInfo.h"
 #include "llvm/IR/DiagnosticInfo.h"
 #include "llvm/IR/DiagnosticPrinter.h"
@@ -96,9 +98,9 @@ static cl::opt<bool> PrintThinLTOIndexOnly(
     cl::desc("Only read thinlto index and print the index as LLVM assembly."),
     cl::init(false), cl::Hidden, cl::cat(DisCategory));
 
-extern cl::opt<bool> WriteNewDbgInfoFormat;
+LLVM_CORE_ABI extern cl::opt<bool> WriteNewDbgInfoFormat;
 
-extern cl::opt<cl::boolOrDefault> LoadBitcodeIntoNewDbgInfoFormat;
+LLVM_BITREADER_ABI extern cl::opt<cl::boolOrDefault> LoadBitcodeIntoNewDbgInfoFormat;
 
 namespace {
 

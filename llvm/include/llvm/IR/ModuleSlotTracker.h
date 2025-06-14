@@ -9,6 +9,7 @@
 #ifndef LLVM_IR_MODULESLOTTRACKER_H
 #define LLVM_IR_MODULESLOTTRACKER_H
 
+#include "llvm/IR/CoreConfig.h"
 #include <functional>
 #include <memory>
 #include <utility>
@@ -58,8 +59,8 @@ class ModuleSlotTracker {
 
 public:
   /// Wrap a preinitialized SlotTracker.
-  ModuleSlotTracker(SlotTracker &Machine, const Module *M,
-                    const Function *F = nullptr);
+  LLVM_CORE_ABI ModuleSlotTracker(SlotTracker &Machine, const Module *M,
+                                  const Function *F = nullptr);
 
   /// Construct a slot tracker from a module.
   ///
@@ -68,14 +69,14 @@ public:
   /// ShouldInitializeAllMetadata defaults to true because this is expected to
   /// be shared between multiple callers, and otherwise MDNode references will
   /// not match up.
-  explicit ModuleSlotTracker(const Module *M,
-                             bool ShouldInitializeAllMetadata = true);
+  LLVM_CORE_ABI explicit ModuleSlotTracker(
+      const Module *M, bool ShouldInitializeAllMetadata = true);
 
   /// Destructor to clean up storage.
-  virtual ~ModuleSlotTracker();
+  LLVM_CORE_ABI virtual ~ModuleSlotTracker();
 
   /// Lazily creates a slot tracker.
-  SlotTracker *getMachine();
+  LLVM_CORE_ABI SlotTracker *getMachine();
 
   const Module *getModule() const { return M; }
   const Function *getCurrentFunction() const { return F; }
@@ -84,24 +85,26 @@ public:
   ///
   /// Purge the currently incorporated function and incorporate \c F.  If \c F
   /// is currently incorporated, this is a no-op.
-  void incorporateFunction(const Function &F);
+  LLVM_CORE_ABI void incorporateFunction(const Function &F);
 
   /// Return the slot number of the specified local value.
   ///
   /// A function that defines this value should be incorporated prior to calling
   /// this method.
   /// Return -1 if the value is not in the function's SlotTracker.
-  int getLocalSlot(const Value *V);
+  LLVM_CORE_ABI int getLocalSlot(const Value *V);
 
-  void setProcessHook(
+  LLVM_CORE_ABI void setProcessHook(
       std::function<void(AbstractSlotTrackerStorage *, const Module *, bool)>);
-  void setProcessHook(std::function<void(AbstractSlotTrackerStorage *,
-                                         const Function *, bool)>);
+  LLVM_CORE_ABI void
+      setProcessHook(std::function<void(AbstractSlotTrackerStorage *,
+                                        const Function *, bool)>);
 
   using MachineMDNodeListType =
       std::vector<std::pair<unsigned, const MDNode *>>;
 
-  void collectMDNodes(MachineMDNodeListType &L, unsigned LB, unsigned UB) const;
+  LLVM_CORE_ABI void collectMDNodes(MachineMDNodeListType &L, unsigned LB,
+                                    unsigned UB) const;
 };
 
 } // end namespace llvm

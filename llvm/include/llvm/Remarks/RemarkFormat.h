@@ -1,4 +1,4 @@
-//===-- llvm/Remarks/RemarkFormat.h - The format of remarks -----*- C++/-*-===//
+﻿//===-- llvm/Remarks/RemarkFormat.h - The format of remarks -----*- C++/-*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -14,6 +14,7 @@
 #define LLVM_REMARKS_REMARKFORMAT_H
 
 #include "llvm/ADT/StringRef.h"
+#include "llvm/Remarks/RemarksConfig.h"
 #include "llvm/Support/Error.h"
 
 namespace llvm {
@@ -25,10 +26,10 @@ constexpr StringLiteral Magic("REMARKS");
 enum class Format { Unknown, YAML, YAMLStrTab, Bitstream };
 
 /// Parse and validate a string for the remark format.
-Expected<Format> parseFormat(StringRef FormatStr);
+LLVM_REMARKS_ABI Expected<Format> parseFormat(StringRef FormatStr);
 
 /// Parse and validate a magic number to a remark format.
-Expected<Format> magicToFormat(StringRef Magic);
+LLVM_REMARKS_ABI Expected<Format> magicToFormat(StringRef Magic);
 
 } // end namespace remarks
 } // end namespace llvm

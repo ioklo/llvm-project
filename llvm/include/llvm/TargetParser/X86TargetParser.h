@@ -1,4 +1,4 @@
-//===-- X86TargetParser - Parser for X86 features ---------------*- C++ -*-===//
+﻿//===-- X86TargetParser - Parser for X86 features ---------------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -15,6 +15,7 @@
 
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/ADT/StringMap.h"
+#include "llvm/TargetParser/TargetParserConfig.h"
 #include <array>
 
 namespace llvm {
@@ -153,34 +154,39 @@ enum CPUKind {
 
 /// Parse \p CPU string into a CPUKind. Will only accept 64-bit capable CPUs if
 /// \p Only64Bit is true.
-CPUKind parseArchX86(StringRef CPU, bool Only64Bit = false);
-CPUKind parseTuneCPU(StringRef CPU, bool Only64Bit = false);
+LLVM_TARGETPARSER_ABI CPUKind parseArchX86(StringRef CPU, bool Only64Bit = false);
+LLVM_TARGETPARSER_ABI CPUKind parseTuneCPU(StringRef CPU, bool Only64Bit = false);
 
 /// Provide a list of valid CPU names. If \p Only64Bit is true, the list will
 /// only contain 64-bit capable CPUs.
-void fillValidCPUArchList(SmallVectorImpl<StringRef> &Values,
-                          bool Only64Bit = false);
+LLVM_TARGETPARSER_ABI void
+fillValidCPUArchList(SmallVectorImpl<StringRef> &Values,
+                     bool Only64Bit = false);
 /// Provide a list of valid -mtune names.
-void fillValidTuneCPUList(SmallVectorImpl<StringRef> &Values,
-                          bool Only64Bit = false);
+LLVM_TARGETPARSER_ABI void
+fillValidTuneCPUList(SmallVectorImpl<StringRef> &Values,
+                     bool Only64Bit = false);
 
 /// Get the key feature prioritizing target multiversioning.
-ProcessorFeatures getKeyFeature(CPUKind Kind);
+LLVM_TARGETPARSER_ABI ProcessorFeatures getKeyFeature(CPUKind Kind);
 
 /// Fill in the features that \p CPU supports into \p Features.
 /// "+" will be append in front of each feature if NeedPlus is true.
-void getFeaturesForCPU(StringRef CPU, SmallVectorImpl<StringRef> &Features,
-                       bool NeedPlus = false);
+LLVM_TARGETPARSER_ABI void
+getFeaturesForCPU(StringRef CPU, SmallVectorImpl<StringRef> &Features,
+                  bool NeedPlus = false);
 
 /// Set or clear entries in \p Features that are implied to be enabled/disabled
 /// by the provided \p Feature.
-void updateImpliedFeatures(StringRef Feature, bool Enabled,
-                           StringMap<bool> &Features);
+LLVM_TARGETPARSER_ABI void updateImpliedFeatures(StringRef Feature,
+                                                 bool Enabled,
+                                                 StringMap<bool> &Features);
 
-char getCPUDispatchMangling(StringRef Name);
-bool validateCPUSpecificCPUDispatch(StringRef Name);
-std::array<uint32_t, 4> getCpuSupportsMask(ArrayRef<StringRef> FeatureStrs);
-unsigned getFeaturePriority(ProcessorFeatures Feat);
+LLVM_TARGETPARSER_ABI char getCPUDispatchMangling(StringRef Name);
+LLVM_TARGETPARSER_ABI bool validateCPUSpecificCPUDispatch(StringRef Name);
+LLVM_TARGETPARSER_ABI std::array<uint32_t, 4>
+getCpuSupportsMask(ArrayRef<StringRef> FeatureStrs);
+LLVM_TARGETPARSER_ABI unsigned getFeaturePriority(ProcessorFeatures Feat);
 
 } // namespace X86
 } // namespace llvm

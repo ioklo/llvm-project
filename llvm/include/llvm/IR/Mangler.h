@@ -15,6 +15,7 @@
 
 #include "llvm/ADT/DenseMap.h"
 #include "llvm/ADT/StringRef.h"
+#include "llvm/IR/CoreConfig.h"
 
 namespace llvm {
 
@@ -34,32 +35,32 @@ public:
   /// Print the appropriate prefix and the specified global variable's name.
   /// If the global variable doesn't have a name, this fills in a unique name
   /// for the global.
-  void getNameWithPrefix(raw_ostream &OS, const GlobalValue *GV,
+  LLVM_CORE_ABI void getNameWithPrefix(raw_ostream &OS, const GlobalValue *GV,
                          bool CannotUsePrivateLabel) const;
-  void getNameWithPrefix(SmallVectorImpl<char> &OutName, const GlobalValue *GV,
+  LLVM_CORE_ABI void getNameWithPrefix(SmallVectorImpl<char> &OutName, const GlobalValue *GV,
                          bool CannotUsePrivateLabel) const;
 
   /// Print the appropriate prefix and the specified name as the global variable
   /// name. GVName must not be empty.
-  static void getNameWithPrefix(raw_ostream &OS, const Twine &GVName,
+  LLVM_CORE_ABI static void getNameWithPrefix(raw_ostream &OS, const Twine &GVName,
                                 const DataLayout &DL);
-  static void getNameWithPrefix(SmallVectorImpl<char> &OutName,
+  LLVM_CORE_ABI static void getNameWithPrefix(SmallVectorImpl<char> &OutName,
                                 const Twine &GVName, const DataLayout &DL);
 };
 
-void emitLinkerFlagsForGlobalCOFF(raw_ostream &OS, const GlobalValue *GV,
+LLVM_CORE_ABI void emitLinkerFlagsForGlobalCOFF(raw_ostream &OS, const GlobalValue *GV,
                                   const Triple &TT, Mangler &Mangler);
 
-void emitLinkerFlagsForUsedCOFF(raw_ostream &OS, const GlobalValue *GV,
+LLVM_CORE_ABI void emitLinkerFlagsForUsedCOFF(raw_ostream &OS, const GlobalValue *GV,
                                 const Triple &T, Mangler &M);
 
 /// Returns the ARM64EC mangled function name unless the input is already
 /// mangled.
-std::optional<std::string> getArm64ECMangledFunctionName(StringRef Name);
+LLVM_CORE_ABI std::optional<std::string> getArm64ECMangledFunctionName(StringRef Name);
 
 /// Returns the ARM64EC demangled function name, unless the input is not
 /// mangled.
-std::optional<std::string> getArm64ECDemangledFunctionName(StringRef Name);
+LLVM_CORE_ABI std::optional<std::string> getArm64ECDemangledFunctionName(StringRef Name);
 
 /// Check if an ARM64EC function name is mangled.
 bool inline isArm64ECMangledFunctionName(StringRef Name) {

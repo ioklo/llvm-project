@@ -1,4 +1,4 @@
-//===- llvm-reduce.cpp - The LLVM Delta Reduction utility -----------------===//
+﻿//===- llvm-reduce.cpp - The LLVM Delta Reduction utility -----------------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -100,7 +100,7 @@ static cl::opt<int>
                                "of delta passes (default=5)"),
                       cl::init(5), cl::cat(LLVMReduceOptions));
 
-extern cl::opt<cl::boolOrDefault> PreserveInputDbgFormat;
+LLVM_CORE_ABI extern cl::opt<cl::boolOrDefault> PreserveInputDbgFormat;
 
 static codegen::RegisterCodeGenFlags CGF;
 

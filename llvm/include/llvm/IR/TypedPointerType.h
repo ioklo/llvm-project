@@ -14,6 +14,7 @@
 #ifndef LLVM_IR_TYPEDPOINTERTYPE_H
 #define LLVM_IR_TYPEDPOINTERTYPE_H
 
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/Type.h"
 
 namespace llvm {
@@ -23,7 +24,7 @@ namespace llvm {
 /// It is not legal to use this type, or derived types containing this type, in
 /// LLVM IR.
 class TypedPointerType : public Type {
-  explicit TypedPointerType(Type *ElType, unsigned AddrSpace);
+  LLVM_CORE_ABI explicit TypedPointerType(Type *ElType, unsigned AddrSpace);
 
   Type *PointeeTy;
 
@@ -33,10 +34,11 @@ public:
 
   /// This constructs a pointer to an object of the specified type in a numbered
   /// address space.
-  static TypedPointerType *get(Type *ElementType, unsigned AddressSpace);
+  LLVM_CORE_ABI static TypedPointerType *get(Type *ElementType,
+                                             unsigned AddressSpace);
 
   /// Return true if the specified type is valid as a element type.
-  static bool isValidElementType(Type *ElemTy);
+  LLVM_CORE_ABI static bool isValidElementType(Type *ElemTy);
 
   /// Return the address space of the Pointer type.
   unsigned getAddressSpace() const { return getSubclassData(); }

@@ -1,4 +1,4 @@
-//===-- AssemblyAnnotationWriter.h - Annotation .ll files -------*- C++ -*-===//
+﻿//===-- AssemblyAnnotationWriter.h - Annotation .ll files -------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -16,6 +16,8 @@
 #ifndef LLVM_IR_ASSEMBLYANNOTATIONWRITER_H
 #define LLVM_IR_ASSEMBLYANNOTATIONWRITER_H
 
+#include "llvm/IR/CoreConfig.h"
+
 namespace llvm {
 
 class Function;
@@ -26,7 +28,7 @@ class formatted_raw_ostream;
 
 class AssemblyAnnotationWriter {
 public:
-  virtual ~AssemblyAnnotationWriter();
+  LLVM_CORE_ABI virtual ~AssemblyAnnotationWriter();
 
   /// emitFunctionAnnot - This may be implemented to emit a string right before
   /// the start of a function.

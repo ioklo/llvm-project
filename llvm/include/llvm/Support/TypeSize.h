@@ -1,4 +1,4 @@
-//===- TypeSize.h - Wrapper around type sizes -------------------*- C++ -*-===//
+﻿//===- TypeSize.h - Wrapper around type sizes -------------------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -375,7 +375,7 @@ public:
   //     else
   //       bail out early for scalable vectors and use getFixedValue()
   //   }
-  operator ScalarTy() const;
+  LLVM_SUPPORT_ABI operator ScalarTy() const;
 
   // Additional operators needed to avoid ambiguous parses
   // because of the implicit conversion hack.

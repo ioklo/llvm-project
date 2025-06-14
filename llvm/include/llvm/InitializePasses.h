@@ -14,12 +14,14 @@
 #ifndef LLVM_INITIALIZEPASSES_H
 #define LLVM_INITIALIZEPASSES_H
 
+#include "llvm/IR/CoreConfig.h"
+
 namespace llvm {
 
 class PassRegistry;
 
 /// Initialize all passes linked into the Core library.
-void initializeCore(PassRegistry &);
+LLVM_CORE_ABI void initializeCore(PassRegistry &);
 
 /// Initialize all passes linked into the TransformUtils library.
 void initializeTransformUtils(PassRegistry &);

@@ -1,4 +1,4 @@
-//===-- MsgPackDocument.h - MsgPack Document --------------------*- C++ -*-===//
+﻿//===-- MsgPackDocument.h - MsgPack Document --------------------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -17,6 +17,7 @@
 #ifndef LLVM_BINARYFORMAT_MSGPACKDOCUMENT_H
 #define LLVM_BINARYFORMAT_MSGPACKDOCUMENT_H
 
+#include "llvm/BinaryFormat/BinaryFormatConfig.h"
 #include "llvm/BinaryFormat/MsgPackReader.h"
 #include <map>
 
@@ -192,26 +193,26 @@ public:
   }
 
   /// Convert this node to a string, assuming it is scalar.
-  std::string toString() const;
+  LLVM_BINARYFORMAT_ABI std::string toString() const;
 
   /// Convert the StringRef and use it to set this DocNode (assuming scalar). If
   /// it is a string, copy the string into the Document's strings list so we do
   /// not rely on S having a lifetime beyond this call. Tag is "" or a YAML tag.
-  StringRef fromString(StringRef S, StringRef Tag = "");
+  LLVM_BINARYFORMAT_ABI StringRef fromString(StringRef S, StringRef Tag = "");
 
   /// Convenience assignment operators. This only works if the destination
   /// DocNode has an associated Document, i.e. it was not constructed using the
   /// default constructor. The string one does not copy, so the string must
   /// remain valid for the lifetime of the Document. Use fromString to avoid
   /// that restriction.
-  DocNode &operator=(const char *Val) { return *this = StringRef(Val); }
-  DocNode &operator=(StringRef Val);
-  DocNode &operator=(MemoryBufferRef Val);
-  DocNode &operator=(bool Val);
-  DocNode &operator=(int Val);
-  DocNode &operator=(unsigned Val);
-  DocNode &operator=(int64_t Val);
-  DocNode &operator=(uint64_t Val);
+  LLVM_BINARYFORMAT_ABI DocNode &operator=(const char *Val) { return *this = StringRef(Val); }
+  LLVM_BINARYFORMAT_ABI DocNode &operator=(StringRef Val);
+  LLVM_BINARYFORMAT_ABI DocNode &operator=(MemoryBufferRef Val);
+  LLVM_BINARYFORMAT_ABI DocNode &operator=(bool Val);
+  LLVM_BINARYFORMAT_ABI DocNode &operator=(int Val);
+  LLVM_BINARYFORMAT_ABI DocNode &operator=(unsigned Val);
+  LLVM_BINARYFORMAT_ABI DocNode &operator=(int64_t Val);
+  LLVM_BINARYFORMAT_ABI DocNode &operator=(uint64_t Val);
 
 private:
   // Private constructor setting KindAndDoc, used by methods in Document.
@@ -233,7 +234,7 @@ public:
   MapTy::iterator begin() { return Map->begin(); }
   MapTy::iterator end() { return Map->end(); }
   MapTy::iterator find(DocNode Key) { return Map->find(Key); }
-  MapTy::iterator find(StringRef Key);
+  LLVM_BINARYFORMAT_ABI MapTy::iterator find(StringRef Key);
   MapTy::iterator erase(MapTy::const_iterator I) { return Map->erase(I); }
   size_t erase(DocNode Key) { return Map->erase(Key); }
   MapTy::iterator erase(MapTy::const_iterator First,
@@ -242,13 +243,13 @@ public:
   }
   /// Member access. The string data must remain valid for the lifetime of the
   /// Document.
-  DocNode &operator[](StringRef S);
+  LLVM_BINARYFORMAT_ABI DocNode &operator[](StringRef S);
   /// Member access, with convenience versions for an integer key.
-  DocNode &operator[](DocNode Key);
-  DocNode &operator[](int Key);
-  DocNode &operator[](unsigned Key);
-  DocNode &operator[](int64_t Key);
-  DocNode &operator[](uint64_t Key);
+  LLVM_BINARYFORMAT_ABI DocNode &operator[](DocNode Key);
+  LLVM_BINARYFORMAT_ABI DocNode &operator[](int Key);
+  LLVM_BINARYFORMAT_ABI DocNode &operator[](unsigned Key);
+  LLVM_BINARYFORMAT_ABI DocNode &operator[](int64_t Key);
+  LLVM_BINARYFORMAT_ABI DocNode &operator[](uint64_t Key);
 };
 
 /// A DocNode that is an array.

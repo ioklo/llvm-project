@@ -15,6 +15,7 @@
 #ifndef LLVM_IR_DIAGNOSTICPRINTER_H
 #define LLVM_IR_DIAGNOSTICPRINTER_H
 
+#include "llvm/IR/CoreConfig.h"
 #include <string>
 
 namespace llvm {
@@ -66,28 +67,29 @@ public:
   DiagnosticPrinterRawOStream(raw_ostream &Stream) : Stream(Stream) {}
 
   // Simple types.
-  DiagnosticPrinter &operator<<(char C) override;
-  DiagnosticPrinter &operator<<(unsigned char C) override;
-  DiagnosticPrinter &operator<<(signed char C) override;
-  DiagnosticPrinter &operator<<(StringRef Str) override;
-  DiagnosticPrinter &operator<<(const char *Str) override;
-  DiagnosticPrinter &operator<<(const std::string &Str) override;
-  DiagnosticPrinter &operator<<(unsigned long N) override;
-  DiagnosticPrinter &operator<<(long N) override;
-  DiagnosticPrinter &operator<<(unsigned long long N) override;
-  DiagnosticPrinter &operator<<(long long N) override;
-  DiagnosticPrinter &operator<<(const void *P) override;
-  DiagnosticPrinter &operator<<(unsigned int N) override;
-  DiagnosticPrinter &operator<<(int N) override;
-  DiagnosticPrinter &operator<<(double N) override;
-  DiagnosticPrinter &operator<<(const Twine &Str) override;
+  LLVM_CORE_ABI DiagnosticPrinter &operator<<(char C) override;
+  LLVM_CORE_ABI DiagnosticPrinter &operator<<(unsigned char C) override;
+  LLVM_CORE_ABI DiagnosticPrinter &operator<<(signed char C) override;
+  LLVM_CORE_ABI DiagnosticPrinter &operator<<(StringRef Str) override;
+  LLVM_CORE_ABI DiagnosticPrinter &operator<<(const char *Str) override;
+  LLVM_CORE_ABI DiagnosticPrinter &operator<<(const std::string &Str) override;
+  LLVM_CORE_ABI DiagnosticPrinter &operator<<(unsigned long N) override;
+  LLVM_CORE_ABI DiagnosticPrinter &operator<<(long N) override;
+  LLVM_CORE_ABI DiagnosticPrinter &operator<<(unsigned long long N) override;
+  LLVM_CORE_ABI DiagnosticPrinter &operator<<(long long N) override;
+  LLVM_CORE_ABI DiagnosticPrinter &operator<<(const void *P) override;
+  LLVM_CORE_ABI DiagnosticPrinter &operator<<(unsigned int N) override;
+  LLVM_CORE_ABI DiagnosticPrinter &operator<<(int N) override;
+  LLVM_CORE_ABI DiagnosticPrinter &operator<<(double N) override;
+  LLVM_CORE_ABI DiagnosticPrinter &operator<<(const Twine &Str) override;
 
   // IR related types.
-  DiagnosticPrinter &operator<<(const Value &V) override;
-  DiagnosticPrinter &operator<<(const Module &M) override;
+  LLVM_CORE_ABI DiagnosticPrinter &operator<<(const Value &V) override;
+  LLVM_CORE_ABI DiagnosticPrinter &operator<<(const Module &M) override;
 
   // Other types.
-  DiagnosticPrinter &operator<<(const SMDiagnostic &Diag) override;
+  LLVM_CORE_ABI DiagnosticPrinter &
+  operator<<(const SMDiagnostic &Diag) override;
 };
 
 } // end namespace llvm

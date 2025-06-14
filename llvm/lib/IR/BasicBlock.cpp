@@ -1,4 +1,4 @@
-//===-- BasicBlock.cpp - Implement BasicBlock related methods -------------===//
+﻿//===-- BasicBlock.cpp - Implement BasicBlock related methods -------------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -30,13 +30,13 @@ using namespace llvm;
 #define DEBUG_TYPE "ir"
 STATISTIC(NumInstrRenumberings, "Number of renumberings across all blocks");
 
-cl::opt<bool> UseNewDbgInfoFormat(
+LLVM_CORE_ABI cl::opt<bool> UseNewDbgInfoFormat(
     "experimental-debuginfo-iterators",
     cl::desc("Enable communicating debuginfo positions through iterators, "
              "eliminating intrinsics. Has no effect if "
              "--preserve-input-debuginfo-format=true."),
     cl::init(true));
-cl::opt<cl::boolOrDefault> PreserveInputDbgFormat(
+LLVM_CORE_ABI cl::opt<cl::boolOrDefault> PreserveInputDbgFormat(
     "preserve-input-debuginfo-format", cl::Hidden,
     cl::desc("When set to true, IR files will be processed and printed in "
              "their current debug info format, regardless of default behaviour "
@@ -44,8 +44,9 @@ cl::opt<cl::boolOrDefault> PreserveInputDbgFormat(
              "contain debug records or intrinsics. Ignored in llvm-link, "
              "llvm-lto, and llvm-lto2."));
 
-bool WriteNewDbgInfoFormatToBitcode /*set default value in cl::init() below*/;
-cl::opt<bool, true> WriteNewDbgInfoFormatToBitcode2(
+LLVM_CORE_ABI bool
+    WriteNewDbgInfoFormatToBitcode /*set default value in cl::init() below*/;
+LLVM_CORE_ABI cl::opt<bool, true> WriteNewDbgInfoFormatToBitcode2(
     "write-experimental-debuginfo-iterators-to-bitcode", cl::Hidden,
     cl::location(WriteNewDbgInfoFormatToBitcode), cl::init(true));
 

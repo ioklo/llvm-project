@@ -18,6 +18,7 @@
 #include "llvm/ADT/Bitfields.h"
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/ADT/StringRef.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/Value.h"
 #include "llvm/Support/ErrorHandling.h"
 #include <cassert>
@@ -33,10 +34,7 @@ template <class ConstantClass> class ConstantUniqueMap;
 
 class InlineAsm final : public Value {
 public:
-  enum AsmDialect {
-    AD_ATT,
-    AD_Intel
-  };
+  enum AsmDialect { AD_ATT, AD_Intel };
 
 private:
   friend struct InlineAsmKeyType;
@@ -49,13 +47,14 @@ private:
   AsmDialect Dialect;
   bool CanThrow;
 
-  InlineAsm(FunctionType *Ty, const std::string &AsmString,
-            const std::string &Constraints, bool hasSideEffects,
-            bool isAlignStack, AsmDialect asmDialect, bool canThrow);
+  LLVM_CORE_ABI InlineAsm(FunctionType *Ty, const std::string &AsmString,
+                          const std::string &Constraints, bool hasSideEffects,
+                          bool isAlignStack, AsmDialect asmDialect,
+                          bool canThrow);
 
   /// When the ConstantUniqueMap merges two types and makes two InlineAsms
   /// identical, it destroys one of them with this method.
-  void destroyConstant();
+  LLVM_CORE_ABI void destroyConstant();
 
 public:
   InlineAsm(const InlineAsm &) = delete;
@@ -63,10 +62,10 @@ public:
 
   /// InlineAsm::get - Return the specified uniqued inline asm string.
   ///
-  static InlineAsm *get(FunctionType *Ty, StringRef AsmString,
-                        StringRef Constraints, bool hasSideEffects,
-                        bool isAlignStack = false,
-                        AsmDialect asmDialect = AD_ATT, bool canThrow = false);
+  LLVM_CORE_ABI static InlineAsm *
+  get(FunctionType *Ty, StringRef AsmString, StringRef Constraints,
+      bool hasSideEffects, bool isAlignStack = false,
+      AsmDialect asmDialect = AD_ATT, bool canThrow = false);
 
   bool hasSideEffects() const { return HasSideEffects; }
   bool isAlignStack() const { return IsAlignStack; }
@@ -76,12 +75,12 @@ public:
   /// getType - InlineAsm's are always pointers.
   ///
   PointerType *getType() const {
-    return reinterpret_cast<PointerType*>(Value::getType());
+    return reinterpret_cast<PointerType *>(Value::getType());
   }
 
   /// getFunctionType - InlineAsm's are always pointers to functions.
   ///
-  FunctionType *getFunctionType() const;
+  LLVM_CORE_ABI FunctionType *getFunctionType() const;
 
   const std::string &getAsmString() const { return AsmString; }
   const std::string &getConstraintString() const { return Constraints; }
@@ -89,14 +88,14 @@ public:
 
   /// This static method can be used by the parser to check to see if the
   /// specified constraint string is legal for the type.
-  static Error verify(FunctionType *Ty, StringRef Constraints);
+  LLVM_CORE_ABI static Error verify(FunctionType *Ty, StringRef Constraints);
 
   // Constraint String Parsing
   enum ConstraintPrefix {
-    isInput,            // 'x'
-    isOutput,           // '=x'
-    isClobber,          // '~x'
-    isLabel,            // '!x'
+    isInput,   // 'x'
+    isOutput,  // '=x'
+    isClobber, // '~x'
+    isLabel,   // '!x'
   };
 
   using ConstraintCodeVector = std::vector<std::string>;
@@ -169,11 +168,12 @@ public:
     /// Parse - Analyze the specified string (e.g. "=*&{eax}") and fill in the
     /// fields in this structure.  If the constraint string is not understood,
     /// return true, otherwise return false.
-    bool Parse(StringRef Str, ConstraintInfoVector &ConstraintsSoFar);
+    LLVM_CORE_ABI bool Parse(StringRef Str,
+                             ConstraintInfoVector &ConstraintsSoFar);
 
     /// selectAlternative - Point this constraint to the alternative constraint
     /// indicated by the index.
-    void selectAlternative(unsigned index);
+    LLVM_CORE_ABI void selectAlternative(unsigned index);
 
     /// Whether this constraint corresponds to an argument.
     bool hasArg() const {
@@ -184,7 +184,8 @@ public:
   /// ParseConstraints - Split up the constraint string into the specific
   /// constraints and their prefixes.  If this returns an empty vector, and if
   /// the constraint string itself isn't empty, there was an error parsing.
-  static ConstraintInfoVector ParseConstraints(StringRef ConstraintString);
+  LLVM_CORE_ABI static ConstraintInfoVector
+  ParseConstraints(StringRef ConstraintString);
 
   /// ParseConstraints - Parse the constraints of this inlineasm object,
   /// returning them the same way that ParseConstraints(str) does.
@@ -305,13 +306,15 @@ public:
     using KindField = Bitfield::Element<Kind, 0, 3, Kind::Func>;
     using NumOperands = Bitfield::Element<unsigned, 3, 13>;
     using MatchedOperandNo = Bitfield::Element<unsigned, 16, 15>;
-    using MemConstraintCode = Bitfield::Element<ConstraintCode, 16, 15, ConstraintCode::Max>;
+    using MemConstraintCode =
+        Bitfield::Element<ConstraintCode, 16, 15, ConstraintCode::Max>;
     using RegClass = Bitfield::Element<unsigned, 16, 14>;
     using RegMayBeFolded = Bitfield::Element<bool, 30, 1>;
     using IsMatched = Bitfield::Element<bool, 31, 1>;
 
-
-    unsigned getMatchedOperandNo() const { return Bitfield::get<MatchedOperandNo>(Storage); }
+    unsigned getMatchedOperandNo() const {
+      return Bitfield::get<MatchedOperandNo>(Storage);
+    }
     unsigned getRegClass() const { return Bitfield::get<RegClass>(Storage); }
     bool isMatched() const { return Bitfield::get<IsMatched>(Storage); }
 
@@ -408,7 +411,8 @@ public:
     /// setMemConstraint - Augment an existing flag with the constraint code for
     /// a memory constraint.
     void setMemConstraint(ConstraintCode C) {
-      assert(getMemoryConstraintID() == ConstraintCode::Unknown && "Mem constraint already set");
+      assert(getMemoryConstraintID() == ConstraintCode::Unknown &&
+             "Mem constraint already set");
       Bitfield::set<MemConstraintCode>(Storage, C);
     }
     /// clearMemConstraint - Similar to setMemConstraint(0), but without the

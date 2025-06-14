@@ -1,4 +1,4 @@
-//===- llvm/TargetParser/Host.h - Host machine detection  -------*- C++ -*-===//
+﻿//===- llvm/TargetParser/Host.h - Host machine detection  -------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -13,6 +13,7 @@
 #ifndef LLVM_TARGETPARSER_HOST_H
 #define LLVM_TARGETPARSER_HOST_H
 
+#include "llvm/TargetParser/TargetParserConfig.h"
 #include <string>
 
 namespace llvm {
@@ -30,18 +31,18 @@ namespace sys {
   ///   CPU_TYPE-VENDOR-OPERATING_SYSTEM
   /// or
   ///   CPU_TYPE-VENDOR-KERNEL-OPERATING_SYSTEM
-  std::string getDefaultTargetTriple();
+  LLVM_TARGETPARSER_ABI std::string getDefaultTargetTriple();
 
   /// getProcessTriple() - Return an appropriate target triple for generating
   /// code to be loaded into the current process, e.g. when using the JIT.
-  std::string getProcessTriple();
+  LLVM_TARGETPARSER_ABI std::string getProcessTriple();
 
   /// getHostCPUName - Get the LLVM name for the host CPU. The particular format
   /// of the name is target dependent, and suitable for passing as -mcpu to the
   /// target which matches the host.
   ///
   /// \return - The host CPU name, or empty if the CPU could not be determined.
-  StringRef getHostCPUName();
+  LLVM_TARGETPARSER_ABI StringRef getHostCPUName();
 
   /// getHostCPUFeatures - Get the LLVM names for the host CPU features.
   /// The particular format of the names are target dependent, and suitable for
@@ -52,20 +53,26 @@ namespace sys {
   /// which features may appear in this map, except that they are all valid LLVM
   /// feature names. The map can be empty, for example if feature detection
   /// fails.
-  const StringMap<bool, MallocAllocator> getHostCPUFeatures();
+  LLVM_TARGETPARSER_ABI const StringMap<bool, MallocAllocator>
+  getHostCPUFeatures();
 
   /// This is a function compatible with cl::AddExtraVersionPrinter, which adds
   /// info about the current target triple and detected CPU.
-  void printDefaultTargetAndDetectedCPU(raw_ostream &OS);
+  LLVM_TARGETPARSER_ABI void printDefaultTargetAndDetectedCPU(raw_ostream &OS);
 
   namespace detail {
   /// Helper functions to extract HostCPUName from /proc/cpuinfo on linux.
-  StringRef getHostCPUNameForPowerPC(StringRef ProcCpuinfoContent);
-  StringRef getHostCPUNameForARM(StringRef ProcCpuinfoContent);
-  StringRef getHostCPUNameForS390x(StringRef ProcCpuinfoContent);
-  StringRef getHostCPUNameForRISCV(StringRef ProcCpuinfoContent);
-  StringRef getHostCPUNameForSPARC(StringRef ProcCpuinfoContent);
-  StringRef getHostCPUNameForBPF();
+  LLVM_TARGETPARSER_ABI StringRef
+  getHostCPUNameForPowerPC(StringRef ProcCpuinfoContent);
+  LLVM_TARGETPARSER_ABI StringRef
+  getHostCPUNameForARM(StringRef ProcCpuinfoContent);
+  LLVM_TARGETPARSER_ABI StringRef
+  getHostCPUNameForS390x(StringRef ProcCpuinfoContent);
+  LLVM_TARGETPARSER_ABI StringRef
+  getHostCPUNameForRISCV(StringRef ProcCpuinfoContent);
+  LLVM_TARGETPARSER_ABI StringRef
+  getHostCPUNameForSPARC(StringRef ProcCpuinfoContent);
+  LLVM_TARGETPARSER_ABI StringRef getHostCPUNameForBPF();
 
   /// Helper functions to extract CPU details from CPUID on x86.
   namespace x86 {
@@ -78,7 +85,8 @@ namespace sys {
   /// Returns the host CPU's vendor.
   /// MaxLeaf: if a non-nullptr pointer is specified, the EAX value will be
   /// assigned to its pointee.
-  VendorSignatures getVendorSignature(unsigned *MaxLeaf = nullptr);
+  LLVM_TARGETPARSER_ABI VendorSignatures
+  getVendorSignature(unsigned *MaxLeaf = nullptr);
   } // namespace x86
   }
 }

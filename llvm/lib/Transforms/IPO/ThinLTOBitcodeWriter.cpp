@@ -1,4 +1,4 @@
-//===- ThinLTOBitcodeWriter.cpp - Bitcode writing pass for ThinLTO --------===//
+﻿//===- ThinLTOBitcodeWriter.cpp - Bitcode writing pass for ThinLTO --------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -575,7 +575,7 @@ bool writeThinLTOBitcode(raw_ostream &OS, raw_ostream *ThinLinkOS,
 }
 
 } // anonymous namespace
-extern bool WriteNewDbgInfoFormatToBitcode;
+LLVM_CORE_ABI extern bool WriteNewDbgInfoFormatToBitcode;
 PreservedAnalyses
 llvm::ThinLTOBitcodeWriterPass::run(Module &M, ModuleAnalysisManager &AM) {
   FunctionAnalysisManager &FAM =

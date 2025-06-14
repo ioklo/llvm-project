@@ -1,4 +1,4 @@
-//===- llvm/unittest/IR/DebugInfo.cpp - DebugInfo tests -------------------===//
+﻿//===- llvm/unittest/IR/DebugInfo.cpp - DebugInfo tests -------------------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -10,6 +10,7 @@
 #include "../lib/IR/LLVMContextImpl.h"
 #include "llvm/ADT/APSInt.h"
 #include "llvm/AsmParser/Parser.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/DIBuilder.h"
 #include "llvm/IR/DebugInfoMetadata.h"
 #include "llvm/IR/DebugProgramInstruction.h"
@@ -26,7 +27,7 @@
 
 using namespace llvm;
 
-extern cl::opt<bool> UseNewDbgInfoFormat;
+LLVM_CORE_ABI extern cl::opt<bool> UseNewDbgInfoFormat;
 
 static std::unique_ptr<Module> parseIR(LLVMContext &C, const char *IR) {
   SMDiagnostic Err;

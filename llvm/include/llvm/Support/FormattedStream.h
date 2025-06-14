@@ -1,4 +1,4 @@
-//===-- llvm/Support/FormattedStream.h - Formatted streams ------*- C++ -*-===//
+﻿//===-- llvm/Support/FormattedStream.h - Formatted streams ------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -150,7 +150,7 @@ public:
   /// space.
   ///
   /// \param NewCol - The column to move to.
-  formatted_raw_ostream &PadToColumn(unsigned NewCol);
+  LLVM_SUPPORT_ABI formatted_raw_ostream &PadToColumn(unsigned NewCol);
 
   unsigned getColumn() {
     // Calculate current position, taking buffer contents into account.

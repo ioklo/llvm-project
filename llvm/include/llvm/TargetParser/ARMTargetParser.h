@@ -1,4 +1,4 @@
-//===-- ARMTargetParser - Parser for ARM target features --------*- C++ -*-===//
+﻿//===-- ARMTargetParser - Parser for ARM target features --------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -18,6 +18,7 @@
 #include "llvm/ADT/StringRef.h"
 #include "llvm/Support/ARMBuildAttributes.h"
 #include "llvm/TargetParser/ARMTargetParserCommon.h"
+#include "llvm/TargetParser/TargetParserConfig.h"
 #include <vector>
 
 namespace llvm {
@@ -222,53 +223,60 @@ inline ArchKind &operator--(ArchKind &Kind) {
 }
 
 // Information by ID
-StringRef getFPUName(FPUKind FPUKind);
-FPUVersion getFPUVersion(FPUKind FPUKind);
-NeonSupportLevel getFPUNeonSupportLevel(FPUKind FPUKind);
-FPURestriction getFPURestriction(FPUKind FPUKind);
+LLVM_TARGETPARSER_ABI StringRef getFPUName(FPUKind FPUKind);
+LLVM_TARGETPARSER_ABI FPUVersion getFPUVersion(FPUKind FPUKind);
+LLVM_TARGETPARSER_ABI NeonSupportLevel getFPUNeonSupportLevel(FPUKind FPUKind);
+LLVM_TARGETPARSER_ABI FPURestriction getFPURestriction(FPUKind FPUKind);
 
-bool getFPUFeatures(FPUKind FPUKind, std::vector<StringRef> &Features);
-bool getHWDivFeatures(uint64_t HWDivKind, std::vector<StringRef> &Features);
-bool getExtensionFeatures(uint64_t Extensions,
+LLVM_TARGETPARSER_ABI bool getFPUFeatures(FPUKind FPUKind,
+                                          std::vector<StringRef> &Features);
+LLVM_TARGETPARSER_ABI bool getHWDivFeatures(uint64_t HWDivKind,
+                                            std::vector<StringRef> &Features);
+LLVM_TARGETPARSER_ABI bool
+getExtensionFeatures(uint64_t Extensions,
                           std::vector<StringRef> &Features);
 
-StringRef getArchName(ArchKind AK);
-unsigned getArchAttr(ArchKind AK);
-StringRef getCPUAttr(ArchKind AK);
-StringRef getSubArch(ArchKind AK);
-StringRef getArchExtName(uint64_t ArchExtKind);
-StringRef getArchExtFeature(StringRef ArchExt);
-bool appendArchExtFeatures(StringRef CPU, ARM::ArchKind AK, StringRef ArchExt,
-                           std::vector<StringRef> &Features,
-                           FPUKind &ArgFPUKind);
-ArchKind convertV9toV8(ArchKind AK);
+LLVM_TARGETPARSER_ABI StringRef getArchName(ArchKind AK);
+LLVM_TARGETPARSER_ABI unsigned getArchAttr(ArchKind AK);
+LLVM_TARGETPARSER_ABI StringRef getCPUAttr(ArchKind AK);
+LLVM_TARGETPARSER_ABI StringRef getSubArch(ArchKind AK);
+LLVM_TARGETPARSER_ABI StringRef getArchExtName(uint64_t ArchExtKind);
+LLVM_TARGETPARSER_ABI StringRef getArchExtFeature(StringRef ArchExt);
+LLVM_TARGETPARSER_ABI bool
+appendArchExtFeatures(StringRef CPU, ARM::ArchKind AK, StringRef ArchExt,
+                      std::vector<StringRef> &Features, FPUKind &ArgFPUKind);
+LLVM_TARGETPARSER_ABI ArchKind convertV9toV8(ArchKind AK);
 
 // Information by Name
-FPUKind getDefaultFPU(StringRef CPU, ArchKind AK);
-uint64_t getDefaultExtensions(StringRef CPU, ArchKind AK);
-StringRef getDefaultCPU(StringRef Arch);
-StringRef getCanonicalArchName(StringRef Arch);
-StringRef getFPUSynonym(StringRef FPU);
+LLVM_TARGETPARSER_ABI FPUKind getDefaultFPU(StringRef CPU, ArchKind AK);
+LLVM_TARGETPARSER_ABI uint64_t getDefaultExtensions(StringRef CPU, ArchKind AK);
+LLVM_TARGETPARSER_ABI StringRef getDefaultCPU(StringRef Arch);
+LLVM_TARGETPARSER_ABI StringRef getCanonicalArchName(StringRef Arch);
+LLVM_TARGETPARSER_ABI StringRef getFPUSynonym(StringRef FPU);
 
 // Parser
-uint64_t parseHWDiv(StringRef HWDiv);
-FPUKind parseFPU(StringRef FPU);
-ArchKind parseArch(StringRef Arch);
-uint64_t parseArchExt(StringRef ArchExt);
-ArchKind parseCPUArch(StringRef CPU);
-ProfileKind parseArchProfile(StringRef Arch);
-unsigned parseArchVersion(StringRef Arch);
+LLVM_TARGETPARSER_ABI uint64_t parseHWDiv(StringRef HWDiv);
+LLVM_TARGETPARSER_ABI FPUKind parseFPU(StringRef FPU);
+LLVM_TARGETPARSER_ABI ArchKind parseArch(StringRef Arch);
+LLVM_TARGETPARSER_ABI uint64_t parseArchExt(StringRef ArchExt);
+LLVM_TARGETPARSER_ABI ArchKind parseCPUArch(StringRef CPU);
+LLVM_TARGETPARSER_ABI ProfileKind parseArchProfile(StringRef Arch);
+LLVM_TARGETPARSER_ABI unsigned parseArchVersion(StringRef Arch);
 
-void fillValidCPUArchList(SmallVectorImpl<StringRef> &Values);
-StringRef computeDefaultTargetABI(const Triple &TT, StringRef CPU);
+LLVM_TARGETPARSER_ABI void
+fillValidCPUArchList(SmallVectorImpl<StringRef> &Values);
+LLVM_TARGETPARSER_ABI StringRef computeDefaultTargetABI(const Triple &TT,
+                                                        StringRef CPU);
 
 /// Get the (LLVM) name of the minimum ARM CPU for the arch we are targeting.
 ///
 /// \param Arch the architecture name (e.g., "armv7s"). If it is an empty
 /// string then the triple's arch name is used.
-StringRef getARMCPUForArch(const llvm::Triple &Triple, StringRef MArch = {});
+LLVM_TARGETPARSER_ABI StringRef getARMCPUForArch(const llvm::Triple &Triple,
+                                                 StringRef MArch = {});
 
-void PrintSupportedExtensions(StringMap<StringRef> DescMap);
+LLVM_TARGETPARSER_ABI void
+PrintSupportedExtensions(StringMap<StringRef> DescMap);
 
 } // namespace ARM
 } // namespace llvm

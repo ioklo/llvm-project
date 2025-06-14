@@ -1,4 +1,4 @@
-//===- llvm/unittest/IR/ValueTest.cpp - Value unit tests ------------------===//
+﻿//===- llvm/unittest/IR/ValueTest.cpp - Value unit tests ------------------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -9,6 +9,7 @@
 #include "llvm/IR/Value.h"
 #include "llvm-c/Core.h"
 #include "llvm/AsmParser/Parser.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/Function.h"
 #include "llvm/IR/IntrinsicInst.h"
 #include "llvm/IR/LLVMContext.h"
@@ -19,7 +20,7 @@
 #include "gtest/gtest.h"
 using namespace llvm;
 
-extern cl::opt<bool> UseNewDbgInfoFormat;
+LLVM_CORE_ABI extern cl::opt<bool> UseNewDbgInfoFormat;
 
 namespace {
 

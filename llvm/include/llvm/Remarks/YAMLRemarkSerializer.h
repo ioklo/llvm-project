@@ -1,4 +1,4 @@
-//===-- YAMLRemarkSerializer.h - YAML Remark serialization ---*- C++ -*-===//
+﻿//===-- YAMLRemarkSerializer.h - YAML Remark serialization ---*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -13,6 +13,7 @@
 #ifndef LLVM_REMARKS_YAMLREMARKSERIALIZER_H
 #define LLVM_REMARKS_YAMLREMARKSERIALIZER_H
 
+#include "llvm/Remarks/RemarksConfig.h"
 #include "llvm/Remarks/RemarkSerializer.h"
 #include "llvm/Support/YAMLTraits.h"
 #include <optional>
@@ -35,11 +36,12 @@ struct YAMLRemarkSerializer : public RemarkSerializer {
   /// The YAML streamer.
   yaml::Output YAMLOutput;
 
+  LLVM_REMARKS_ABI
   YAMLRemarkSerializer(raw_ostream &OS, SerializerMode Mode,
                        std::optional<StringTable> StrTab = std::nullopt);
 
-  void emit(const Remark &Remark) override;
-  std::unique_ptr<MetaSerializer> metaSerializer(
+  LLVM_REMARKS_ABI void emit(const Remark &Remark) override;
+  LLVM_REMARKS_ABI std::unique_ptr<MetaSerializer> metaSerializer(
       raw_ostream &OS,
       std::optional<StringRef> ExternalFilename = std::nullopt) override;
 
@@ -48,6 +50,7 @@ struct YAMLRemarkSerializer : public RemarkSerializer {
   }
 
 protected:
+  LLVM_REMARKS_ABI
   YAMLRemarkSerializer(Format SerializerFormat, raw_ostream &OS,
                        SerializerMode Mode,
                        std::optional<StringTable> StrTab = std::nullopt);
@@ -59,7 +62,7 @@ struct YAMLMetaSerializer : public MetaSerializer {
   YAMLMetaSerializer(raw_ostream &OS, std::optional<StringRef> ExternalFilename)
       : MetaSerializer(OS), ExternalFilename(ExternalFilename) {}
 
-  void emit() override;
+  LLVM_REMARKS_ABI void emit() override;
 };
 
 /// Serialize the remarks to YAML using a string table. An remark entry looks
@@ -80,9 +83,9 @@ struct YAMLStrTabRemarkSerializer : public YAMLRemarkSerializer {
       : YAMLRemarkSerializer(Format::YAMLStrTab, OS, Mode, std::move(StrTab)) {}
 
   /// Override to emit the metadata if necessary.
-  void emit(const Remark &Remark) override;
+  LLVM_REMARKS_ABI void emit(const Remark &Remark) override;
 
-  std::unique_ptr<MetaSerializer> metaSerializer(
+  LLVM_REMARKS_ABI std::unique_ptr<MetaSerializer> metaSerializer(
       raw_ostream &OS,
       std::optional<StringRef> ExternalFilename = std::nullopt) override;
 
@@ -100,7 +103,7 @@ struct YAMLStrTabMetaSerializer : public YAMLMetaSerializer {
                            const StringTable &StrTab)
       : YAMLMetaSerializer(OS, ExternalFilename), StrTab(StrTab) {}
 
-  void emit() override;
+  LLVM_REMARKS_ABI void emit() override;
 };
 
 } // end namespace remarks

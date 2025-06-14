@@ -16,6 +16,7 @@
 #include "llvm/IR/AttributeMask.h"
 #include "llvm/IR/Attributes.h"
 #include "llvm/IR/Constants.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/InstrTypes.h"
 #include "llvm/IR/Instructions.h"
 #include "llvm/IR/IntrinsicInst.h"
@@ -129,7 +130,7 @@ BasicBlock::iterator Instruction::insertInto(BasicBlock *ParentBB,
   return getIterator();
 }
 
-extern cl::opt<bool> UseNewDbgInfoFormat;
+LLVM_CORE_ABI extern cl::opt<bool> UseNewDbgInfoFormat;
 
 void Instruction::insertBefore(BasicBlock &BB,
                                InstListType::iterator InsertPos) {

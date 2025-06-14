@@ -1,4 +1,4 @@
-//===- llvm/IR/Comdat.h - Comdat definitions --------------------*- C++ -*-===//
+﻿//===- llvm/IR/Comdat.h - Comdat definitions --------------------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -17,6 +17,7 @@
 
 #include "llvm-c/Types.h"
 #include "llvm/ADT/SmallPtrSet.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/Support/CBindingWrapping.h"
 
 namespace llvm {
@@ -41,22 +42,22 @@ public:
   };
 
   Comdat(const Comdat &) = delete;
-  Comdat(Comdat &&C);
+  LLVM_CORE_ABI Comdat(Comdat &&C);
 
   SelectionKind getSelectionKind() const { return SK; }
   void setSelectionKind(SelectionKind Val) { SK = Val; }
-  StringRef getName() const;
-  void print(raw_ostream &OS, bool IsForDebug = false) const;
-  void dump() const;
+  LLVM_CORE_ABI StringRef getName() const;
+  LLVM_CORE_ABI void print(raw_ostream &OS, bool IsForDebug = false) const;
+  LLVM_CORE_ABI void dump() const;
   const SmallPtrSetImpl<GlobalObject *> &getUsers() const { return Users; }
 
 private:
   friend class Module;
   friend class GlobalObject;
 
-  Comdat();
-  void addUser(GlobalObject *GO);
-  void removeUser(GlobalObject *GO);
+  LLVM_CORE_ABI Comdat();
+  LLVM_CORE_ABI void addUser(GlobalObject *GO);
+  LLVM_CORE_ABI void removeUser(GlobalObject *GO);
 
   // Points to the map in Module.
   StringMapEntry<Comdat> *Name = nullptr;

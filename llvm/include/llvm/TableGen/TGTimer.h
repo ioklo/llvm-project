@@ -1,4 +1,4 @@
-//===- llvm/TableGen/TGTimer.h - Class for TableGen Timer -------*- C++ -*-===//
+﻿//===- llvm/TableGen/TGTimer.h - Class for TableGen Timer -------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -16,6 +16,7 @@
 
 #include "llvm/ADT/StringRef.h"
 #include "llvm/Support/Timer.h"
+#include "llvm/TableGen/TableGenConfig.h"
 #include <memory>
 
 namespace llvm {
@@ -38,17 +39,17 @@ public:
   }
 
   /// Start timing a phase. Automatically stops any previous phase timer.
-  void startTimer(StringRef Name);
+  LLVM_TABLEGEN_ABI void startTimer(StringRef Name);
 
   /// Stop timing a phase.
-  void stopTimer();
+  LLVM_TABLEGEN_ABI void stopTimer();
 
   /// Start timing the overall backend. If the backend itself starts a timer,
   /// then this timer is cleared.
-  void startBackendTimer(StringRef Name);
+  LLVM_TABLEGEN_ABI void startBackendTimer(StringRef Name);
 
   /// Stop timing the overall backend.
-  void stopBackendTimer();
+  LLVM_TABLEGEN_ABI void stopBackendTimer();
 
   /// Stop phase timing and print the report.
   void stopPhaseTiming() { TimingGroup.reset(); }

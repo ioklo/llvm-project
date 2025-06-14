@@ -1,4 +1,4 @@
-//===- llvm-link.cpp - Low-level LLVM linker ------------------------------===//
+﻿//===- llvm-link.cpp - Low-level LLVM linker ------------------------------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -15,7 +15,9 @@
 #include "llvm/BinaryFormat/Magic.h"
 #include "llvm/Bitcode/BitcodeReader.h"
 #include "llvm/Bitcode/BitcodeWriter.h"
+#include "llvm/Bitcode/BitReaderConfig.h"
 #include "llvm/IR/AutoUpgrade.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/DiagnosticInfo.h"
 #include "llvm/IR/DiagnosticPrinter.h"
 #include "llvm/IR/LLVMContext.h"
@@ -134,12 +136,13 @@ static cl::opt<bool> TryUseNewDbgInfoFormat(
     cl::desc("Enable debuginfo iterator positions, if they're built in"),
     cl::init(false));
 
-extern cl::opt<bool> UseNewDbgInfoFormat;
-extern cl::opt<cl::boolOrDefault> PreserveInputDbgFormat;
-extern cl::opt<bool> WriteNewDbgInfoFormat;
-extern bool WriteNewDbgInfoFormatToBitcode;
+LLVM_CORE_ABI extern cl::opt<bool> UseNewDbgInfoFormat;
+LLVM_CORE_ABI extern cl::opt<cl::boolOrDefault> PreserveInputDbgFormat;
+LLVM_CORE_ABI extern cl::opt<bool> WriteNewDbgInfoFormat;
+LLVM_CORE_ABI extern bool WriteNewDbgInfoFormatToBitcode;
 
-extern cl::opt<cl::boolOrDefault> LoadBitcodeIntoNewDbgInfoFormat;
+LLVM_BITREADER_ABI extern cl::opt<cl::boolOrDefault>
+    LoadBitcodeIntoNewDbgInfoFormat;
 
 static ExitOnError ExitOnErr;
 

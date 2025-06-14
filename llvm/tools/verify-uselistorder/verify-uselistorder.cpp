@@ -1,4 +1,4 @@
-//===- verify-uselistorder.cpp - The LLVM Modular Optimizer ---------------===//
+﻿//===- verify-uselistorder.cpp - The LLVM Modular Optimizer ---------------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -68,7 +68,7 @@ static cl::opt<unsigned>
                 cl::desc("Number of times to shuffle and verify use-lists"),
                 cl::init(1), cl::cat(Cat));
 
-extern cl::opt<cl::boolOrDefault> PreserveInputDbgFormat;
+LLVM_CORE_ABI extern cl::opt<cl::boolOrDefault> PreserveInputDbgFormat;
 
 namespace {
 

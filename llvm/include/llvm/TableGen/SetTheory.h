@@ -1,4 +1,4 @@
-//===- SetTheory.h - Generate ordered sets from DAG expressions -*- C++ -*-===//
+﻿//===- SetTheory.h - Generate ordered sets from DAG expressions -*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -52,6 +52,7 @@
 #include "llvm/ADT/StringMap.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/Support/SMLoc.h"
+#include "llvm/TableGen/TableGenConfig.h"
 #include <map>
 #include <memory>
 #include <vector>
@@ -69,22 +70,22 @@ public:
 
   /// Operator - A callback representing a DAG operator.
   class Operator {
-    virtual void anchor();
+    LLVM_TABLEGEN_ABI virtual void anchor();
 
   public:
     virtual ~Operator() = default;
 
     /// apply - Apply this operator to Expr's arguments and insert the result
     /// in Elts.
-    virtual void apply(SetTheory &, const DagInit *Expr, RecSet &Elts,
-                       ArrayRef<SMLoc> Loc) = 0;
+    LLVM_TABLEGEN_ABI virtual void apply(SetTheory &, const DagInit *Expr,
+                                         RecSet &Elts, ArrayRef<SMLoc> Loc) = 0;
   };
 
   /// Expander - A callback function that can transform a Record representing a
   /// set into a fully expanded list of elements. Expanders provide a way for
   /// users to define named sets that can be used in DAG expressions.
   class Expander {
-    virtual void anchor();
+    LLVM_TABLEGEN_ABI virtual void anchor();
 
   public:
     virtual ~Expander() = default;
@@ -106,10 +107,11 @@ private:
 
 public:
   /// Create a SetTheory instance with only the standard operators.
-  SetTheory();
+  LLVM_TABLEGEN_ABI SetTheory();
 
   /// addExpander - Add an expander for Records with the named super class.
-  void addExpander(StringRef ClassName, std::unique_ptr<Expander>);
+  LLVM_TABLEGEN_ABI void addExpander(StringRef ClassName,
+                                     std::unique_ptr<Expander>);
 
   /// addFieldExpander - Add an expander for ClassName that simply evaluates
   /// FieldName in the Record to get the set elements.  That is all that is
@@ -119,13 +121,15 @@ public:
   ///     dag Elts = d;
   ///   }
   ///
-  void addFieldExpander(StringRef ClassName, StringRef FieldName);
+  LLVM_TABLEGEN_ABI void addFieldExpander(StringRef ClassName,
+                                          StringRef FieldName);
 
   /// addOperator - Add a DAG operator.
-  void addOperator(StringRef Name, std::unique_ptr<Operator>);
+  LLVM_TABLEGEN_ABI void addOperator(StringRef Name, std::unique_ptr<Operator>);
 
   /// evaluate - Evaluate Expr and append the resulting set to Elts.
-  void evaluate(const Init *Expr, RecSet &Elts, ArrayRef<SMLoc> Loc);
+  LLVM_TABLEGEN_ABI void evaluate(const Init *Expr, RecSet &Elts,
+                                  ArrayRef<SMLoc> Loc);
 
   /// evaluate - Evaluate a sequence of Inits and append to Elts.
   template<typename Iter>
@@ -137,7 +141,7 @@ public:
   /// expand - Expand a record into a set of elements if possible.  Return a
   /// pointer to the expanded elements, or NULL if Set cannot be expanded
   /// further.
-  const RecVec *expand(const Record *Set);
+  LLVM_TABLEGEN_ABI const RecVec *expand(const Record *Set);
 };
 
 } // end namespace llvm

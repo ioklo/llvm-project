@@ -1,4 +1,4 @@
-//===- llvm/unittest/IR/InstructionsTest.cpp - Instructions unit tests ----===//
+﻿//===- llvm/unittest/IR/InstructionsTest.cpp - Instructions unit tests ----===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -14,6 +14,7 @@
 #include "llvm/AsmParser/Parser.h"
 #include "llvm/IR/BasicBlock.h"
 #include "llvm/IR/Constants.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/DataLayout.h"
 #include "llvm/IR/DebugInfoMetadata.h"
 #include "llvm/IR/DerivedTypes.h"
@@ -32,7 +33,7 @@
 #include "gtest/gtest.h"
 #include <memory>
 
-extern llvm::cl::opt<bool> UseNewDbgInfoFormat;
+LLVM_CORE_ABI extern llvm::cl::opt<bool> UseNewDbgInfoFormat;
 
 namespace llvm {
 namespace {

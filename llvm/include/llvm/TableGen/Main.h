@@ -1,4 +1,4 @@
-//===- llvm/TableGen/Main.h - tblgen entry point ----------------*- C++ -*-===//
+﻿//===- llvm/TableGen/Main.h - tblgen entry point ----------------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -13,6 +13,7 @@
 #ifndef LLVM_TABLEGEN_MAIN_H
 #define LLVM_TABLEGEN_MAIN_H
 
+#include "llvm/TableGen/TableGenConfig.h"
 #include <functional>
 
 namespace llvm {
@@ -24,7 +25,8 @@ class RecordKeeper;
 /// Returns true on error, false otherwise.
 using TableGenMainFn = bool(raw_ostream &OS, const RecordKeeper &Records);
 
-int TableGenMain(const char *argv0,
+LLVM_TABLEGEN_ABI int
+TableGenMain(const char *argv0,
                  std::function<TableGenMainFn> MainFn = nullptr);
 
 } // end namespace llvm

@@ -1,4 +1,4 @@
-//===-- llvm-lto2: test harness for the resolution-based LTO interface ----===//
+﻿//===-- llvm-lto2: test harness for the resolution-based LTO interface ----===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -16,7 +16,9 @@
 //===----------------------------------------------------------------------===//
 
 #include "llvm/Bitcode/BitcodeReader.h"
+#include "llvm/Bitcode/BitReaderConfig.h"
 #include "llvm/CodeGen/CommandFlags.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/DiagnosticPrinter.h"
 #include "llvm/LTO/LTO.h"
 #include "llvm/Passes/PassPlugin.h"
@@ -192,9 +194,10 @@ static cl::opt<bool> TryUseNewDbgInfoFormat(
     cl::desc("Enable debuginfo iterator positions, if they're built in"),
     cl::init(false), cl::Hidden);
 
-extern cl::opt<bool> UseNewDbgInfoFormat;
-extern cl::opt<cl::boolOrDefault> LoadBitcodeIntoNewDbgInfoFormat;
-extern cl::opt<cl::boolOrDefault> PreserveInputDbgFormat;
+LLVM_CORE_ABI extern cl::opt<bool> UseNewDbgInfoFormat;
+LLVM_BITREADER_ABI extern cl::opt<cl::boolOrDefault>
+    LoadBitcodeIntoNewDbgInfoFormat;
+LLVM_CORE_ABI extern cl::opt<cl::boolOrDefault> PreserveInputDbgFormat;
 
 static void check(Error E, std::string Msg) {
   if (!E)

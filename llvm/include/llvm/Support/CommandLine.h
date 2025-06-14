@@ -1,4 +1,4 @@
-//===- llvm/Support/CommandLine.h - Command line handler --------*- C++ -*-===//
+﻿//===- llvm/Support/CommandLine.h - Command line handler --------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -183,7 +183,7 @@ private:
   StringRef const Name;
   StringRef const Description;
 
-  void registerCategory();
+  LLVM_SUPPORT_ABI void registerCategory();
 
 public:
   OptionCategory(StringRef const Name,
@@ -330,7 +330,7 @@ public:
   void setFormattingFlag(enum FormattingFlags V) { Formatting = V; }
   void setMiscFlag(enum MiscFlags M) { Misc |= M; }
   void setPosition(unsigned pos) { Position = pos; }
-  void addCategory(OptionCategory &C);
+  LLVM_SUPPORT_ABI void addCategory(OptionCategory &C);
   void addSubCommand(SubCommand &S) { Subs.insert(&S); }
 
 protected:

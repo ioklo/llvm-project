@@ -1,4 +1,4 @@
-//===- llvm/Support/Error.h - Recoverable error handling --------*- C++ -*-===//
+﻿//===- llvm/Support/Error.h - Recoverable error handling --------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -83,7 +83,7 @@ public:
 private:
   LLVM_SUPPORT_ABI virtual void anchor();
 
-  static char ID;
+  LLVM_SUPPORT_ABI static char ID;
 };
 
 /// Lightweight error class with error context and mandatory checking.
@@ -263,7 +263,7 @@ private:
   // of debug prints can cause the function to be too large for inlining.  So
   // it's important that we define this function out of line so that it can't be
   // inlined.
-  [[noreturn]] void fatalUncheckedError() const;
+  [[noreturn]] LLVM_SUPPORT_ABI void fatalUncheckedError() const;
 #endif
 
   void assertIsChecked() {
@@ -392,7 +392,7 @@ public:
   LLVM_SUPPORT_ABI std::error_code convertToErrorCode() const override;
 
   // Used by ErrorInfo::classID.
-  static char ID;
+  LLVM_SUPPORT_ABI static char ID;
 
 private:
   ErrorList(std::unique_ptr<ErrorInfoBase> Payload1,
@@ -1189,7 +1189,7 @@ public:
   void log(raw_ostream &OS) const override { OS << EC.message(); }
 
   // Used by ErrorInfo::classID.
-  static char ID;
+  LLVM_SUPPORT_ABI static char ID;
 
 protected:
   ECError() = default;
@@ -1269,7 +1269,7 @@ template <typename T> ErrorOr<T> expectedToErrorOr(Expected<T> &&E) {
 ///
 class StringError : public ErrorInfo<StringError> {
 public:
-  static char ID;
+  LLVM_SUPPORT_ABI static char ID;
 
   LLVM_SUPPORT_ABI StringError(std::string &&S, std::error_code EC,
                                bool PrintMsgOnly);
@@ -1298,7 +1298,7 @@ inline Error createStringError(std::error_code EC, char const *Fmt,
   return make_error<StringError>(Buffer, EC);
 }
 
-Error createStringError(std::string &&Msg, std::error_code EC);
+LLVM_SUPPORT_ABI Error createStringError(std::string &&Msg, std::error_code EC);
 
 inline Error createStringError(std::error_code EC, const char *S) {
   return createStringError(std::string(S), EC);
@@ -1353,10 +1353,10 @@ public:
 
   Error takeError() { return Error(std::move(Err)); }
 
-  std::error_code convertToErrorCode() const override;
+  LLVM_SUPPORT_ABI std::error_code convertToErrorCode() const override;
 
   // Used by ErrorInfo::classID.
-  static char ID;
+  LLVM_SUPPORT_ABI static char ID;
 
 private:
   FileError(const Twine &F, std::optional<size_t> LineNum,

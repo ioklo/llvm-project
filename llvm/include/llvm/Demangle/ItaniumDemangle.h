@@ -1,4 +1,4 @@
-//===--- ItaniumDemangle.h -----------*- mode:c++;eval:(read-only-mode) -*-===//
+﻿//===--- ItaniumDemangle.h -----------*- mode:c++;eval:(read-only-mode) -*-===//
 //       Do not edit! See README.txt.
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -308,7 +308,7 @@ public:
   virtual ~Node() = default;
 
 #ifndef NDEBUG
-  DEMANGLE_DUMP_METHOD void dump() const;
+  LLVM_DEMANGLE_ABI DEMANGLE_DUMP_METHOD void dump() const;
 #endif
 };
 
@@ -351,7 +351,7 @@ public:
 
   // Print an array of integer literals as a string literal. Returns whether we
   // could do so.
-  bool printAsString(OutputBuffer &OB) const;
+  LLVM_DEMANGLE_ABI bool printAsString(OutputBuffer &OB) const;
 };
 
 struct NodeArrayNode : Node {

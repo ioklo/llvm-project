@@ -1,4 +1,4 @@
-//===- AMDGPUMetadataVerifier.h - MsgPack Types -----------------*- C++ -*-===//
+﻿//===- AMDGPUMetadataVerifier.h - MsgPack Types -----------------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -18,6 +18,7 @@
 
 #include "llvm/ADT/STLFunctionalExtras.h"
 #include "llvm/ADT/StringRef.h"
+#include "llvm/BinaryFormat/BinaryFormatConfig.h"
 #include "llvm/BinaryFormat/MsgPackReader.h"
 
 #include <cstddef>
@@ -69,7 +70,7 @@ public:
   /// Verify given HSA metadata.
   ///
   /// \returns True when successful, false when metadata is invalid.
-  bool verify(msgpack::DocNode &HSAMetadataRoot);
+  LLVM_BINARYFORMAT_ABI bool verify(msgpack::DocNode &HSAMetadataRoot);
 };
 
 } // end namespace V3

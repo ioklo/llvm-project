@@ -1,4 +1,4 @@
-//===- llvm/Support/YAMLTraits.h --------------------------------*- C++ -*-===//
+﻿//===- llvm/Support/YAMLTraits.h --------------------------------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -877,8 +877,8 @@ public:
       Val = Val | ConstVal;
   }
 
-  void *getContext() const;
-  void setContext(void *);
+  LLVM_SUPPORT_ABI void *getContext() const;
+  LLVM_SUPPORT_ABI void setContext(void *);
 
   template <typename T> void mapRequired(const char *Key, T &Val) {
     EmptyContext Ctx;
@@ -1206,92 +1206,93 @@ yamlize(IO &io, T &Seq, bool, Context &Ctx) {
 
 template<>
 struct ScalarTraits<bool> {
-  static void output(const bool &, void* , raw_ostream &);
-  static StringRef input(StringRef, void *, bool &);
+  LLVM_SUPPORT_ABI static void output(const bool &, void* , raw_ostream &);
+  LLVM_SUPPORT_ABI static StringRef input(StringRef, void *, bool &);
   static QuotingType mustQuote(StringRef) { return QuotingType::None; }
 };
 
 template<>
 struct ScalarTraits<StringRef> {
-  static void output(const StringRef &, void *, raw_ostream &);
-  static StringRef input(StringRef, void *, StringRef &);
+  LLVM_SUPPORT_ABI static void output(const StringRef &, void *, raw_ostream &);
+  LLVM_SUPPORT_ABI static StringRef input(StringRef, void *, StringRef &);
   static QuotingType mustQuote(StringRef S) { return needsQuotes(S); }
 };
 
 template<>
 struct ScalarTraits<std::string> {
-  static void output(const std::string &, void *, raw_ostream &);
-  static StringRef input(StringRef, void *, std::string &);
+  LLVM_SUPPORT_ABI static void output(const std::string &, void *,
+                                      raw_ostream &);
+  LLVM_SUPPORT_ABI static StringRef input(StringRef, void *, std::string &);
   static QuotingType mustQuote(StringRef S) { return needsQuotes(S); }
 };
 
 template<>
 struct ScalarTraits<uint8_t> {
-  static void output(const uint8_t &, void *, raw_ostream &);
-  static StringRef input(StringRef, void *, uint8_t &);
+  LLVM_SUPPORT_ABI static void output(const uint8_t &, void *, raw_ostream &);
+  LLVM_SUPPORT_ABI static StringRef input(StringRef, void *, uint8_t &);
   static QuotingType mustQuote(StringRef) { return QuotingType::None; }
 };
 
 template<>
 struct ScalarTraits<uint16_t> {
-  static void output(const uint16_t &, void *, raw_ostream &);
-  static StringRef input(StringRef, void *, uint16_t &);
+  LLVM_SUPPORT_ABI static void output(const uint16_t &, void *, raw_ostream &);
+  LLVM_SUPPORT_ABI static StringRef input(StringRef, void *, uint16_t &);
   static QuotingType mustQuote(StringRef) { return QuotingType::None; }
 };
 
 template<>
 struct ScalarTraits<uint32_t> {
-  static void output(const uint32_t &, void *, raw_ostream &);
-  static StringRef input(StringRef, void *, uint32_t &);
+  LLVM_SUPPORT_ABI static void output(const uint32_t &, void *, raw_ostream &);
+  LLVM_SUPPORT_ABI static StringRef input(StringRef, void *, uint32_t &);
   static QuotingType mustQuote(StringRef) { return QuotingType::None; }
 };
 
 template<>
 struct ScalarTraits<uint64_t> {
-  static void output(const uint64_t &, void *, raw_ostream &);
-  static StringRef input(StringRef, void *, uint64_t &);
+  LLVM_SUPPORT_ABI static void output(const uint64_t &, void *, raw_ostream &);
+  LLVM_SUPPORT_ABI static StringRef input(StringRef, void *, uint64_t &);
   static QuotingType mustQuote(StringRef) { return QuotingType::None; }
 };
 
 template<>
 struct ScalarTraits<int8_t> {
-  static void output(const int8_t &, void *, raw_ostream &);
-  static StringRef input(StringRef, void *, int8_t &);
+  LLVM_SUPPORT_ABI static void output(const int8_t &, void *, raw_ostream &);
+  LLVM_SUPPORT_ABI static StringRef input(StringRef, void *, int8_t &);
   static QuotingType mustQuote(StringRef) { return QuotingType::None; }
 };
 
 template<>
 struct ScalarTraits<int16_t> {
-  static void output(const int16_t &, void *, raw_ostream &);
-  static StringRef input(StringRef, void *, int16_t &);
+  LLVM_SUPPORT_ABI static void output(const int16_t &, void *, raw_ostream &);
+  LLVM_SUPPORT_ABI static StringRef input(StringRef, void *, int16_t &);
   static QuotingType mustQuote(StringRef) { return QuotingType::None; }
 };
 
 template<>
 struct ScalarTraits<int32_t> {
-  static void output(const int32_t &, void *, raw_ostream &);
-  static StringRef input(StringRef, void *, int32_t &);
+  LLVM_SUPPORT_ABI static void output(const int32_t &, void *, raw_ostream &);
+  LLVM_SUPPORT_ABI static StringRef input(StringRef, void *, int32_t &);
   static QuotingType mustQuote(StringRef) { return QuotingType::None; }
 };
 
 template<>
 struct ScalarTraits<int64_t> {
-  static void output(const int64_t &, void *, raw_ostream &);
-  static StringRef input(StringRef, void *, int64_t &);
+  LLVM_SUPPORT_ABI static void output(const int64_t &, void *, raw_ostream &);
+  LLVM_SUPPORT_ABI static StringRef input(StringRef, void *, int64_t &);
   static QuotingType mustQuote(StringRef) { return QuotingType::None; }
 };
 
 template<>
 struct ScalarTraits<float> {
-  static void output(const float &, void *, raw_ostream &);
-  static StringRef input(StringRef, void *, float &);
+  LLVM_SUPPORT_ABI static void output(const float &, void *, raw_ostream &);
+  LLVM_SUPPORT_ABI static StringRef input(StringRef, void *, float &);
   static QuotingType mustQuote(StringRef) { return QuotingType::None; }
 };
 
 template<>
 struct ScalarTraits<double> {
-  static void output(const double &, void *, raw_ostream &);
-  static StringRef input(StringRef, void *, double &);
+  LLVM_SUPPORT_ABI static void output(const double &, void *, raw_ostream &);
+  LLVM_SUPPORT_ABI static StringRef input(StringRef, void *, double &);
   static QuotingType mustQuote(StringRef) { return QuotingType::None; }
 };
 
@@ -1752,29 +1753,29 @@ LLVM_YAML_STRONG_TYPEDEF(uint64_t, Hex64)
 
 template<>
 struct ScalarTraits<Hex8> {
-  static void output(const Hex8 &, void *, raw_ostream &);
-  static StringRef input(StringRef, void *, Hex8 &);
+  LLVM_SUPPORT_ABI static void output(const Hex8 &, void *, raw_ostream &);
+  LLVM_SUPPORT_ABI static StringRef input(StringRef, void *, Hex8 &);
   static QuotingType mustQuote(StringRef) { return QuotingType::None; }
 };
 
 template<>
 struct ScalarTraits<Hex16> {
-  static void output(const Hex16 &, void *, raw_ostream &);
-  static StringRef input(StringRef, void *, Hex16 &);
+  LLVM_SUPPORT_ABI static void output(const Hex16 &, void *, raw_ostream &);
+  LLVM_SUPPORT_ABI static StringRef input(StringRef, void *, Hex16 &);
   static QuotingType mustQuote(StringRef) { return QuotingType::None; }
 };
 
 template<>
 struct ScalarTraits<Hex32> {
-  static void output(const Hex32 &, void *, raw_ostream &);
-  static StringRef input(StringRef, void *, Hex32 &);
+  LLVM_SUPPORT_ABI static void output(const Hex32 &, void *, raw_ostream &);
+  LLVM_SUPPORT_ABI static StringRef input(StringRef, void *, Hex32 &);
   static QuotingType mustQuote(StringRef) { return QuotingType::None; }
 };
 
 template<>
 struct ScalarTraits<Hex64> {
-  static void output(const Hex64 &, void *, raw_ostream &);
-  static StringRef input(StringRef, void *, Hex64 &);
+  LLVM_SUPPORT_ABI static void output(const Hex64 &, void *, raw_ostream &);
+  LLVM_SUPPORT_ABI static StringRef input(StringRef, void *, Hex64 &);
   static QuotingType mustQuote(StringRef) { return QuotingType::None; }
 };
 
@@ -2090,8 +2091,8 @@ template <typename T> struct StdMapStringCustomMappingTraitsImpl {
 #define LLVM_YAML_DECLARE_MAPPING_TRAITS(Type)                                 \
   namespace llvm {                                                             \
   namespace yaml {                                                             \
-  template <> struct LLVM_ABI MappingTraits<Type> {                            \
-    static void mapping(IO &IO, Type &Obj);                                    \
+  template <> struct MappingTraits<Type> {                                     \
+    LLVM_SUPPORT_ABI static void mapping(IO &IO, Type &Obj);                   \
   };                                                                           \
   }                                                                            \
   }
@@ -2108,8 +2109,8 @@ template <typename T> struct StdMapStringCustomMappingTraitsImpl {
 #define LLVM_YAML_DECLARE_ENUM_TRAITS(Type)                                    \
   namespace llvm {                                                             \
   namespace yaml {                                                             \
-  template <> struct LLVM_ABI ScalarEnumerationTraits<Type> {                  \
-    static void enumeration(IO &io, Type &Value);                              \
+  template <> struct ScalarEnumerationTraits<Type> {                           \
+    LLVM_SUPPORT_ABI static void enumeration(IO &io, Type &Value);             \
   };                                                                           \
   }                                                                            \
   }
@@ -2117,8 +2118,8 @@ template <typename T> struct StdMapStringCustomMappingTraitsImpl {
 #define LLVM_YAML_DECLARE_BITSET_TRAITS(Type)                                  \
   namespace llvm {                                                             \
   namespace yaml {                                                             \
-  template <> struct LLVM_ABI ScalarBitSetTraits<Type> {                       \
-    static void bitset(IO &IO, Type &Options);                                 \
+  template <> struct ScalarBitSetTraits<Type> {                                \
+    LLVM_SUPPORT_ABI static void bitset(IO &IO, Type &Options);                \
   };                                                                           \
   }                                                                            \
   }
@@ -2126,9 +2127,11 @@ template <typename T> struct StdMapStringCustomMappingTraitsImpl {
 #define LLVM_YAML_DECLARE_SCALAR_TRAITS(Type, MustQuote)                       \
   namespace llvm {                                                             \
   namespace yaml {                                                             \
-  template <> struct LLVM_ABI ScalarTraits<Type> {                             \
-    static void output(const Type &Value, void *ctx, raw_ostream &Out);        \
-    static StringRef input(StringRef Scalar, void *ctxt, Type &Value);         \
+  template <> struct ScalarTraits<Type> {                                      \
+    LLVM_SUPPORT_ABI static void output(const Type &Value, void *ctx,          \
+                                        raw_ostream &Out);                     \
+    LLVM_SUPPORT_ABI static StringRef input(StringRef Scalar, void *ctxt,      \
+                                            Type &Value);                      \
     static QuotingType mustQuote(StringRef) { return MustQuote; }              \
   };                                                                           \
   }                                                                            \

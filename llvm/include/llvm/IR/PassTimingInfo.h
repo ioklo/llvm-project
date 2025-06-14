@@ -18,6 +18,7 @@
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/ADT/StringMap.h"
 #include "llvm/ADT/StringRef.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/Support/Timer.h"
 #include <memory>
 #include <utility>
@@ -31,10 +32,10 @@ class raw_ostream;
 /// If -time-passes has been specified, report the timings immediately and then
 /// reset the timers to zero. By default it uses the stream created by
 /// CreateInfoOutputFile().
-void reportAndResetTimings(raw_ostream *OutStream = nullptr);
+LLVM_CORE_ABI void reportAndResetTimings(raw_ostream *OutStream = nullptr);
 
 /// Request the timer for this legacy-pass-manager's pass instance.
-Timer *getPassTimer(Pass *);
+LLVM_CORE_ABI Timer *getPassTimer(Pass *);
 
 /// This class implements -time-passes functionality for new pass manager.
 /// It provides the pass-instrumentation callbacks that measure the pass
@@ -71,35 +72,35 @@ class TimePassesHandler {
   bool PerRun;
 
 public:
-  TimePassesHandler();
-  TimePassesHandler(bool Enabled, bool PerRun = false);
+  LLVM_CORE_ABI TimePassesHandler();
+  LLVM_CORE_ABI TimePassesHandler(bool Enabled, bool PerRun = false);
 
   /// Destructor handles the print action if it has not been handled before.
   ~TimePassesHandler() { print(); }
 
   /// Prints out timing information and then resets the timers.
-  void print();
+  LLVM_CORE_ABI void print();
 
   // We intend this to be unique per-compilation, thus no copies.
   TimePassesHandler(const TimePassesHandler &) = delete;
   void operator=(const TimePassesHandler &) = delete;
 
-  void registerCallbacks(PassInstrumentationCallbacks &PIC);
+  LLVM_CORE_ABI void registerCallbacks(PassInstrumentationCallbacks &PIC);
 
   /// Set a custom output stream for subsequent reporting.
-  void setOutStream(raw_ostream &OutStream);
+  LLVM_CORE_ABI void setOutStream(raw_ostream &OutStream);
 
 private:
   /// Dumps information for running/triggered timers, useful for debugging
-  LLVM_DUMP_METHOD void dump() const;
+  LLVM_CORE_ABI LLVM_DUMP_METHOD void dump() const;
 
   /// Returns the new timer for each new run of the pass.
-  Timer &getPassTimer(StringRef PassID, bool IsPass);
+  LLVM_CORE_ABI Timer &getPassTimer(StringRef PassID, bool IsPass);
 
-  void startAnalysisTimer(StringRef PassID);
-  void stopAnalysisTimer(StringRef PassID);
-  void startPassTimer(StringRef PassID);
-  void stopPassTimer(StringRef PassID);
+  LLVM_CORE_ABI void startAnalysisTimer(StringRef PassID);
+  LLVM_CORE_ABI void stopAnalysisTimer(StringRef PassID);
+  LLVM_CORE_ABI void startPassTimer(StringRef PassID);
+  LLVM_CORE_ABI void stopPassTimer(StringRef PassID);
 };
 
 } // namespace llvm

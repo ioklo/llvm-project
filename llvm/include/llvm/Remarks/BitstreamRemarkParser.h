@@ -1,4 +1,4 @@
-//===-- BitstreamRemarkParser.h - Bitstream parser --------------*- C++ -*-===//
+﻿//===-- BitstreamRemarkParser.h - Bitstream parser --------------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -17,6 +17,7 @@
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/Bitstream/BitstreamReader.h"
+#include "llvm/Remarks/RemarksConfig.h"
 #include "llvm/Support/Error.h"
 #include <array>
 #include <cstdint>
@@ -42,12 +43,12 @@ struct BitstreamMetaParserHelper {
   /// Continue parsing with \p Stream. \p Stream is expected to contain a
   /// ENTER_SUBBLOCK to the META_BLOCK at the current position.
   /// \p Stream is expected to have a BLOCKINFO_BLOCK set.
-  BitstreamMetaParserHelper(BitstreamCursor &Stream,
-                            BitstreamBlockInfo &BlockInfo);
+  LLVM_REMARKS_ABI BitstreamMetaParserHelper(BitstreamCursor &Stream,
+                                             BitstreamBlockInfo &BlockInfo);
 
   /// Parse the META_BLOCK and fill the available entries.
   /// This helper does not check for the validity of the fields.
-  Error parse();
+  LLVM_REMARKS_ABI Error parse();
 };
 
 /// Helper to parse a REMARK_BLOCK for a bitstream remark container.
@@ -78,11 +79,11 @@ struct BitstreamRemarkParserHelper {
   /// ENTER_SUBBLOCK to the REMARK_BLOCK at the current position.
   /// \p Stream is expected to have a BLOCKINFO_BLOCK set and to have already
   /// parsed the META_BLOCK.
-  BitstreamRemarkParserHelper(BitstreamCursor &Stream);
+  LLVM_REMARKS_ABI BitstreamRemarkParserHelper(BitstreamCursor &Stream);
 
   /// Parse the REMARK_BLOCK and fill the available entries.
   /// This helper does not check for the validity of the fields.
-  Error parse();
+  LLVM_REMARKS_ABI Error parse();
 };
 
 /// Helper to parse any bitstream remark container.
@@ -92,18 +93,18 @@ struct BitstreamParserHelper {
   /// The block info block.
   BitstreamBlockInfo BlockInfo;
   /// Start parsing at \p Buffer.
-  BitstreamParserHelper(StringRef Buffer);
+  LLVM_REMARKS_ABI BitstreamParserHelper(StringRef Buffer);
   /// Parse the magic number.
-  Expected<std::array<char, 4>> parseMagic();
+  LLVM_REMARKS_ABI Expected<std::array<char, 4>> parseMagic();
   /// Parse the block info block containing all the abbrevs.
   /// This needs to be called before calling any other parsing function.
-  Error parseBlockInfoBlock();
+  LLVM_REMARKS_ABI Error parseBlockInfoBlock();
   /// Return true if the next block is a META_BLOCK. This function does not move
   /// the cursor.
-  Expected<bool> isMetaBlock();
+  LLVM_REMARKS_ABI Expected<bool> isMetaBlock();
   /// Return true if the next block is a REMARK_BLOCK. This function does not
   /// move the cursor.
-  Expected<bool> isRemarkBlock();
+  LLVM_REMARKS_ABI Expected<bool> isRemarkBlock();
   /// Return true if the parser reached the end of the stream.
   bool atEndOfStream() { return Stream.AtEndOfStream(); }
   /// Jump to the end of the stream, skipping everything.

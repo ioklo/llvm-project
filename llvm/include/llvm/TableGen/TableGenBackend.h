@@ -1,4 +1,4 @@
-//===- llvm/TableGen/TableGenBackend.h - Backend utilities ------*- C++ -*-===//
+﻿//===- llvm/TableGen/TableGenBackend.h - Backend utilities ------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -16,6 +16,7 @@
 #include "llvm/ADT/STLFunctionalExtras.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/TableGen/Record.h"
+#include "llvm/TableGen/TableGenConfig.h"
 
 namespace llvm {
 
@@ -30,7 +31,8 @@ using FnT = function_ref<void(const RecordKeeper &Records, raw_ostream &OS)>;
 /// \p ByDefault is true, then that callback is applied by default if no
 /// command line option was specified.
 struct Opt {
-  Opt(StringRef Name, FnT CB, StringRef Desc, bool ByDefault = false);
+  LLVM_TABLEGEN_ABI Opt(StringRef Name, FnT CB, StringRef Desc,
+                        bool ByDefault = false);
 };
 
 /// Convienence wrapper around `Opt` that registers `EmitterClass::run` as the
@@ -46,14 +48,16 @@ public:
 
 /// Apply callback for any command line option registered above. Returns false
 /// is no callback was applied.
-bool ApplyCallback(const RecordKeeper &Records, raw_ostream &OS);
+LLVM_TABLEGEN_ABI bool ApplyCallback(const RecordKeeper &Records,
+                                     raw_ostream &OS);
 
 } // namespace TableGen::Emitter
 
 /// emitSourceFileHeader - Output an LLVM style file header to the specified
 /// raw_ostream.
-void emitSourceFileHeader(StringRef Desc, raw_ostream &OS,
-                          const RecordKeeper &Record = RecordKeeper());
+LLVM_TABLEGEN_ABI void
+emitSourceFileHeader(StringRef Desc, raw_ostream &OS,
+                     const RecordKeeper &Record = RecordKeeper());
 
 } // namespace llvm
 

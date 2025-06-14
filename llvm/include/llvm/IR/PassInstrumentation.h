@@ -53,6 +53,7 @@
 #include "llvm/ADT/DenseMap.h"
 #include "llvm/ADT/FunctionExtras.h"
 #include "llvm/ADT/SmallVector.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/PassManager.h"
 #include "llvm/Support/Compiler.h"
 #include <type_traits>
@@ -163,9 +164,10 @@ public:
   }
 
   /// Add a class name to pass name mapping for use by pass instrumentation.
-  void addClassToPassName(StringRef ClassName, StringRef PassName);
+  LLVM_CORE_ABI void addClassToPassName(StringRef ClassName,
+                                        StringRef PassName);
   /// Get the pass name for a given pass class name.
-  StringRef getPassNameForClassName(StringRef ClassName);
+  LLVM_CORE_ABI StringRef getPassNameForClassName(StringRef ClassName);
 
 private:
   friend class PassInstrumentation;
@@ -198,7 +200,7 @@ private:
   SmallVector<llvm::unique_function<AnalysesClearedFunc>, 4>
       AnalysesClearedCallbacks;
 
-  SmallVector<llvm::unique_function<void ()>, 4> ClassToPassNameCallbacks;
+  SmallVector<llvm::unique_function<void()>, 4> ClassToPassNameCallbacks;
   DenseMap<StringRef, std::string> ClassToPassName;
 };
 
@@ -349,14 +351,15 @@ public:
   }
 };
 
-bool isSpecialPass(StringRef PassID, const std::vector<StringRef> &Specials);
+LLVM_CORE_ABI bool isSpecialPass(StringRef PassID,
+                                 const std::vector<StringRef> &Specials);
 
 /// Pseudo-analysis pass that exposes the \c PassInstrumentation to pass
 /// managers.
 class PassInstrumentationAnalysis
     : public AnalysisInfoMixin<PassInstrumentationAnalysis> {
   friend AnalysisInfoMixin<PassInstrumentationAnalysis>;
-  static AnalysisKey Key;
+  LLVM_CORE_ABI static AnalysisKey Key;
 
   PassInstrumentationCallbacks *Callbacks;
 
@@ -373,7 +376,6 @@ public:
     return PassInstrumentation(Callbacks);
   }
 };
-
 
 } // namespace llvm
 

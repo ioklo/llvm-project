@@ -19,6 +19,7 @@
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/ADT/Twine.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/DebugLoc.h"
 #include "llvm/Support/CBindingWrapping.h"
 #include "llvm/Support/ErrorHandling.h"
@@ -102,7 +103,7 @@ enum DiagnosticKind {
 /// The returned ID will be greater than or equal to DK_FirstPluginKind.
 /// Thus, the plugin identifiers will not conflict with the
 /// DiagnosticKind values.
-int getNextAvailablePluginDiagnosticKind();
+LLVM_CORE_ABI int getNextAvailablePluginDiagnosticKind();
 
 /// This is the base abstract class for diagnostic reporting in
 /// the backend.
@@ -117,6 +118,7 @@ private:
   const DiagnosticSeverity Severity;
 
   virtual void anchor();
+
 public:
   DiagnosticInfo(/* DiagnosticKind */ int Kind, DiagnosticSeverity Severity)
       : Kind(Kind), Severity(Severity) {}
@@ -180,16 +182,17 @@ public:
   /// \p MsgStr gives the message.
   /// This class does not copy \p MsgStr, therefore the reference must be valid
   /// for the whole life time of the Diagnostic.
-  DiagnosticInfoInlineAsm(uint64_t LocCookie, const Twine &MsgStr,
-                          DiagnosticSeverity Severity = DS_Error);
+  LLVM_CORE_ABI DiagnosticInfoInlineAsm(uint64_t LocCookie, const Twine &MsgStr,
+                                        DiagnosticSeverity Severity = DS_Error);
 
   /// \p Instr gives the original instruction that triggered the diagnostic.
   /// \p MsgStr gives the message.
   /// This class does not copy \p MsgStr, therefore the reference must be valid
   /// for the whole life time of the Diagnostic.
   /// Same for \p I.
-  DiagnosticInfoInlineAsm(const Instruction &I, const Twine &MsgStr,
-                          DiagnosticSeverity Severity = DS_Error);
+  LLVM_CORE_ABI DiagnosticInfoInlineAsm(const Instruction &I,
+                                        const Twine &MsgStr,
+                                        DiagnosticSeverity Severity = DS_Error);
 
   uint64_t getLocCookie() const { return LocCookie; }
   const Twine &getMsgStr() const { return MsgStr; }
@@ -224,7 +227,7 @@ public:
   unsigned getMetadataVersion() const { return MetadataVersion; }
 
   /// \see DiagnosticInfo::print.
-  void print(DiagnosticPrinter &DP) const override;
+  LLVM_CORE_ABI void print(DiagnosticPrinter &DP) const override;
 
   static bool classof(const DiagnosticInfo *DI) {
     return DI->getKind() == DK_DebugMetadataVersion;
@@ -246,7 +249,7 @@ public:
   const Module &getModule() const { return M; }
 
   /// \see DiagnosticInfo::print.
-  void print(DiagnosticPrinter &DP) const override;
+  LLVM_CORE_ABI void print(DiagnosticPrinter &DP) const override;
 
   static bool classof(const DiagnosticInfo *DI) {
     return DI->getKind() == DK_DebugMetadataInvalid;
@@ -270,7 +273,7 @@ public:
       : DiagnosticInfo(DK_SampleProfile, Severity), Msg(Msg) {}
 
   /// \see DiagnosticInfo::print.
-  void print(DiagnosticPrinter &DP) const override;
+  LLVM_CORE_ABI void print(DiagnosticPrinter &DP) const override;
 
   static bool classof(const DiagnosticInfo *DI) {
     return DI->getKind() == DK_SampleProfile;
@@ -300,7 +303,7 @@ public:
       : DiagnosticInfo(DK_PGOProfile, Severity), FileName(FileName), Msg(Msg) {}
 
   /// \see DiagnosticInfo::print.
-  void print(DiagnosticPrinter &DP) const override;
+  LLVM_CORE_ABI void print(DiagnosticPrinter &DP) const override;
 
   static bool classof(const DiagnosticInfo *DI) {
     return DI->getKind() == DK_PGOProfile;
@@ -324,21 +327,22 @@ class DiagnosticLocation {
 
 public:
   DiagnosticLocation() = default;
-  DiagnosticLocation(const DebugLoc &DL);
-  DiagnosticLocation(const DISubprogram *SP);
+  LLVM_CORE_ABI DiagnosticLocation(const DebugLoc &DL);
+  LLVM_CORE_ABI DiagnosticLocation(const DISubprogram *SP);
 
   bool isValid() const { return File; }
   /// Return the full path to the file.
-  std::string getAbsolutePath() const;
+  LLVM_CORE_ABI std::string getAbsolutePath() const;
   /// Return the file name relative to the compilation directory.
-  StringRef getRelativePath() const;
+  LLVM_CORE_ABI StringRef getRelativePath() const;
   unsigned getLine() const { return Line; }
   unsigned getColumn() const { return Column; }
 };
 
 /// Common features for diagnostics with an associated location.
 class DiagnosticInfoWithLocationBase : public DiagnosticInfo {
-  void anchor() override;
+  LLVM_CORE_ABI void anchor() override;
+
 public:
   /// \p Fn is the function where the diagnostic is being emitted. \p Loc is
   /// the location information to use in the diagnostic.
@@ -354,16 +358,16 @@ public:
   /// Return a string with the location information for this diagnostic
   /// in the format "file:line:col". If location information is not available,
   /// it returns "<unknown>:0:0".
-  std::string getLocationStr() const;
+  LLVM_CORE_ABI std::string getLocationStr() const;
 
   /// Return location information for this diagnostic in three parts:
   /// the relative source file path, line number and column.
-  void getLocation(StringRef &RelativePath, unsigned &Line,
-                   unsigned &Column) const;
+  LLVM_CORE_ABI void getLocation(StringRef &RelativePath, unsigned &Line,
+                                 unsigned &Column) const;
 
   /// Return the absolute path tot the file.
-  std::string getAbsolutePath() const;
-  
+  LLVM_CORE_ABI std::string getAbsolutePath() const;
+
   const Function &getFunction() const { return Fn; }
   DiagnosticLocation getLocation() const { return Loc; }
 
@@ -393,7 +397,7 @@ public:
   const Twine &getMsgStr() const { return MsgStr; }
 
   /// \see DiagnosticInfo::print.
-  void print(DiagnosticPrinter &DP) const override;
+  LLVM_CORE_ABI void print(DiagnosticPrinter &DP) const override;
 
   static bool classof(const DiagnosticInfo *DI) {
     return DI->getKind() == DK_GenericWithLoc;
@@ -409,17 +413,19 @@ public:
   /// \p MsgStr is the message to be reported to the frontend.
   /// This class does not copy \p MsgStr, therefore the reference must be valid
   /// for the whole life time of the Diagnostic.
+  LLVM_CORE_ABI
   DiagnosticInfoRegAllocFailure(const Twine &MsgStr, const Function &Fn,
                                 const DiagnosticLocation &DL,
                                 DiagnosticSeverity Severity = DS_Error);
 
+  LLVM_CORE_ABI
   DiagnosticInfoRegAllocFailure(const Twine &MsgStr, const Function &Fn,
                                 DiagnosticSeverity Severity = DS_Error);
 
   const Twine &getMsgStr() const { return MsgStr; }
 
   /// \see DiagnosticInfo::print.
-  void print(DiagnosticPrinter &DP) const override;
+  LLVM_CORE_ABI void print(DiagnosticPrinter &DP) const override;
 
   static bool classof(const DiagnosticInfo *DI) {
     return DI->getKind() == DK_RegAllocFailure;
@@ -445,6 +451,7 @@ private:
 public:
   /// \p The function that is concerned by this stack size diagnostic.
   /// \p The computed stack size.
+  LLVM_CORE_ABI
   DiagnosticInfoResourceLimit(const Function &Fn, const char *ResourceName,
                               uint64_t ResourceSize, uint64_t ResourceLimit,
                               DiagnosticSeverity Severity = DS_Warning,
@@ -456,7 +463,7 @@ public:
   uint64_t getResourceLimit() const { return ResourceLimit; }
 
   /// \see DiagnosticInfo::print.
-  void print(DiagnosticPrinter &DP) const override;
+  LLVM_CORE_ABI void print(DiagnosticPrinter &DP) const override;
 
   static bool classof(const DiagnosticInfo *DI) {
     return DI->getKind() == DK_ResourceLimit || DI->getKind() == DK_StackSize;
@@ -464,7 +471,7 @@ public:
 };
 
 class DiagnosticInfoStackSize : public DiagnosticInfoResourceLimit {
-  void anchor() override;
+  LLVM_CORE_ABI void anchor() override;
 
 public:
   DiagnosticInfoStackSize(const Function &Fn, uint64_t StackSize,
@@ -503,21 +510,21 @@ public:
     DiagnosticLocation Loc;
 
     explicit Argument(StringRef Str = "") : Key("String"), Val(Str) {}
-    Argument(StringRef Key, const Value *V);
-    Argument(StringRef Key, const Type *T);
-    Argument(StringRef Key, StringRef S);
+    LLVM_CORE_ABI Argument(StringRef Key, const Value *V);
+    LLVM_CORE_ABI Argument(StringRef Key, const Type *T);
+    LLVM_CORE_ABI Argument(StringRef Key, StringRef S);
     Argument(StringRef Key, const char *S) : Argument(Key, StringRef(S)) {};
-    Argument(StringRef Key, int N);
-    Argument(StringRef Key, float N);
-    Argument(StringRef Key, long N);
-    Argument(StringRef Key, long long N);
-    Argument(StringRef Key, unsigned N);
-    Argument(StringRef Key, unsigned long N);
-    Argument(StringRef Key, unsigned long long N);
-    Argument(StringRef Key, ElementCount EC);
+    LLVM_CORE_ABI Argument(StringRef Key, int N);
+    LLVM_CORE_ABI Argument(StringRef Key, float N);
+    LLVM_CORE_ABI Argument(StringRef Key, long N);
+    LLVM_CORE_ABI Argument(StringRef Key, long long N);
+    LLVM_CORE_ABI Argument(StringRef Key, unsigned N);
+    LLVM_CORE_ABI Argument(StringRef Key, unsigned long N);
+    LLVM_CORE_ABI Argument(StringRef Key, unsigned long long N);
+    LLVM_CORE_ABI Argument(StringRef Key, ElementCount EC);
     Argument(StringRef Key, bool B) : Key(Key), Val(B ? "true" : "false") {}
-    Argument(StringRef Key, DebugLoc dl);
-    Argument(StringRef Key, InstructionCost C);
+    LLVM_CORE_ABI Argument(StringRef Key, DebugLoc dl);
+    LLVM_CORE_ABI Argument(StringRef Key, InstructionCost C);
   };
 
   /// \p PassName is the name of the pass emitting this diagnostic. \p
@@ -534,13 +541,13 @@ public:
       : DiagnosticInfoWithLocationBase(Kind, Severity, Fn, Loc),
         PassName(PassName), RemarkName(RemarkName) {}
 
-  void insert(StringRef S);
-  void insert(Argument A);
-  void insert(setIsVerbose V);
-  void insert(setExtraArgs EA);
+  LLVM_CORE_ABI void insert(StringRef S);
+  LLVM_CORE_ABI void insert(Argument A);
+  LLVM_CORE_ABI void insert(setIsVerbose V);
+  LLVM_CORE_ABI void insert(setExtraArgs EA);
 
   /// \see DiagnosticInfo::print.
-  void print(DiagnosticPrinter &DP) const override;
+  LLVM_CORE_ABI void print(DiagnosticPrinter &DP) const override;
 
   /// Return true if this optimization remark is enabled by one of
   /// of the LLVM command line flags (-pass-remarks, -pass-remarks-missed,
@@ -551,7 +558,7 @@ public:
 
   StringRef getPassName() const { return PassName; }
   StringRef getRemarkName() const { return RemarkName; }
-  std::string getMsg() const;
+  LLVM_CORE_ABI std::string getMsg() const;
   std::optional<uint64_t> getHotness() const { return Hotness; }
   void setHotness(std::optional<uint64_t> H) { Hotness = H; }
 
@@ -693,7 +700,8 @@ operator<<(RemarkT &R,
 /// Common features for diagnostics dealing with optimization remarks
 /// that are used by IR passes.
 class DiagnosticInfoIROptimization : public DiagnosticInfoOptimizationBase {
-  void anchor() override;
+  LLVM_CORE_ABI void anchor() override;
+
 public:
   /// \p PassName is the name of the pass emitting this diagnostic. \p
   /// RemarkName is a textual identifier for the remark (single-word,
@@ -767,25 +775,26 @@ public:
   /// word, camel-case). \p Loc is the debug location and \p CodeRegion is the
   /// region that the optimization operates on (currently only block is
   /// supported).
-  OptimizationRemark(const char *PassName, StringRef RemarkName,
-                     const DiagnosticLocation &Loc, const Value *CodeRegion);
+  LLVM_CORE_ABI OptimizationRemark(const char *PassName, StringRef RemarkName,
+                                   const DiagnosticLocation &Loc,
+                                   const Value *CodeRegion);
 
   /// Same as above, but the debug location and code region are derived from \p
   /// Instr.
-  OptimizationRemark(const char *PassName, StringRef RemarkName,
-                     const Instruction *Inst);
+  LLVM_CORE_ABI OptimizationRemark(const char *PassName, StringRef RemarkName,
+                                   const Instruction *Inst);
 
   /// Same as above, but the debug location and code region are derived from \p
   /// Func.
-  OptimizationRemark(const char *PassName, StringRef RemarkName,
-                     const Function *Func);
+  LLVM_CORE_ABI OptimizationRemark(const char *PassName, StringRef RemarkName,
+                                   const Function *Func);
 
   static bool classof(const DiagnosticInfo *DI) {
     return DI->getKind() == DK_OptimizationRemark;
   }
 
   /// \see DiagnosticInfoOptimizationBase::isEnabled.
-  bool isEnabled() const override;
+  LLVM_CORE_ABI bool isEnabled() const override;
 
 private:
   /// This is deprecated now and only used by the function API below.
@@ -812,26 +821,29 @@ public:
   /// remark (single-word, camel-case). \p Loc is the debug location and \p
   /// CodeRegion is the region that the optimization operates on (currently only
   /// block is supported).
-  OptimizationRemarkMissed(const char *PassName, StringRef RemarkName,
-                           const DiagnosticLocation &Loc,
-                           const Value *CodeRegion);
+  LLVM_CORE_ABI OptimizationRemarkMissed(const char *PassName,
+                                         StringRef RemarkName,
+                                         const DiagnosticLocation &Loc,
+                                         const Value *CodeRegion);
 
   /// Same as above but \p Inst is used to derive code region and debug
   /// location.
-  OptimizationRemarkMissed(const char *PassName, StringRef RemarkName,
-                           const Instruction *Inst);
+  LLVM_CORE_ABI OptimizationRemarkMissed(const char *PassName,
+                                         StringRef RemarkName,
+                                         const Instruction *Inst);
 
   /// Same as above but \p F is used to derive code region and debug
   /// location.
-  OptimizationRemarkMissed(const char *PassName, StringRef RemarkName,
-                           const Function *F);
+  LLVM_CORE_ABI OptimizationRemarkMissed(const char *PassName,
+                                         StringRef RemarkName,
+                                         const Function *F);
 
   static bool classof(const DiagnosticInfo *DI) {
     return DI->getKind() == DK_OptimizationRemarkMissed;
   }
 
   /// \see DiagnosticInfoOptimizationBase::isEnabled.
-  bool isEnabled() const override;
+  LLVM_CORE_ABI bool isEnabled() const override;
 
 private:
   /// This is deprecated now and only used by the function API below.
@@ -858,9 +870,10 @@ public:
   /// remark (single-word, camel-case). \p Loc is the debug location and \p
   /// CodeRegion is the region that the optimization operates on (currently only
   /// block is supported).
-  OptimizationRemarkAnalysis(const char *PassName, StringRef RemarkName,
-                             const DiagnosticLocation &Loc,
-                             const Value *CodeRegion);
+  LLVM_CORE_ABI OptimizationRemarkAnalysis(const char *PassName,
+                                           StringRef RemarkName,
+                                           const DiagnosticLocation &Loc,
+                                           const Value *CodeRegion);
 
   /// This is ctor variant allows a pass to build an optimization remark
   /// from an existing remark.
@@ -875,22 +888,24 @@ public:
 
   /// Same as above but \p Inst is used to derive code region and debug
   /// location.
-  OptimizationRemarkAnalysis(const char *PassName, StringRef RemarkName,
-                             const Instruction *Inst);
+  LLVM_CORE_ABI OptimizationRemarkAnalysis(const char *PassName,
+                                           StringRef RemarkName,
+                                           const Instruction *Inst);
 
   /// Same as above but \p F is used to derive code region and debug
   /// location.
-  OptimizationRemarkAnalysis(const char *PassName, StringRef RemarkName,
-                             const Function *F);
+  LLVM_CORE_ABI OptimizationRemarkAnalysis(const char *PassName,
+                                           StringRef RemarkName,
+                                           const Function *F);
 
   static bool classof(const DiagnosticInfo *DI) {
     return DI->getKind() == DK_OptimizationRemarkAnalysis;
   }
 
   /// \see DiagnosticInfoOptimizationBase::isEnabled.
-  bool isEnabled() const override;
+  LLVM_CORE_ABI bool isEnabled() const override;
 
-  static const char *AlwaysPrint;
+  LLVM_CORE_ABI static const char *AlwaysPrint;
 
   bool shouldAlwaysPrint() const { return getPassName() == AlwaysPrint; }
 
@@ -900,10 +915,11 @@ protected:
                              const Twine &Msg)
       : DiagnosticInfoIROptimization(Kind, DS_Remark, PassName, Fn, Loc, Msg) {}
 
-  OptimizationRemarkAnalysis(enum DiagnosticKind Kind, const char *PassName,
-                             StringRef RemarkName,
-                             const DiagnosticLocation &Loc,
-                             const Value *CodeRegion);
+  LLVM_CORE_ABI OptimizationRemarkAnalysis(enum DiagnosticKind Kind,
+                                           const char *PassName,
+                                           StringRef RemarkName,
+                                           const DiagnosticLocation &Loc,
+                                           const Value *CodeRegion);
 
 private:
   /// This is deprecated now and only used by the function API below.
@@ -924,7 +940,8 @@ private:
 /// Diagnostic information for optimization analysis remarks related to
 /// floating-point non-commutativity.
 class OptimizationRemarkAnalysisFPCommute : public OptimizationRemarkAnalysis {
-  void anchor() override;
+  LLVM_CORE_ABI void anchor() override;
+
 public:
   /// \p PassName is the name of the pass emitting this diagnostic. If this name
   /// matches the regular expression given in -Rpass-analysis=, then the
@@ -966,7 +983,8 @@ private:
 /// Diagnostic information for optimization analysis remarks related to
 /// pointer aliasing.
 class OptimizationRemarkAnalysisAliasing : public OptimizationRemarkAnalysis {
-  void anchor() override;
+  LLVM_CORE_ABI void anchor() override;
+
 public:
   /// \p PassName is the name of the pass emitting this diagnostic. If this name
   /// matches the regular expression given in -Rpass-analysis=, then the
@@ -1016,7 +1034,7 @@ public:
 
   const SMDiagnostic &getDiagnostic() const { return Diagnostic; }
 
-  void print(DiagnosticPrinter &DP) const override;
+  LLVM_CORE_ABI void print(DiagnosticPrinter &DP) const override;
 
   static bool classof(const DiagnosticInfo *DI) {
     return DI->getKind() == DK_MIRParser;
@@ -1032,7 +1050,7 @@ public:
                                 DiagnosticSeverity Severity = DS_Warning)
       : DiagnosticInfo(DK_Instrumentation, Severity), Msg(DiagMsg) {}
 
-  void print(DiagnosticPrinter &DP) const override;
+  LLVM_CORE_ABI void print(DiagnosticPrinter &DP) const override;
 
   static bool classof(const DiagnosticInfo *DI) {
     return DI->getKind() == DK_Instrumentation;
@@ -1051,7 +1069,7 @@ public:
 
   const Function &getFunction() const { return Fn; }
 
-  void print(DiagnosticPrinter &DP) const override;
+  LLVM_CORE_ABI void print(DiagnosticPrinter &DP) const override;
 
   static bool classof(const DiagnosticInfo *DI) {
     return DI->getKind() == DK_ISelFallback;
@@ -1081,16 +1099,17 @@ public:
   /// camel-case).  \p Loc is the debug location and \p CodeRegion is the
   /// region that the optimization operates on (currently basic block is
   /// supported).
-  DiagnosticInfoOptimizationFailure(const char *PassName, StringRef RemarkName,
-                                    const DiagnosticLocation &Loc,
-                                    const Value *CodeRegion);
+  LLVM_CORE_ABI DiagnosticInfoOptimizationFailure(const char *PassName,
+                                                  StringRef RemarkName,
+                                                  const DiagnosticLocation &Loc,
+                                                  const Value *CodeRegion);
 
   static bool classof(const DiagnosticInfo *DI) {
     return DI->getKind() == DK_OptimizationFailure;
   }
 
   /// \see DiagnosticInfoOptimizationBase::isEnabled.
-  bool isEnabled() const override;
+  LLVM_CORE_ABI bool isEnabled() const override;
 };
 
 /// Diagnostic information for unsupported feature in backend.
@@ -1118,16 +1137,16 @@ public:
 
   const Twine &getMessage() const { return Msg; }
 
-  void print(DiagnosticPrinter &DP) const override;
+  LLVM_CORE_ABI void print(DiagnosticPrinter &DP) const override;
 };
 
 /// Diagnostic information for MisExpect analysis.
 class DiagnosticInfoMisExpect : public DiagnosticInfoWithLocationBase {
 public:
-  DiagnosticInfoMisExpect(const Instruction *Inst, Twine &Msg);
+  LLVM_CORE_ABI DiagnosticInfoMisExpect(const Instruction *Inst, Twine &Msg);
 
   /// \see DiagnosticInfo::print.
-  void print(DiagnosticPrinter &DP) const override;
+  LLVM_CORE_ABI void print(DiagnosticPrinter &DP) const override;
 
   static bool classof(const DiagnosticInfo *DI) {
     return DI->getKind() == DK_MisExpect;
@@ -1178,14 +1197,14 @@ public:
   bool isInlineAsmDiag() const { return InlineAsmDiag; }
   const SMDiagnostic &getSMDiag() const { return Diagnostic; }
   uint64_t getLocCookie() const { return LocCookie; }
-  void print(DiagnosticPrinter &DP) const override;
+  LLVM_CORE_ABI void print(DiagnosticPrinter &DP) const override;
 
   static bool classof(const DiagnosticInfo *DI) {
     return DI->getKind() == DK_SrcMgr;
   }
 };
 
-void diagnoseDontCall(const CallInst &CI);
+LLVM_CORE_ABI void diagnoseDontCall(const CallInst &CI);
 
 class DiagnosticInfoDontCall : public DiagnosticInfo {
   StringRef CalleeName;
@@ -1200,7 +1219,7 @@ public:
   StringRef getFunctionName() const { return CalleeName; }
   StringRef getNote() const { return Note; }
   uint64_t getLocCookie() const { return LocCookie; }
-  void print(DiagnosticPrinter &DP) const override;
+  LLVM_CORE_ABI void print(DiagnosticPrinter &DP) const override;
   static bool classof(const DiagnosticInfo *DI) {
     return DI->getKind() == DK_DontCall;
   }

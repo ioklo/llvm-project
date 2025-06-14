@@ -1,4 +1,4 @@
-//===- BinaryStreamWriter.h - Writes objects to a BinaryStream ---*- C++-*-===//
+﻿//===- BinaryStreamWriter.h - Writes objects to a BinaryStream ---*- C++-*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -48,7 +48,7 @@ public:
   ///
   /// \returns a success error code if the data was successfully written,
   /// otherwise returns an appropriate error code.
-  Error writeBytes(ArrayRef<uint8_t> Buffer);
+  LLVM_SUPPORT_ABI Error writeBytes(ArrayRef<uint8_t> Buffer);
 
   /// Write the integer \p Value to the underlying stream in the
   /// specified endianness.  On success, updates the offset so that

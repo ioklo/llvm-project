@@ -1,4 +1,4 @@
-//===- CmpPredicate.h - CmpInst Predicate with samesign information -------===//
+﻿//===- CmpPredicate.h - CmpInst Predicate with samesign information -------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -13,6 +13,7 @@
 #ifndef LLVM_IR_CMPPREDICATE_H
 #define LLVM_IR_CMPPREDICATE_H
 
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/InstrTypes.h"
 
 namespace llvm {
@@ -50,14 +51,14 @@ public:
   ///   samesign ult + slt -> slt
   ///   ult + ult -> ult
   ///   ult + slt -> std::nullopt
-  static std::optional<CmpPredicate> getMatching(CmpPredicate A,
-                                                 CmpPredicate B);
+  LLVM_CORE_ABI static std::optional<CmpPredicate> getMatching(CmpPredicate A,
+                                                               CmpPredicate B);
 
   /// Attempts to return a signed CmpInst::Predicate from the CmpPredicate. If
   /// the CmpPredicate has samesign, return ICmpInst::getSignedPredicate,
   /// dropping samesign information. Otherwise, return the predicate, dropping
   /// samesign information.
-  CmpInst::Predicate getPreferredSignedPredicate() const;
+  LLVM_CORE_ABI CmpInst::Predicate getPreferredSignedPredicate() const;
 
   /// An operator== on the underlying Predicate.
   bool operator==(CmpInst::Predicate P) const { return Pred == P; }
@@ -70,13 +71,13 @@ public:
 
   /// Do a ICmpInst::getCmpPredicate() or CmpInst::getPredicate(), as
   /// appropriate.
-  static CmpPredicate get(const CmpInst *Cmp);
+  LLVM_CORE_ABI static CmpPredicate get(const CmpInst *Cmp);
 
   /// Get the swapped predicate of a CmpPredicate.
-  static CmpPredicate getSwapped(CmpPredicate P);
+  LLVM_CORE_ABI static CmpPredicate getSwapped(CmpPredicate P);
 
   /// Get the swapped predicate of a CmpInst.
-  static CmpPredicate getSwapped(const CmpInst *Cmp);
+  LLVM_CORE_ABI static CmpPredicate getSwapped(const CmpInst *Cmp);
 };
 } // namespace llvm
 

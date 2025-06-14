@@ -1,4 +1,4 @@
-//===- BitcodeWriterPass.cpp - Bitcode writing pass -----------------------===//
+﻿//===- BitcodeWriterPass.cpp - Bitcode writing pass -----------------------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -18,7 +18,7 @@
 #include "llvm/Pass.h"
 using namespace llvm;
 
-extern bool WriteNewDbgInfoFormatToBitcode;
+LLVM_CORE_ABI extern bool WriteNewDbgInfoFormatToBitcode;
 
 PreservedAnalyses BitcodeWriterPass::run(Module &M, ModuleAnalysisManager &AM) {
   ScopedDbgInfoFormatSetter FormatSetter(M, M.IsNewDbgInfoFormat &&

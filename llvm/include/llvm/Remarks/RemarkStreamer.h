@@ -1,4 +1,4 @@
-//===- llvm/Remarks/RemarkStreamer.h ----------------------------*- C++ -*-===//
+﻿//===- llvm/Remarks/RemarkStreamer.h ----------------------------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -30,6 +30,7 @@
 #ifndef LLVM_REMARKS_REMARKSTREAMER_H
 #define LLVM_REMARKS_REMARKSTREAMER_H
 
+#include "llvm/Remarks/RemarksConfig.h"
 #include "llvm/Remarks/RemarkSerializer.h"
 #include "llvm/Support/Error.h"
 #include "llvm/Support/Regex.h"
@@ -50,6 +51,7 @@ class RemarkStreamer final {
   const std::optional<std::string> Filename;
 
 public:
+  LLVM_REMARKS_ABI
   RemarkStreamer(std::unique_ptr<remarks::RemarkSerializer> RemarkSerializer,
                  std::optional<StringRef> Filename = std::nullopt);
 
@@ -63,11 +65,11 @@ public:
   remarks::RemarkSerializer &getSerializer() { return *RemarkSerializer; }
   /// Set a pass filter based on a regex \p Filter.
   /// Returns an error if the regex is invalid.
-  Error setFilter(StringRef Filter);
+  LLVM_REMARKS_ABI Error setFilter(StringRef Filter);
   /// Check wether the string matches the filter.
-  bool matchesFilter(StringRef Str);
+  LLVM_REMARKS_ABI bool matchesFilter(StringRef Str);
   /// Check if the remarks also need to have associated metadata in a section.
-  bool needsSection() const;
+  LLVM_REMARKS_ABI bool needsSection() const;
 };
 } // end namespace remarks
 } // end namespace llvm

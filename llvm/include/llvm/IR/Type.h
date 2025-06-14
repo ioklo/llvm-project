@@ -15,6 +15,7 @@
 #define LLVM_IR_TYPE_H
 
 #include "llvm/ADT/ArrayRef.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/Support/CBindingWrapping.h"
 #include "llvm/Support/Casting.h"
 #include "llvm/Support/Compiler.h"
@@ -82,7 +83,7 @@ private:
   /// This refers to the LLVMContext in which this type was uniqued.
   LLVMContext &Context;
 
-  TypeID   ID : 8;            // The current base type of this type.
+  TypeID ID : 8;              // The current base type of this type.
   unsigned SubclassData : 24; // Space for subclasses to store data.
                               // Note that this should be synchronized with
                               // MAX_INT_BITS value in IntegerType class.
@@ -91,7 +92,7 @@ protected:
   friend class LLVMContextImpl;
 
   explicit Type(LLVMContext &C, TypeID tid)
-    : Context(C), ID(tid), SubclassData(0) {}
+      : Context(C), ID(tid), SubclassData(0) {}
   ~Type() = default;
 
   unsigned getSubclassData() const { return SubclassData; }
@@ -110,7 +111,7 @@ protected:
   /// the pointee of a pointer, the element type of an array, etc. This pointer
   /// may be 0 for types that don't contain other types (Integer, Double,
   /// Float).
-  Type * const *ContainedTys = nullptr;
+  Type *const *ContainedTys = nullptr;
 
 public:
   /// Print the current type.
@@ -119,10 +120,10 @@ public:
   /// When \p NoDetails is true, we only print %st.
   /// Put differently, \p NoDetails prints the type as if
   /// inlined with the operands when printing an instruction.
-  void print(raw_ostream &O, bool IsForDebug = false,
-             bool NoDetails = false) const;
+  LLVM_CORE_ABI void print(raw_ostream &O, bool IsForDebug = false,
+                           bool NoDetails = false) const;
 
-  void dump() const;
+  LLVM_CORE_ABI void dump() const;
 
   /// Return the LLVMContext in which this type was uniqued.
   LLVMContext &getContext() const { return Context; }
@@ -190,11 +191,9 @@ public:
   /// of multiple floating-point units.
   /// An example of such a type is ppc_fp128, also known as double-double, which
   /// consists of two IEEE 754 doubles.
-  bool isMultiUnitFPType() const {
-    return getTypeID() == PPC_FP128TyID;
-  }
+  bool isMultiUnitFPType() const { return getTypeID() == PPC_FP128TyID; }
 
-  const fltSemantics &getFltSemantics() const;
+  LLVM_CORE_ABI const fltSemantics &getFltSemantics() const;
 
   /// Return true if this is X86 AMX.
   bool isX86_AMXTy() const { return getTypeID() == X86_AMXTyID; }
@@ -203,23 +202,23 @@ public:
   bool isTargetExtTy() const { return getTypeID() == TargetExtTyID; }
 
   /// Return true if this is a target extension type with a scalable layout.
-  bool isScalableTargetExtTy() const;
+  LLVM_CORE_ABI bool isScalableTargetExtTy() const;
 
   /// Return true if this is a type whose size is a known multiple of vscale.
-  bool isScalableTy(SmallPtrSetImpl<const Type *> &Visited) const;
-  bool isScalableTy() const;
+  LLVM_CORE_ABI bool isScalableTy(SmallPtrSetImpl<const Type *> &Visited) const;
+  LLVM_CORE_ABI bool isScalableTy() const;
 
   /// Return true if this type is or contains a target extension type that
   /// disallows being used as a global.
-  bool
+  LLVM_CORE_ABI bool
   containsNonGlobalTargetExtType(SmallPtrSetImpl<const Type *> &Visited) const;
-  bool containsNonGlobalTargetExtType() const;
+  LLVM_CORE_ABI bool containsNonGlobalTargetExtType() const;
 
   /// Return true if this type is or contains a target extension type that
   /// disallows being used as a local.
-  bool
+  LLVM_CORE_ABI bool
   containsNonLocalTargetExtType(SmallPtrSetImpl<const Type *> &Visited) const;
-  bool containsNonLocalTargetExtType() const;
+  LLVM_CORE_ABI bool containsNonLocalTargetExtType() const;
 
   /// Return true if this is a FP type or a vector of FP.
   bool isFPOrFPVectorTy() const { return getScalarType()->isFloatingPointTy(); }
@@ -237,7 +236,7 @@ public:
   bool isIntegerTy() const { return getTypeID() == IntegerTyID; }
 
   /// Return true if this is an IntegerType of the given width.
-  bool isIntegerTy(unsigned Bitwidth) const;
+  LLVM_CORE_ABI bool isIntegerTy(unsigned Bitwidth) const;
 
   /// Return true if this is an integer type or a vector of integer types.
   bool isIntOrIntVectorTy() const { return getScalarType()->isIntegerTy(); }
@@ -272,17 +271,17 @@ public:
   }
 
   // True if this is an instance of TargetExtType of RISC-V vector tuple.
-  bool isRISCVVectorTupleTy() const;
+  LLVM_CORE_ABI bool isRISCVVectorTupleTy() const;
 
   /// Return true if this type could be converted with a lossless BitCast to
   /// type 'Ty'. For example, i8* to i32*. BitCasts are valid for types of the
   /// same size only where no re-interpretation of the bits is done.
   /// Determine if this type could be losslessly bitcast to Ty
-  bool canLosslesslyBitCastTo(Type *Ty) const;
+  LLVM_CORE_ABI bool canLosslesslyBitCastTo(Type *Ty) const;
 
   /// Return true if this type is empty, that is, it has no elements or all of
   /// its elements are empty.
-  bool isEmptyTy() const;
+  LLVM_CORE_ABI bool isEmptyTy() const;
 
   /// Return true if the type is "first class", meaning it is a valid type for a
   /// Value.
@@ -307,7 +306,7 @@ public:
   /// Return true if it makes sense to take the size of this type. To get the
   /// actual size for a particular target, it is reasonable to use the
   /// DataLayout subsystem to do this.
-  bool isSized(SmallPtrSetImpl<Type*> *Visited = nullptr) const {
+  bool isSized(SmallPtrSetImpl<Type *> *Visited = nullptr) const {
     // If it's a primitive, it is always sized.
     if (getTypeID() == IntegerTyID || isFloatingPointTy() ||
         getTypeID() == PointerTyID || getTypeID() == X86_AMXTyID)
@@ -334,21 +333,21 @@ public:
   /// instance of the type is stored to memory. The DataLayout class provides
   /// additional query functions to provide this information.
   ///
-  TypeSize getPrimitiveSizeInBits() const LLVM_READONLY;
+  LLVM_CORE_ABI TypeSize getPrimitiveSizeInBits() const LLVM_READONLY;
 
   /// If this is a vector type, return the getPrimitiveSizeInBits value for the
   /// element type. Otherwise return the getPrimitiveSizeInBits value for this
   /// type.
-  unsigned getScalarSizeInBits() const LLVM_READONLY;
+  LLVM_CORE_ABI unsigned getScalarSizeInBits() const LLVM_READONLY;
 
   /// Return the width of the mantissa of this type. This is only valid on
   /// floating-point types. If the FP type does not have a stable mantissa (e.g.
   /// ppc long double), this method returns -1.
-  int getFPMantissaWidth() const;
+  LLVM_CORE_ABI int getFPMantissaWidth() const;
 
   /// Return whether the type is IEEE compatible, as defined by the eponymous
   /// method in APFloat.
-  bool isIEEE() const;
+  LLVM_CORE_ABI bool isIEEE() const;
 
   /// If this is a vector type, return the element type, otherwise return
   /// 'this'.
@@ -361,11 +360,13 @@ public:
   //===--------------------------------------------------------------------===//
   // Type Iteration support.
   //
-  using subtype_iterator = Type * const *;
+  using subtype_iterator = Type *const *;
 
   subtype_iterator subtype_begin() const { return ContainedTys; }
-  subtype_iterator subtype_end() const { return &ContainedTys[NumContainedTys];}
-  ArrayRef<Type*> subtypes() const {
+  subtype_iterator subtype_end() const {
+    return &ContainedTys[NumContainedTys];
+  }
+  ArrayRef<Type *> subtypes() const {
     return ArrayRef(subtype_begin(), subtype_end());
   }
 
@@ -437,34 +438,34 @@ public:
   //
 
   /// Return a type based on an identifier.
-  static Type *getPrimitiveType(LLVMContext &C, TypeID IDNumber);
+  LLVM_CORE_ABI static Type *getPrimitiveType(LLVMContext &C, TypeID IDNumber);
 
   //===--------------------------------------------------------------------===//
   // These are the builtin types that are always available.
   //
-  static Type *getVoidTy(LLVMContext &C);
-  static Type *getLabelTy(LLVMContext &C);
-  static Type *getHalfTy(LLVMContext &C);
-  static Type *getBFloatTy(LLVMContext &C);
-  static Type *getFloatTy(LLVMContext &C);
-  static Type *getDoubleTy(LLVMContext &C);
-  static Type *getMetadataTy(LLVMContext &C);
-  static Type *getX86_FP80Ty(LLVMContext &C);
-  static Type *getFP128Ty(LLVMContext &C);
-  static Type *getPPC_FP128Ty(LLVMContext &C);
-  static Type *getX86_AMXTy(LLVMContext &C);
-  static Type *getTokenTy(LLVMContext &C);
-  static IntegerType *getIntNTy(LLVMContext &C, unsigned N);
-  static IntegerType *getInt1Ty(LLVMContext &C);
-  static IntegerType *getInt8Ty(LLVMContext &C);
-  static IntegerType *getInt16Ty(LLVMContext &C);
-  static IntegerType *getInt32Ty(LLVMContext &C);
-  static IntegerType *getInt64Ty(LLVMContext &C);
-  static IntegerType *getInt128Ty(LLVMContext &C);
+  LLVM_CORE_ABI static Type *getVoidTy(LLVMContext &C);
+  LLVM_CORE_ABI static Type *getLabelTy(LLVMContext &C);
+  LLVM_CORE_ABI static Type *getHalfTy(LLVMContext &C);
+  LLVM_CORE_ABI static Type *getBFloatTy(LLVMContext &C);
+  LLVM_CORE_ABI static Type *getFloatTy(LLVMContext &C);
+  LLVM_CORE_ABI static Type *getDoubleTy(LLVMContext &C);
+  LLVM_CORE_ABI static Type *getMetadataTy(LLVMContext &C);
+  LLVM_CORE_ABI static Type *getX86_FP80Ty(LLVMContext &C);
+  LLVM_CORE_ABI static Type *getFP128Ty(LLVMContext &C);
+  LLVM_CORE_ABI static Type *getPPC_FP128Ty(LLVMContext &C);
+  LLVM_CORE_ABI static Type *getX86_AMXTy(LLVMContext &C);
+  LLVM_CORE_ABI static Type *getTokenTy(LLVMContext &C);
+  LLVM_CORE_ABI static IntegerType *getIntNTy(LLVMContext &C, unsigned N);
+  LLVM_CORE_ABI static IntegerType *getInt1Ty(LLVMContext &C);
+  LLVM_CORE_ABI static IntegerType *getInt8Ty(LLVMContext &C);
+  LLVM_CORE_ABI static IntegerType *getInt16Ty(LLVMContext &C);
+  LLVM_CORE_ABI static IntegerType *getInt32Ty(LLVMContext &C);
+  LLVM_CORE_ABI static IntegerType *getInt64Ty(LLVMContext &C);
+  LLVM_CORE_ABI static IntegerType *getInt128Ty(LLVMContext &C);
   template <typename ScalarTy> static Type *getScalarTy(LLVMContext &C) {
     int noOfBits = sizeof(ScalarTy) * CHAR_BIT;
     if (std::is_integral<ScalarTy>::value) {
-      return (Type*) Type::getIntNTy(C, noOfBits);
+      return (Type *)Type::getIntNTy(C, noOfBits);
     } else if (std::is_floating_point<ScalarTy>::value) {
       switch (noOfBits) {
       case 32:
@@ -475,25 +476,27 @@ public:
     }
     llvm_unreachable("Unsupported type in Type::getScalarTy");
   }
-  static Type *getFloatingPointTy(LLVMContext &C, const fltSemantics &S);
+  LLVM_CORE_ABI static Type *getFloatingPointTy(LLVMContext &C,
+                                                const fltSemantics &S);
 
   //===--------------------------------------------------------------------===//
   // Convenience methods for getting pointer types.
   //
-  static Type *getWasm_ExternrefTy(LLVMContext &C);
-  static Type *getWasm_FuncrefTy(LLVMContext &C);
+  LLVM_CORE_ABI static Type *getWasm_ExternrefTy(LLVMContext &C);
+  LLVM_CORE_ABI static Type *getWasm_FuncrefTy(LLVMContext &C);
 
   /// Return a pointer to the current type. This is equivalent to
   /// PointerType::get(Ctx, AddrSpace).
   /// TODO: Remove this after opaque pointer transition is complete.
   LLVM_DEPRECATED("Use PointerType::get instead", "PointerType::get")
-  PointerType *getPointerTo(unsigned AddrSpace = 0) const;
+  LLVM_CORE_ABI PointerType *getPointerTo(unsigned AddrSpace = 0) const;
 
 private:
   /// Derived types like structures and arrays are sized iff all of the members
   /// of the type are sized as well. Since asking for their size is relatively
   /// uncommon, move this operation out-of-line.
-  bool isSizedDerivedType(SmallPtrSetImpl<Type*> *Visited = nullptr) const;
+  LLVM_CORE_ABI bool
+  isSizedDerivedType(SmallPtrSetImpl<Type *> *Visited = nullptr) const;
 };
 
 // Printing of types.
@@ -514,12 +517,12 @@ DEFINE_ISA_CONVERSION_FUNCTIONS(Type, LLVMTypeRef)
 
 /* Specialized opaque type conversions.
  */
-inline Type **unwrap(LLVMTypeRef* Tys) {
-  return reinterpret_cast<Type**>(Tys);
+inline Type **unwrap(LLVMTypeRef *Tys) {
+  return reinterpret_cast<Type **>(Tys);
 }
 
 inline LLVMTypeRef *wrap(Type **Tys) {
-  return reinterpret_cast<LLVMTypeRef*>(const_cast<Type**>(Tys));
+  return reinterpret_cast<LLVMTypeRef *>(const_cast<Type **>(Tys));
 }
 
 } // end namespace llvm

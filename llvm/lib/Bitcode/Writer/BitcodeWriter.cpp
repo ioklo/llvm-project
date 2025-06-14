@@ -1,4 +1,4 @@
-//===- Bitcode/Writer/BitcodeWriter.cpp - Bitcode Writer ------------------===//
+﻿//===- Bitcode/Writer/BitcodeWriter.cpp - Bitcode Writer ------------------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -35,6 +35,7 @@
 #include "llvm/IR/Constant.h"
 #include "llvm/IR/ConstantRangeList.h"
 #include "llvm/IR/Constants.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/DebugInfoMetadata.h"
 #include "llvm/IR/DebugLoc.h"
 #include "llvm/IR/DerivedTypes.h"
@@ -102,8 +103,8 @@ namespace llvm {
 extern FunctionSummary::ForceSummaryHotnessType ForceSummaryEdgesCold;
 }
 
-extern bool WriteNewDbgInfoFormatToBitcode;
-extern llvm::cl::opt<bool> UseNewDbgInfoFormat;
+LLVM_CORE_ABI extern bool WriteNewDbgInfoFormatToBitcode;
+LLVM_CORE_ABI extern llvm::cl::opt<bool> UseNewDbgInfoFormat;
 
 namespace {
 

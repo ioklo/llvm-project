@@ -26,6 +26,7 @@
 
 #include "llvm/ADT/ilist.h"
 #include "llvm/ADT/simple_ilist.h"
+#include "llvm/IR/CoreConfig.h"
 #include <cstddef>
 
 namespace llvm {
@@ -47,7 +48,9 @@ class ValueSymbolTable;
 template <typename NodeTy> struct SymbolTableListParentType {};
 
 #define DEFINE_SYMBOL_TABLE_PARENT_TYPE(NODE, PARENT)                          \
-  template <> struct SymbolTableListParentType<NODE> { using type = PARENT; };
+  template <> struct SymbolTableListParentType<NODE> {                         \
+    using type = PARENT;                                                       \
+  };
 DEFINE_SYMBOL_TABLE_PARENT_TYPE(Instruction, BasicBlock)
 DEFINE_SYMBOL_TABLE_PARENT_TYPE(BasicBlock, Function)
 DEFINE_SYMBOL_TABLE_PARENT_TYPE(Argument, Function)
@@ -82,12 +85,12 @@ private:
                                            static_cast<ValueSubClass *>(
                                                nullptr))));
     ListTy *Anchor = static_cast<ListTy *>(this);
-    return reinterpret_cast<ItemParentClass*>(reinterpret_cast<char*>(Anchor)-
-                                              Offset);
+    return reinterpret_cast<ItemParentClass *>(
+        reinterpret_cast<char *>(Anchor) - Offset);
   }
 
   static ListTy &getList(ItemParentClass *Par) {
-    return Par->*(Par->getSublistAccess((ValueSubClass*)nullptr));
+    return Par->*(Par->getSublistAccess((ValueSubClass *)nullptr));
   }
 
   static ValueSymbolTable *getSymTab(ItemParentClass *Par) {
@@ -95,13 +98,12 @@ private:
   }
 
 public:
-  void addNodeToList(ValueSubClass *V);
-  void removeNodeFromList(ValueSubClass *V);
-  void transferNodesFromList(SymbolTableListTraits &L2, iterator first,
-                             iterator last);
+  LLVM_CORE_ABI void addNodeToList(ValueSubClass *V);
+  LLVM_CORE_ABI void removeNodeFromList(ValueSubClass *V);
+  LLVM_CORE_ABI void transferNodesFromList(SymbolTableListTraits &L2,
+                                           iterator first, iterator last);
   // private:
-  template<typename TPtr>
-  void setSymTabObject(TPtr *, TPtr);
+  template <typename TPtr> void setSymTabObject(TPtr *, TPtr);
   static ValueSymbolTable *toPtr(ValueSymbolTable *P) { return P; }
   static ValueSymbolTable *toPtr(ValueSymbolTable &R) { return &R; }
 };

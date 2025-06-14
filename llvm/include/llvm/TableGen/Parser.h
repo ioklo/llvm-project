@@ -1,4 +1,4 @@
-//===- llvm/TableGen/Parser.h - tblgen parser entry point -------*- C++ -*-===//
+﻿//===- llvm/TableGen/Parser.h - tblgen parser entry point -------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -13,6 +13,8 @@
 #ifndef LLVM_TABLEGEN_PARSER_H
 #define LLVM_TABLEGEN_PARSER_H
 
+#include "llvm/TableGen/TableGenConfig.h"
+
 namespace llvm {
 class RecordKeeper;
 class SourceMgr;
@@ -23,7 +25,8 @@ class SourceMgr;
 ///
 /// NOTE: TableGen currently relies on global state within a given parser
 ///       invocation, so this function is not thread-safe.
-bool TableGenParseFile(SourceMgr &InputSrcMgr, RecordKeeper &Records);
+LLVM_TABLEGEN_ABI bool TableGenParseFile(SourceMgr &InputSrcMgr,
+                                         RecordKeeper &Records);
 
 } // end namespace llvm
 

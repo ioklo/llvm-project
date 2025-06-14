@@ -1,4 +1,4 @@
-//===- llvm/Support/Debug.h - Easy way to add debug output ------*- C++ -*-===//
+﻿//===- llvm/Support/Debug.h - Easy way to add debug output ------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -83,7 +83,7 @@ LLVM_SUPPORT_ABI void setCurrentDebugTypes(const char **Types, unsigned Count);
 /// is specified.  This should probably not be referenced directly, instead, use
 /// the DEBUG macro below.
 ///
-extern bool DebugFlag;
+LLVM_SUPPORT_ABI extern bool DebugFlag;
 
 /// EnableDebugBuffering - This defaults to false.  If true, the debug
 /// stream will install signal handlers to dump any buffered debug
@@ -91,7 +91,7 @@ extern bool DebugFlag;
 /// to install signal handlers if they are certain there will be no
 /// conflict.
 ///
-extern bool EnableDebugBuffering;
+LLVM_SUPPORT_ABI extern bool EnableDebugBuffering;
 
 /// dbgs() - This returns a reference to a raw_ostream for debugging
 /// messages.  If debugging is disabled it returns errs().  Use it

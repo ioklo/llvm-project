@@ -23,6 +23,7 @@
 
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/IR/Constants.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/FMF.h"
 #include "llvm/IR/IRBuilderFolder.h"
 #include "llvm/IR/InstrTypes.h"
@@ -33,7 +34,7 @@ namespace llvm {
 
 /// NoFolder - Create "constants" (actually, instructions) with no folding.
 class NoFolder final : public IRBuilderFolder {
-  virtual void anchor();
+  LLVM_CORE_ABI virtual void anchor();
 
 public:
   explicit NoFolder() = default;

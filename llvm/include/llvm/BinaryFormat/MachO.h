@@ -1,4 +1,4 @@
-//===-- llvm/BinaryFormat/MachO.h - The MachO file format -------*- C++ -*-===//
+﻿//===-- llvm/BinaryFormat/MachO.h - The MachO file format -------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -13,6 +13,7 @@
 #ifndef LLVM_BINARYFORMAT_MACHO_H
 #define LLVM_BINARYFORMAT_MACHO_H
 
+#include "llvm/BinaryFormat/BinaryFormatConfig.h"
 #include "llvm/Support/Compiler.h"
 #include "llvm/Support/DataTypes.h"
 #include "llvm/Support/Error.h"
@@ -1698,10 +1699,11 @@ enum CPUSubTypePowerPC {
   CPU_SUBTYPE_MC98601 = CPU_SUBTYPE_POWERPC_601
 };
 
-Expected<uint32_t> getCPUType(const Triple &T);
-Expected<uint32_t> getCPUSubType(const Triple &T);
-Expected<uint32_t> getCPUSubType(const Triple &T, unsigned PtrAuthABIVersion,
-                                 bool PtrAuthKernelABIVersion);
+LLVM_BINARYFORMAT_ABI Expected<uint32_t> getCPUType(const Triple &T);
+LLVM_BINARYFORMAT_ABI Expected<uint32_t> getCPUSubType(const Triple &T);
+LLVM_BINARYFORMAT_ABI Expected<uint32_t>
+getCPUSubType(const Triple &T, unsigned PtrAuthABIVersion,
+              bool PtrAuthKernelABIVersion);
 
 struct x86_thread_state32_t {
   uint32_t eax;

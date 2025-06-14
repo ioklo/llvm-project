@@ -1,4 +1,4 @@
-//===- AbstractCallSite.h - Abstract call sites -----------------*- C++ -*-===//
+﻿//===- AbstractCallSite.h - Abstract call sites -----------------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -15,6 +15,7 @@
 #define LLVM_IR_ABSTRACTCALLSITE_H
 
 #include "llvm/IR/Constants.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/Function.h"
 #include "llvm/IR/InstrTypes.h"
 #include "llvm/IR/Value.h"
@@ -95,15 +96,16 @@ public:
   /// If the use is not a callee use of a call or invoke instruction, the
   /// callback metadata is used to determine the argument <-> parameter mapping
   /// as well as the callee of the abstract call site.
-  AbstractCallSite(const Use *U);
+  LLVM_CORE_ABI AbstractCallSite(const Use *U);
 
   /// Add operand uses of \p CB that represent callback uses into
   /// \p CallbackUses.
   ///
   /// All uses added to \p CallbackUses can be used to create abstract call
   /// sites for which AbstractCallSite::isCallbackCall() will return true.
-  static void getCallbackUses(const CallBase &CB,
-                              SmallVectorImpl<const Use *> &CallbackUses);
+  LLVM_CORE_ABI static void
+  getCallbackUses(const CallBase &CB,
+                  SmallVectorImpl<const Use *> &CallbackUses);
 
   /// Conversion operator to conveniently check for a valid/initialized ACS.
   explicit operator bool() const { return CB != nullptr; }

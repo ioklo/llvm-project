@@ -1,4 +1,4 @@
-//===- MSFError.h - Error extensions for MSF Files --------------*- C++ -*-===//
+﻿//===- MSFError.h - Error extensions for MSF Files --------------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -9,6 +9,7 @@
 #ifndef LLVM_DEBUGINFO_MSF_MSFERROR_H
 #define LLVM_DEBUGINFO_MSF_MSFERROR_H
 
+#include "llvm/DebugInfo/MSF/DebugInfoMSFConfig.h"
 #include "llvm/Support/Error.h"
 
 namespace llvm {
@@ -36,6 +37,7 @@ struct is_error_code_enum<llvm::msf::msf_error_code> : std::true_type {};
 
 namespace llvm {
 namespace msf {
+LLVM_DEBUGINFOMSF_ABI
 const std::error_category &MSFErrCategory();
 
 inline std::error_code make_error_code(msf_error_code E) {
@@ -67,7 +69,7 @@ public:
     llvm_unreachable("msf error code not implemented");
   }
 
-  static char ID;
+  LLVM_DEBUGINFOMSF_ABI static char ID;
 };
 } // namespace msf
 } // namespace llvm

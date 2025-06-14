@@ -1,4 +1,4 @@
-//===- MsgPackReader.h - Simple MsgPack reader ------------------*- C++ -*-===//
+﻿//===- MsgPackReader.h - Simple MsgPack reader ------------------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -38,6 +38,7 @@
 #ifndef LLVM_BINARYFORMAT_MSGPACKREADER_H
 #define LLVM_BINARYFORMAT_MSGPACKREADER_H
 
+#include "llvm/BinaryFormat/BinaryFormatConfig.h"
 #include "llvm/Support/Error.h"
 #include "llvm/Support/MemoryBufferRef.h"
 #include <cstdint>
@@ -104,9 +105,9 @@ struct Object {
 class Reader {
 public:
   /// Construct a reader, keeping a reference to the \p InputBuffer.
-  Reader(MemoryBufferRef InputBuffer);
+  LLVM_BINARYFORMAT_ABI Reader(MemoryBufferRef InputBuffer);
   /// Construct a reader, keeping a reference to the \p Input.
-  Reader(StringRef Input);
+  LLVM_BINARYFORMAT_ABI Reader(StringRef Input);
 
   Reader(const Reader &) = delete;
   Reader &operator=(const Reader &) = delete;
@@ -125,7 +126,7 @@ public:
   ///
   /// \returns true when object successfully read, false when at end of
   /// input (and so \p Obj was not updated), otherwise an error.
-  Expected<bool> read(Object &Obj);
+  LLVM_BINARYFORMAT_ABI Expected<bool> read(Object &Obj);
 
 private:
   MemoryBufferRef InputBuffer;

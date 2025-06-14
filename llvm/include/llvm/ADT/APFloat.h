@@ -1204,7 +1204,7 @@ public:
   /// Returns a float which is bitcasted from an all one value int.
   ///
   /// \param Semantics - type float semantics
-  static APFloat getAllOnesValue(const fltSemantics &Semantics);
+  LLVM_SUPPORT_ABI static APFloat getAllOnesValue(const fltSemantics &Semantics);
 
   /// Returns true if the given semantics has actual significand.
   ///
@@ -1359,8 +1359,7 @@ public:
   }
 
   LLVM_SUPPORT_ABI opStatus convert(const fltSemantics &ToSemantics,
-                                    roundingMode RM,
-                   bool *losesInfo);
+                                    roundingMode RM, bool *losesInfo);
   opStatus convertToInteger(MutableArrayRef<integerPart> Input,
                             unsigned int Width, bool IsSigned, roundingMode RM,
                             bool *IsExact) const {

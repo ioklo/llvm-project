@@ -1,4 +1,4 @@
-//===- MIRPrinter.cpp - MIR serialization format printer ------------------===//
+﻿//===- MIRPrinter.cpp - MIR serialization format printer ------------------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -69,7 +69,7 @@ static cl::opt<bool> SimplifyMIR(
 static cl::opt<bool> PrintLocations("mir-debug-loc", cl::Hidden, cl::init(true),
                                     cl::desc("Print MIR debug-locations"));
 
-extern cl::opt<bool> WriteNewDbgInfoFormat;
+LLVM_CORE_ABI extern cl::opt<bool> WriteNewDbgInfoFormat;
 
 namespace {
 

@@ -19,6 +19,7 @@
 #include "llvm/ADT/iterator_range.h"
 #include "llvm/IR/Attributes.h"
 #include "llvm/IR/Constants.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/Function.h"
 #include "llvm/IR/InstrTypes.h"
 #include "llvm/IR/Instructions.h"
@@ -92,7 +93,7 @@ public:
   uint32_t getNumPatchBytes() const {
     const Value *NumPatchBytesVal = getArgOperand(NumPatchBytesPos);
     uint64_t NumPatchBytes =
-      cast<ConstantInt>(NumPatchBytesVal)->getZExtValue();
+        cast<ConstantInt>(NumPatchBytesVal)->getZExtValue();
     assert(isInt<32>(NumPatchBytes) && "should fit in 32 bits!");
     return NumPatchBytes;
   }
@@ -123,7 +124,6 @@ public:
     auto *FT = cast<FunctionType>(getParamElementType(CalledFunctionPos));
     return FT->getReturnType();
   }
-
 
   /// Return the number of arguments to the underlying call.
   size_t actual_arg_size() const { return getNumCallArgs(); }
@@ -195,7 +195,6 @@ public:
     return make_range(gc_live_begin(), gc_live_end());
   }
 
-
   /// Get list of all gc reloactes linked to this statepoint
   /// May contain several relocations for the same base/derived pair.
   /// For example this could happen due to relocations on unwinding
@@ -242,11 +241,12 @@ struct StatepointDirectives {
 
 /// Parse out statepoint directives from the function attributes present in \p
 /// AS.
-StatepointDirectives parseStatepointDirectivesFromAttrs(AttributeList AS);
+LLVM_CORE_ABI StatepointDirectives
+parseStatepointDirectivesFromAttrs(AttributeList AS);
 
 /// Return \c true if the \p Attr is an attribute that is a statepoint
 /// directive.
-bool isStatepointDirectiveAttr(Attribute Attr);
+LLVM_CORE_ABI bool isStatepointDirectiveAttr(Attribute Attr);
 
 } // end namespace llvm
 

@@ -1,4 +1,4 @@
-//===-- llvm/Remarks/Remark.h - The remark type -----------------*- C++/-*-===//
+﻿//===-- llvm/Remarks/Remark.h - The remark type -----------------*- C++/-*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -16,6 +16,7 @@
 #include "llvm-c/Remarks.h"
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/ADT/StringRef.h"
+#include "llvm/Remarks/RemarksConfig.h"
 #include "llvm/Support/CBindingWrapping.h"
 #include "llvm/Support/raw_ostream.h"
 #include <optional>
@@ -35,7 +36,7 @@ struct RemarkLocation {
   unsigned SourceColumn = 0;
 
   /// Implement operator<< on RemarkLocation.
-  void print(raw_ostream &OS) const;
+  LLVM_REMARKS_ABI void print(raw_ostream &OS) const;
 };
 
 // Create wrappers for C Binding types (see CBindingWrapping.h).
@@ -51,11 +52,11 @@ struct Argument {
   std::optional<RemarkLocation> Loc;
 
   /// Implement operator<< on Argument.
-  void print(raw_ostream &OS) const;
+  LLVM_REMARKS_ABI void print(raw_ostream &OS) const;
   /// Return the value of argument as int.
-  std::optional<int> getValAsInt() const;
+  LLVM_REMARKS_ABI std::optional<int> getValAsInt() const;
   /// Check if the argument value can be parsed as int.
-  bool isValInt() const;
+  LLVM_REMARKS_ABI bool isValInt() const;
 };
 
 // Create wrappers for C Binding types (see CBindingWrapping.h).
@@ -124,13 +125,13 @@ struct Remark {
   Remark &operator=(Remark &&) = default;
 
   /// Return a message composed from the arguments as a string.
-  std::string getArgsAsMsg() const;
+  LLVM_REMARKS_ABI std::string getArgsAsMsg() const;
 
   /// Clone this remark to explicitly ask for a copy.
   Remark clone() const { return *this; }
 
   /// Implement operator<< on Remark.
-  void print(raw_ostream &OS) const;
+  LLVM_REMARKS_ABI void print(raw_ostream &OS) const;
 
 private:
   /// In order to avoid unwanted copies, "delete" the copy constructor.

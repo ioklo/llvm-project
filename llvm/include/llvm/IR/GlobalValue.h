@@ -20,6 +20,7 @@
 #include "llvm/ADT/StringRef.h"
 #include "llvm/ADT/Twine.h"
 #include "llvm/IR/Constant.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/DerivedTypes.h"
 #include "llvm/IR/Value.h"
 #include "llvm/Support/Casting.h"
@@ -49,7 +50,7 @@ class GlobalValue : public Constant {
 public:
   /// An enumeration for the kinds of linkage for global values.
   enum LinkageTypes {
-    ExternalLinkage = 0,///< Externally visible function
+    ExternalLinkage = 0,        ///< Externally visible function
     AvailableExternallyLinkage, ///< Available for inspection, not emission.
     LinkOnceAnyLinkage, ///< Keep one copy of function when linking (inline)
     LinkOnceODRLinkage, ///< Same, but only replaced by something equivalent.
@@ -58,20 +59,20 @@ public:
     AppendingLinkage,   ///< Special purpose, only applies to global arrays
     InternalLinkage,    ///< Rename collisions when linking (static functions).
     PrivateLinkage,     ///< Like Internal, but omit from symbol table.
-    ExternalWeakLinkage,///< ExternalWeak linkage description.
-    CommonLinkage       ///< Tentative definitions.
+    ExternalWeakLinkage, ///< ExternalWeak linkage description.
+    CommonLinkage        ///< Tentative definitions.
   };
 
   /// An enumeration for the kinds of visibility of global values.
   enum VisibilityTypes {
-    DefaultVisibility = 0,  ///< The GV is visible
-    HiddenVisibility,       ///< The GV is hidden
-    ProtectedVisibility     ///< The GV is protected
+    DefaultVisibility = 0, ///< The GV is visible
+    HiddenVisibility,      ///< The GV is hidden
+    ProtectedVisibility    ///< The GV is protected
   };
 
   /// Storage classes of global values for PE targets.
   enum DLLStorageClassTypes {
-    DefaultStorageClass   = 0,
+    DefaultStorageClass = 0,
     DLLImportStorageClass = 1, ///< Function to be imported from DLL
     DLLExportStorageClass = 2  ///< Function to be accessible from DLL.
   };
@@ -96,9 +97,9 @@ protected:
 
   // All bitfields use unsigned as the underlying type so that MSVC will pack
   // them.
-  unsigned Linkage : 4;       // The linkage of this global
-  unsigned Visibility : 2;    // The visibility style of this global
-  unsigned UnnamedAddrVal : 2; // This value's address is not significant
+  unsigned Linkage : 4;         // The linkage of this global
+  unsigned Visibility : 2;      // The visibility style of this global
+  unsigned UnnamedAddrVal : 2;  // This value's address is not significant
   unsigned DllStorageClass : 2; // DLL storage class
 
   unsigned ThreadLocal : 3; // Is this symbol "Thread Local", if so, what is
@@ -129,8 +130,8 @@ private:
 
   friend class Constant;
 
-  void destroyConstantImpl();
-  Value *handleOperandChangeImpl(Value *From, Value *To);
+  LLVM_CORE_ABI void destroyConstantImpl();
+  LLVM_CORE_ABI Value *handleOperandChangeImpl(Value *From, Value *To);
 
   /// Returns true if the definition of this global may be replaced by a
   /// differently optimized variant of the same source level function at link
@@ -162,7 +163,7 @@ private:
 
   /// Returns true if the global is a function definition with the nobuiltin
   /// attribute.
-  bool isNobuiltinFnDef() const;
+  LLVM_CORE_ABI bool isNobuiltinFnDef() const;
 
 protected:
   /// The intrinsic ID for this subclass (which must be a Function).
@@ -173,9 +174,7 @@ protected:
   /// This is stored here to save space in Function on 64-bit hosts.
   Intrinsic::ID IntID = (Intrinsic::ID)0U;
 
-  unsigned getGlobalValueSubClassData() const {
-    return SubClassData;
-  }
+  unsigned getGlobalValueSubClassData() const { return SubClassData; }
   void setGlobalValueSubClassData(unsigned V) {
     assert(V < (1 << GlobalValueSubClassDataBits) && "It will not fit");
     SubClassData = V;
@@ -184,12 +183,10 @@ protected:
   Module *Parent = nullptr; // The containing module.
 
   // Used by SymbolTableListTraits.
-  void setParent(Module *parent) {
-    Parent = parent;
-  }
+  void setParent(Module *parent) { Parent = parent; }
 
   ~GlobalValue() {
-    removeDeadConstantUsers();   // remove any dead constants using this.
+    removeDeadConstantUsers(); // remove any dead constants using this.
   }
 
 public:
@@ -203,9 +200,7 @@ public:
 
   GlobalValue(const GlobalValue &) = delete;
 
-  unsigned getAddressSpace() const {
-    return getType()->getAddressSpace();
-  }
+  unsigned getAddressSpace() const { return getType()->getAddressSpace(); }
 
   enum class UnnamedAddr {
     None,
@@ -226,9 +221,7 @@ public:
     return getUnnamedAddr() != UnnamedAddr::None;
   }
 
-  UnnamedAddr getUnnamedAddr() const {
-    return UnnamedAddr(UnnamedAddrVal);
-  }
+  UnnamedAddr getUnnamedAddr() const { return UnnamedAddr(UnnamedAddrVal); }
   void setUnnamedAddr(UnnamedAddr Val) { UnnamedAddrVal = unsigned(Val); }
 
   static UnnamedAddr getMinUnnamedAddr(UnnamedAddr A, UnnamedAddr B) {
@@ -240,10 +233,10 @@ public:
   }
 
   bool hasComdat() const { return getComdat() != nullptr; }
-  const Comdat *getComdat() const;
+  LLVM_CORE_ABI const Comdat *getComdat() const;
   Comdat *getComdat() {
     return const_cast<Comdat *>(
-                           static_cast<const GlobalValue *>(this)->getComdat());
+        static_cast<const GlobalValue *>(this)->getComdat());
   }
 
   VisibilityTypes getVisibility() const { return VisibilityTypes(Visibility); }
@@ -289,7 +282,7 @@ public:
   }
 
   bool hasSection() const { return !getSection().empty(); }
-  StringRef getSection() const;
+  LLVM_CORE_ABI StringRef getSection() const;
 
   /// Global values are always pointers.
   PointerType *getType() const { return cast<PointerType>(User::getType()); }
@@ -303,22 +296,18 @@ public:
 
   void setDSOLocal(bool Local) { IsDSOLocal = Local; }
 
-  bool isDSOLocal() const {
-    return IsDSOLocal;
-  }
+  bool isDSOLocal() const { return IsDSOLocal; }
 
-  bool hasPartition() const {
-    return HasPartition;
-  }
-  StringRef getPartition() const;
-  void setPartition(StringRef Part);
+  bool hasPartition() const { return HasPartition; }
+  LLVM_CORE_ABI StringRef getPartition() const;
+  LLVM_CORE_ABI void setPartition(StringRef Part);
 
   // ASan, HWASan and Memtag sanitizers have some instrumentation that applies
   // specifically to global variables.
   struct SanitizerMetadata {
     SanitizerMetadata()
-        : NoAddress(false), NoHWAddress(false),
-          Memtag(false), IsDynInit(false) {}
+        : NoAddress(false), NoHWAddress(false), Memtag(false),
+          IsDynInit(false) {}
     // For ASan and HWASan, this instrumentation is implicitly applied to all
     // global variables when built with -fsanitize=*. What we need is a way to
     // persist the information that a certain global variable should *not* have
@@ -354,14 +343,14 @@ public:
   };
 
   bool hasSanitizerMetadata() const { return HasSanitizerMetadata; }
-  const SanitizerMetadata &getSanitizerMetadata() const;
+  LLVM_CORE_ABI const SanitizerMetadata &getSanitizerMetadata() const;
   // Note: Not byref as it's a POD and otherwise it's too easy to call
   // G.setSanitizerMetadata(G2.getSanitizerMetadata()), and the argument becomes
   // dangling when the backing storage allocates the metadata for `G`, as the
   // storage is shared between `G1` and `G2`.
-  void setSanitizerMetadata(SanitizerMetadata Meta);
-  void removeSanitizerMetadata();
-  void setNoSanitizeMetadata();
+  LLVM_CORE_ABI void setSanitizerMetadata(SanitizerMetadata Meta);
+  LLVM_CORE_ABI void removeSanitizerMetadata();
+  LLVM_CORE_ABI void setNoSanitizeMetadata();
 
   bool isTagged() const {
     return hasSanitizerMetadata() && getSanitizerMetadata().Memtag;
@@ -434,7 +423,7 @@ public:
     case AvailableExternallyLinkage:
     case LinkOnceODRLinkage:
     case WeakODRLinkage:
-    // The above three cannot be overridden but can be de-refined.
+      // The above three cannot be overridden but can be de-refined.
 
     case ExternalLinkage:
     case AppendingLinkage:
@@ -456,7 +445,7 @@ public:
   /// Using this method outside of the code generators is almost always a
   /// mistake: when working at the IR level use isInterposable instead as it
   /// knows about ODR semantics.
-  static bool isWeakForLinker(LinkageTypes Linkage)  {
+  static bool isWeakForLinker(LinkageTypes Linkage) {
     return Linkage == WeakAnyLinkage || Linkage == WeakODRLinkage ||
            Linkage == LinkOnceAnyLinkage || Linkage == LinkOnceODRLinkage ||
            Linkage == CommonLinkage || Linkage == ExternalWeakLinkage;
@@ -488,9 +477,7 @@ public:
   /// interposable (see \c isInterposable), since in such cases the currently
   /// visible variant is *a* correct implementation of the original source
   /// function; it just isn't the *only* correct implementation.
-  bool isDefinitionExact() const {
-    return !mayBeDerefined();
-  }
+  bool isDefinitionExact() const { return !mayBeDerefined(); }
 
   /// Return true if this global has an exact defintion.
   bool hasExactDefinition() const {
@@ -506,8 +493,8 @@ public:
   /// *arbitrary* definition at link time or load time. We cannot do any IPO or
   /// inlining across interposable call edges, since the callee can be
   /// replaced with something arbitrary.
-  bool isInterposable() const;
-  bool canBenefitFromLocalAlias() const;
+  LLVM_CORE_ABI bool isInterposable() const;
+  LLVM_CORE_ABI bool canBenefitFromLocalAlias() const;
 
   bool hasExternalLinkage() const { return isExternalLinkage(getLinkage()); }
   bool hasAvailableExternallyLinkage() const {
@@ -555,7 +542,7 @@ public:
 protected:
   /// Copy all additional attributes (those not needed to create a GlobalValue)
   /// from the GlobalValue Src to this one.
-  void copyAttributesFrom(const GlobalValue *Src);
+  LLVM_CORE_ABI void copyAttributesFrom(const GlobalValue *Src);
 
 public:
   /// If the given string begins with the GlobalValue name mangling escape
@@ -574,13 +561,13 @@ public:
   /// used as the key for a global lookup (e.g. profile or ThinLTO).
   /// The value's original name is \c Name and has linkage of type
   /// \c Linkage. The value is defined in module \c FileName.
-  static std::string getGlobalIdentifier(StringRef Name,
-                                         GlobalValue::LinkageTypes Linkage,
-                                         StringRef FileName);
+  LLVM_CORE_ABI static std::string
+  getGlobalIdentifier(StringRef Name, GlobalValue::LinkageTypes Linkage,
+                      StringRef FileName);
 
   /// Return the modified name for this global value suitable to be
   /// used as the key for a global lookup (e.g. profile or ThinLTO).
-  std::string getGlobalIdentifier() const;
+  LLVM_CORE_ABI std::string getGlobalIdentifier() const;
 
   /// Declare a type to represent a global unique identifier for a global value.
   /// This is a 64 bits hash that is used by PGO and ThinLTO to have a compact
@@ -589,7 +576,7 @@ public:
 
   /// Return a 64-bit global unique ID constructed from global value name
   /// (i.e. returned by getGlobalIdentifier()).
-  static GUID getGUID(StringRef GlobalName);
+  LLVM_CORE_ABI static GUID getGUID(StringRef GlobalName);
 
   /// Return a 64-bit global unique ID constructed from global value name
   /// (i.e. returned by getGlobalIdentifier()).
@@ -605,16 +592,16 @@ public:
   /// If this function's Module is being lazily streamed in functions from disk
   /// or some other source, this method can be used to check to see if the
   /// function has been read in yet or not.
-  bool isMaterializable() const;
+  LLVM_CORE_ABI bool isMaterializable() const;
 
   /// Make sure this GlobalValue is fully read.
-  Error materialize();
+  LLVM_CORE_ABI Error materialize();
 
-/// @}
+  /// @}
 
   /// Return true if the primary definition of this global value is outside of
   /// the current translation unit.
-  bool isDeclaration() const;
+  LLVM_CORE_ABI bool isDeclaration() const;
 
   bool isDeclarationForLinker() const {
     if (hasAvailableExternallyLinkage())
@@ -633,25 +620,25 @@ public:
     return !(isDeclarationForLinker() || isWeakForLinker());
   }
 
-  const GlobalObject *getAliaseeObject() const;
+  LLVM_CORE_ABI const GlobalObject *getAliaseeObject() const;
   GlobalObject *getAliaseeObject() {
     return const_cast<GlobalObject *>(
         static_cast<const GlobalValue *>(this)->getAliaseeObject());
   }
 
   /// Returns whether this is a reference to an absolute symbol.
-  bool isAbsoluteSymbolRef() const;
+  LLVM_CORE_ABI bool isAbsoluteSymbolRef() const;
 
   /// If this is an absolute symbol reference, returns the range of the symbol,
   /// otherwise returns std::nullopt.
-  std::optional<ConstantRange> getAbsoluteSymbolRange() const;
+  LLVM_CORE_ABI std::optional<ConstantRange> getAbsoluteSymbolRange() const;
 
   /// This method unlinks 'this' from the containing module, but does not delete
   /// it.
-  void removeFromParent();
+  LLVM_CORE_ABI void removeFromParent();
 
   /// This method unlinks 'this' from the containing module and deletes it.
-  void eraseFromParent();
+  LLVM_CORE_ABI void eraseFromParent();
 
   /// Get the module that this global value is contained inside of...
   Module *getParent() { return Parent; }
@@ -660,7 +647,7 @@ public:
   /// Get the data layout of the module this global belongs to.
   ///
   /// Requires the global to have a parent module.
-  const DataLayout &getDataLayout() const;
+  LLVM_CORE_ABI const DataLayout &getDataLayout() const;
 
   // Methods for support type inquiry through isa, cast, and dyn_cast:
   static bool classof(const Value *V) {
@@ -675,7 +662,7 @@ public:
   /// is not normally profitable to omit them from the .o symbol table. Using
   /// this analysis makes sense when the information can be passed down to the
   /// linker or we are in LTO.
-  bool canBeOmittedFromSymbolTable() const;
+  LLVM_CORE_ABI bool canBeOmittedFromSymbolTable() const;
 };
 
 } // end namespace llvm

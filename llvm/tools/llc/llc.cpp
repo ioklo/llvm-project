@@ -1,4 +1,4 @@
-//===-- llc.cpp - Implement the LLVM Native Code Generator ----------------===//
+﻿//===-- llc.cpp - Implement the LLVM Native Code Generator ----------------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -25,6 +25,7 @@
 #include "llvm/CodeGen/TargetPassConfig.h"
 #include "llvm/CodeGen/TargetSubtargetInfo.h"
 #include "llvm/IR/AutoUpgrade.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/DataLayout.h"
 #include "llvm/IR/DiagnosticInfo.h"
 #include "llvm/IR/DiagnosticPrinter.h"
@@ -211,7 +212,7 @@ static cl::opt<bool> TryUseNewDbgInfoFormat(
     cl::desc("Enable debuginfo iterator positions, if they're built in"),
     cl::init(false), cl::Hidden);
 
-extern cl::opt<bool> UseNewDbgInfoFormat;
+LLVM_CORE_ABI extern cl::opt<bool> UseNewDbgInfoFormat;
 
 namespace {
 

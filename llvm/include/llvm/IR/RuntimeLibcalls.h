@@ -16,6 +16,7 @@
 
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/IR/CallingConv.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/Support/AtomicOrdering.h"
 #include "llvm/TargetParser/Triple.h"
 
@@ -33,14 +34,13 @@ namespace RTLIB {
 enum Libcall {
 #define HANDLE_LIBCALL(code, name) code,
 #include "llvm/IR/RuntimeLibcalls.def"
+
 #undef HANDLE_LIBCALL
 };
 
 /// A simple container for information about the supported runtime calls.
 struct RuntimeLibcallsInfo {
-  explicit RuntimeLibcallsInfo(const Triple &TT) {
-    initLibcalls(TT);
-  }
+  explicit RuntimeLibcallsInfo(const Triple &TT) { initLibcalls(TT); }
 
   /// Rename the default libcall routine name for the specified libcall.
   void setLibcallName(RTLIB::Libcall Call, const char *Name) {
@@ -96,7 +96,7 @@ private:
 
   /// Set default libcall names. If a target wants to opt-out of a libcall it
   /// should be placed here.
-  void initLibcalls(const Triple &TT);
+  LLVM_CORE_ABI void initLibcalls(const Triple &TT);
 };
 
 } // namespace RTLIB

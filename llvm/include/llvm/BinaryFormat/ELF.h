@@ -1,4 +1,4 @@
-//===- llvm/BinaryFormat/ELF.h - ELF constants and structures ---*- C++ -*-===//
+﻿//===- llvm/BinaryFormat/ELF.h - ELF constants and structures ---*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -20,6 +20,7 @@
 #define LLVM_BINARYFORMAT_ELF_H
 
 #include "llvm/ADT/StringRef.h"
+#include "llvm/BinaryFormat/BinaryFormatConfig.h"
 #include <cstdint>
 #include <cstring>
 #include <type_traits>
@@ -2002,17 +2003,17 @@ enum {
 constexpr unsigned CREL_HDR_ADDEND = 4;
 
 /// Convert an architecture name into ELF's e_machine value.
-uint16_t convertArchNameToEMachine(StringRef Arch);
+LLVM_BINARYFORMAT_ABI uint16_t convertArchNameToEMachine(StringRef Arch);
 
 /// Convert an ELF's e_machine value into an architecture name.
-StringRef convertEMachineToArchName(uint16_t EMachine);
+LLVM_BINARYFORMAT_ABI StringRef convertEMachineToArchName(uint16_t EMachine);
 
 // Convert a lowercase string identifier into an OSABI value.
-uint8_t convertNameToOSABI(StringRef Name);
+LLVM_BINARYFORMAT_ABI uint8_t convertNameToOSABI(StringRef Name);
 
 // Convert an OSABI value into a string that identifies the OS- or ABI-
 // specific ELF extension.
-StringRef convertOSABIToName(uint8_t OSABI);
+LLVM_BINARYFORMAT_ABI StringRef convertOSABIToName(uint8_t OSABI);
 
 } // end namespace ELF
 } // end namespace llvm

@@ -1,4 +1,4 @@
-//===- CoroFrame.cpp - Builds and manipulates coroutine frame -------------===//
+﻿//===- CoroFrame.cpp - Builds and manipulates coroutine frame -------------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -19,6 +19,7 @@
 #include "llvm/ADT/ScopeExit.h"
 #include "llvm/ADT/SmallString.h"
 #include "llvm/Analysis/StackLifetime.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/DIBuilder.h"
 #include "llvm/IR/DebugInfo.h"
 #include "llvm/IR/Dominators.h"
@@ -41,7 +42,7 @@
 
 using namespace llvm;
 
-extern cl::opt<bool> UseNewDbgInfoFormat;
+LLVM_CORE_ABI extern cl::opt<bool> UseNewDbgInfoFormat;
 
 #define DEBUG_TYPE "coro-frame"
 

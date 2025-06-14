@@ -15,6 +15,7 @@
 #define LLVM_IR_GLOBALALIAS_H
 
 #include "llvm/ADT/ilist_node.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/GlobalValue.h"
 #include "llvm/IR/OperandTraits.h"
 #include "llvm/IR/Value.h"
@@ -30,8 +31,9 @@ class GlobalAlias : public GlobalValue, public ilist_node<GlobalAlias> {
 
   constexpr static IntrusiveOperandsAllocMarker AllocMarker{1};
 
-  GlobalAlias(Type *Ty, unsigned AddressSpace, LinkageTypes Linkage,
-              const Twine &Name, Constant *Aliasee, Module *Parent);
+  LLVM_CORE_ABI GlobalAlias(Type *Ty, unsigned AddressSpace,
+                            LinkageTypes Linkage, const Twine &Name,
+                            Constant *Aliasee, Module *Parent);
 
 public:
   GlobalAlias(const GlobalAlias &) = delete;
@@ -39,26 +41,29 @@ public:
 
   /// If a parent module is specified, the alias is automatically inserted into
   /// the end of the specified module's alias list.
-  static GlobalAlias *create(Type *Ty, unsigned AddressSpace,
-                             LinkageTypes Linkage, const Twine &Name,
-                             Constant *Aliasee, Module *Parent);
+  LLVM_CORE_ABI static GlobalAlias *create(Type *Ty, unsigned AddressSpace,
+                                           LinkageTypes Linkage,
+                                           const Twine &Name, Constant *Aliasee,
+                                           Module *Parent);
 
   // Without the Aliasee.
-  static GlobalAlias *create(Type *Ty, unsigned AddressSpace,
-                             LinkageTypes Linkage, const Twine &Name,
-                             Module *Parent);
+  LLVM_CORE_ABI static GlobalAlias *create(Type *Ty, unsigned AddressSpace,
+                                           LinkageTypes Linkage,
+                                           const Twine &Name, Module *Parent);
 
   // The module is taken from the Aliasee.
-  static GlobalAlias *create(Type *Ty, unsigned AddressSpace,
-                             LinkageTypes Linkage, const Twine &Name,
-                             GlobalValue *Aliasee);
+  LLVM_CORE_ABI static GlobalAlias *create(Type *Ty, unsigned AddressSpace,
+                                           LinkageTypes Linkage,
+                                           const Twine &Name,
+                                           GlobalValue *Aliasee);
 
   // Type, Parent and AddressSpace taken from the Aliasee.
-  static GlobalAlias *create(LinkageTypes Linkage, const Twine &Name,
-                             GlobalValue *Aliasee);
+  LLVM_CORE_ABI static GlobalAlias *
+  create(LinkageTypes Linkage, const Twine &Name, GlobalValue *Aliasee);
 
   // Linkage, Type, Parent and AddressSpace taken from the Aliasee.
-  static GlobalAlias *create(const Twine &Name, GlobalValue *Aliasee);
+  LLVM_CORE_ABI static GlobalAlias *create(const Twine &Name,
+                                           GlobalValue *Aliasee);
 
   // allocate space for exactly one operand
   void *operator new(size_t S) { return User::operator new(S, AllocMarker); }
@@ -74,21 +79,21 @@ public:
   /// removeFromParent - This method unlinks 'this' from the containing module,
   /// but does not delete it.
   ///
-  void removeFromParent();
+  LLVM_CORE_ABI void removeFromParent();
 
   /// eraseFromParent - This method unlinks 'this' from the containing module
   /// and deletes it.
   ///
-  void eraseFromParent();
+  LLVM_CORE_ABI void eraseFromParent();
 
   /// These methods retrieve and set alias target.
-  void setAliasee(Constant *Aliasee);
+  LLVM_CORE_ABI void setAliasee(Constant *Aliasee);
   const Constant *getAliasee() const {
     return static_cast<Constant *>(Op<0>().get());
   }
   Constant *getAliasee() { return static_cast<Constant *>(Op<0>().get()); }
 
-  const GlobalObject *getAliaseeObject() const;
+  LLVM_CORE_ABI const GlobalObject *getAliaseeObject() const;
   GlobalObject *getAliaseeObject() {
     return const_cast<GlobalObject *>(
         static_cast<const GlobalAlias *>(this)->getAliaseeObject());

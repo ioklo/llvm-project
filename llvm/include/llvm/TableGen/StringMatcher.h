@@ -1,4 +1,4 @@
-//===- StringMatcher.h - Generate a matcher for input strings ---*- C++ -*-===//
+﻿//===- StringMatcher.h - Generate a matcher for input strings ---*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -14,6 +14,7 @@
 #define LLVM_TABLEGEN_STRINGMATCHER_H
 
 #include "llvm/ADT/StringRef.h"
+#include "llvm/TableGen/TableGenConfig.h"
 #include <string>
 #include <utility>
 #include <vector>
@@ -41,7 +42,8 @@ public:
                 const std::vector<StringPair> &matches, raw_ostream &os)
     : StrVariableName(strVariableName), Matches(matches), OS(os) {}
 
-  void Emit(unsigned Indent = 0, bool IgnoreDuplicates = false) const;
+  LLVM_TABLEGEN_ABI void Emit(unsigned Indent = 0,
+                              bool IgnoreDuplicates = false) const;
 
 private:
   bool EmitStringMatcherForChar(const std::vector<const StringPair *> &Matches,

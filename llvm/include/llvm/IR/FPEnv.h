@@ -16,6 +16,7 @@
 #define LLVM_IR_FPENV_H
 
 #include "llvm/ADT/FloatingPointMode.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/FMF.h"
 #include <optional>
 
@@ -41,24 +42,26 @@ enum ExceptionBehavior : uint8_t {
   ebStrict   ///< This corresponds to "fpexcept.strict".
 };
 
-}
+} // namespace fp
 
 /// Returns a valid RoundingMode enumerator when given a string
 /// that is valid as input in constrained intrinsic rounding mode
 /// metadata.
-std::optional<RoundingMode> convertStrToRoundingMode(StringRef);
+LLVM_CORE_ABI std::optional<RoundingMode> convertStrToRoundingMode(StringRef);
 
 /// For any RoundingMode enumerator, returns a string valid as input in
 /// constrained intrinsic rounding mode metadata.
-std::optional<StringRef> convertRoundingModeToStr(RoundingMode);
+LLVM_CORE_ABI std::optional<StringRef> convertRoundingModeToStr(RoundingMode);
 
 /// Returns a valid ExceptionBehavior enumerator when given a string
 /// valid as input in constrained intrinsic exception behavior metadata.
-std::optional<fp::ExceptionBehavior> convertStrToExceptionBehavior(StringRef);
+LLVM_CORE_ABI std::optional<fp::ExceptionBehavior>
+    convertStrToExceptionBehavior(StringRef);
 
 /// For any ExceptionBehavior enumerator, returns a string valid as
 /// input in constrained intrinsic exception behavior metadata.
-std::optional<StringRef> convertExceptionBehaviorToStr(fp::ExceptionBehavior);
+LLVM_CORE_ABI std::optional<StringRef>
+    convertExceptionBehaviorToStr(fp::ExceptionBehavior);
 
 /// Returns true if the exception handling behavior and rounding mode
 /// match what is used in the default floating point environment.
@@ -70,7 +73,7 @@ inline bool isDefaultFPEnvironment(fp::ExceptionBehavior EB, RoundingMode RM) {
 /// strictfp function. If the instruction is already a constrained intrinsic or
 /// does not have a constrained intrinsic counterpart, the function returns
 /// zero.
-Intrinsic::ID getConstrainedIntrinsicID(const Instruction &Instr);
+LLVM_CORE_ABI Intrinsic::ID getConstrainedIntrinsicID(const Instruction &Instr);
 
 /// Returns true if the rounding mode RM may be QRM at compile time or
 /// at run time.
@@ -83,5 +86,5 @@ inline bool canRoundingModeBe(RoundingMode RM, RoundingMode QRM) {
 inline bool canIgnoreSNaN(fp::ExceptionBehavior EB, FastMathFlags FMF) {
   return (EB == fp::ebIgnore || FMF.noNaNs());
 }
-}
+} // namespace llvm
 #endif

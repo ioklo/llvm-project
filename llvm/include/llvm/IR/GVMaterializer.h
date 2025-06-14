@@ -17,6 +17,7 @@
 #ifndef LLVM_IR_GVMATERIALIZER_H
 #define LLVM_IR_GVMATERIALIZER_H
 
+#include "llvm/IR/CoreConfig.h"
 #include <vector>
 
 namespace llvm {
@@ -30,7 +31,7 @@ protected:
   GVMaterializer() = default;
 
 public:
-  virtual ~GVMaterializer();
+  LLVM_CORE_ABI virtual ~GVMaterializer();
 
   /// Make sure the given GlobalValue is fully read.
   ///

@@ -1,4 +1,4 @@
-//===- IRSimilarityIdentifierTest.cpp - IRSimilarityIdentifier unit tests -===//
+﻿//===- IRSimilarityIdentifierTest.cpp - IRSimilarityIdentifier unit tests -===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -14,6 +14,7 @@
 #include "llvm/Analysis/IRSimilarityIdentifier.h"
 #include "llvm/ADT/ScopeExit.h"
 #include "llvm/AsmParser/Parser.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/LLVMContext.h"
 #include "llvm/IR/Module.h"
 #include "llvm/Support/Allocator.h"
@@ -23,10 +24,10 @@
 using namespace llvm;
 using namespace IRSimilarity;
 
-extern llvm::cl::opt<bool> UseNewDbgInfoFormat;
-extern cl::opt<cl::boolOrDefault> PreserveInputDbgFormat;
-extern bool WriteNewDbgInfoFormatToBitcode;
-extern cl::opt<bool> WriteNewDbgInfoFormat;
+LLVM_CORE_ABI extern llvm::cl::opt<bool> UseNewDbgInfoFormat;
+LLVM_CORE_ABI extern cl::opt<cl::boolOrDefault> PreserveInputDbgFormat;
+LLVM_CORE_ABI extern bool WriteNewDbgInfoFormatToBitcode;
+LLVM_CORE_ABI extern cl::opt<bool> WriteNewDbgInfoFormat;
 
 static std::unique_ptr<Module> makeLLVMModule(LLVMContext &Context,
                                               StringRef ModuleStr) {

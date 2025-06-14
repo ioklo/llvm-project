@@ -13,6 +13,7 @@
 #define LLVM_IR_DIAGNOSTICHANDLER_H
 
 #include "llvm/ADT/StringRef.h"
+#include "llvm/IR/CoreConfig.h"
 
 namespace llvm {
 class DiagnosticInfo;
@@ -50,15 +51,15 @@ struct DiagnosticHandler {
 
   /// Return true if analysis remarks are enabled, override
   /// to provide different implementation.
-  virtual bool isAnalysisRemarkEnabled(StringRef PassName) const;
+  LLVM_CORE_ABI virtual bool isAnalysisRemarkEnabled(StringRef PassName) const;
 
   /// Return true if missed optimization remarks are enabled, override
   /// to provide different implementation.
-  virtual bool isMissedOptRemarkEnabled(StringRef PassName) const;
+  LLVM_CORE_ABI virtual bool isMissedOptRemarkEnabled(StringRef PassName) const;
 
   /// Return true if passed optimization remarks are enabled, override
   /// to provide different implementation.
-  virtual bool isPassedOptRemarkEnabled(StringRef PassName) const;
+  LLVM_CORE_ABI virtual bool isPassedOptRemarkEnabled(StringRef PassName) const;
 
   /// Return true if any type of remarks are enabled for this pass.
   bool isAnyRemarkEnabled(StringRef PassName) const {
@@ -68,7 +69,7 @@ struct DiagnosticHandler {
   }
 
   /// Return true if any type of remarks are enabled for any pass.
-  virtual bool isAnyRemarkEnabled() const;
+  LLVM_CORE_ABI virtual bool isAnyRemarkEnabled() const;
 };
 } // namespace llvm
 

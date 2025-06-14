@@ -1,4 +1,4 @@
-//===- BitcodeReader.cpp - Internal BitcodeReader implementation ----------===//
+﻿//===- BitcodeReader.cpp - Internal BitcodeReader implementation ----------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -19,6 +19,7 @@
 #include "llvm/ADT/StringRef.h"
 #include "llvm/ADT/Twine.h"
 #include "llvm/Bitcode/BitcodeCommon.h"
+#include "llvm/Bitcode/BitReaderConfig.h"
 #include "llvm/Bitcode/LLVMBitCodes.h"
 #include "llvm/Bitstream/BitstreamReader.h"
 #include "llvm/Config/llvm-config.h"
@@ -28,6 +29,7 @@
 #include "llvm/IR/AutoUpgrade.h"
 #include "llvm/IR/BasicBlock.h"
 #include "llvm/IR/CallingConv.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/Comdat.h"
 #include "llvm/IR/Constant.h"
 #include "llvm/IR/ConstantRangeList.h"
@@ -106,14 +108,14 @@ static cl::opt<bool> ExpandConstantExprs(
 /// of debug intrinsics). UNSET is treated as FALSE, so the default action
 /// is to do nothing. Individual tools can override this to incrementally add
 /// support for the RemoveDIs format.
-cl::opt<cl::boolOrDefault> LoadBitcodeIntoNewDbgInfoFormat(
+LLVM_BITREADER_ABI cl::opt<cl::boolOrDefault> LoadBitcodeIntoNewDbgInfoFormat(
     "load-bitcode-into-experimental-debuginfo-iterators", cl::Hidden,
     cl::desc("Load bitcode directly into the new debug info format (regardless "
              "of input format)"));
-extern cl::opt<bool> UseNewDbgInfoFormat;
-extern cl::opt<cl::boolOrDefault> PreserveInputDbgFormat;
-extern bool WriteNewDbgInfoFormatToBitcode;
-extern cl::opt<bool> WriteNewDbgInfoFormat;
+LLVM_CORE_ABI extern cl::opt<bool> UseNewDbgInfoFormat;
+LLVM_CORE_ABI extern cl::opt<cl::boolOrDefault> PreserveInputDbgFormat;
+LLVM_CORE_ABI extern bool WriteNewDbgInfoFormatToBitcode;
+LLVM_CORE_ABI extern cl::opt<bool> WriteNewDbgInfoFormat;
 
 namespace {
 

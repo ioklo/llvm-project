@@ -15,6 +15,7 @@
 
 #include "llvm/ADT/StringMap.h"
 #include "llvm/ADT/StringRef.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/Value.h"
 #include <cstdint>
 
@@ -30,7 +31,7 @@ class Instruction;
 template <bool ExtraIteratorBits> struct ilist_iterator_bits;
 template <class ParentTy> struct ilist_parent;
 template <unsigned InternalLen> class SmallString;
-template <typename ValueSubClass, typename ... Args> class SymbolTableListTraits;
+template <typename ValueSubClass, typename... Args> class SymbolTableListTraits;
 
 /// This class provides a symbol table of name/value pairs. It is essentially
 /// a std::map<std::string,Value*> but has a controlled interface provided by
@@ -47,11 +48,11 @@ class ValueSymbolTable {
                                      ilist_parent<BasicBlock>>;
   friend class Value;
 
-/// @name Types
-/// @{
+  /// @name Types
+  /// @{
 public:
   /// A mapping of names to values.
-  using ValueMap = StringMap<Value*>;
+  using ValueMap = StringMap<Value *>;
 
   /// An iterator over a ValueMap.
   using iterator = ValueMap::iterator;
@@ -59,12 +60,12 @@ public:
   /// A const_iterator over a ValueMap.
   using const_iterator = ValueMap::const_iterator;
 
-/// @}
-/// @name Constructors
-/// @{
+  /// @}
+  /// @name Constructors
+  /// @{
 
   ValueSymbolTable(int MaxNameSize = -1) : vmap(0), MaxNameSize(MaxNameSize) {}
-  ~ValueSymbolTable();
+  LLVM_CORE_ABI ~ValueSymbolTable();
 
   /// @}
   /// @name Accessors
@@ -91,11 +92,11 @@ public:
   /// This function can be used from the debugger to display the
   /// content of the symbol table while debugging.
   /// Print out symbol table on stderr
-  void dump() const;
+  LLVM_CORE_ABI void dump() const;
 
-/// @}
-/// @name Iteration
-/// @{
+  /// @}
+  /// @name Iteration
+  /// @{
 
   /// Get an iterator that from the beginning of the symbol table.
   inline iterator begin() { return vmap.begin(); }
@@ -113,34 +114,35 @@ public:
   /// @name Mutators
   /// @{
 private:
-  ValueName *makeUniqueName(Value *V, SmallString<256> &UniqueName);
+  LLVM_CORE_ABI ValueName *makeUniqueName(Value *V,
+                                          SmallString<256> &UniqueName);
 
   /// This method adds the provided value \p N to the symbol table.  The Value
   /// must have a name which is used to place the value in the symbol table.
   /// If the inserted name conflicts, this renames the value.
   /// Add a named value to the symbol table
-  void reinsertValue(Value *V);
+  LLVM_CORE_ABI void reinsertValue(Value *V);
 
   /// createValueName - This method attempts to create a value name and insert
   /// it into the symbol table with the specified name.  If it conflicts, it
   /// auto-renames the name and returns that instead.
-  ValueName *createValueName(StringRef Name, Value *V);
+  LLVM_CORE_ABI ValueName *createValueName(StringRef Name, Value *V);
 
   /// This method removes a value from the symbol table.  It leaves the
   /// ValueName attached to the value, but it is no longer inserted in the
   /// symtab.
-  void removeValueName(ValueName *V);
+  LLVM_CORE_ABI void removeValueName(ValueName *V);
 
   /// @}
   /// @name Internal Data
   /// @{
 
-  ValueMap vmap;                    ///< The map that holds the symbol table.
+  ValueMap vmap;   ///< The map that holds the symbol table.
   int MaxNameSize; ///< The maximum size for each name. If the limit is
                    ///< exceeded, the name is capped.
-  mutable uint32_t LastUnique = 0;  ///< Counter for tracking unique names
+  mutable uint32_t LastUnique = 0; ///< Counter for tracking unique names
 
-/// @}
+  /// @}
 };
 
 } // end namespace llvm

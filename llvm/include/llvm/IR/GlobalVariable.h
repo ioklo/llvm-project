@@ -11,8 +11,8 @@
 //
 // Global variables are constant pointers that refer to hunks of space that are
 // allocated by either the VM, or by the linker in a static compiler.  A global
-// variable may have an initial value, which is copied into the executables .data
-// area.  Global Constants are required to have initializers.
+// variable may have an initial value, which is copied into the executables
+// .data area.  Global Constants are required to have initializers.
 //
 //===----------------------------------------------------------------------===//
 
@@ -22,6 +22,7 @@
 #include "llvm/ADT/Twine.h"
 #include "llvm/ADT/ilist_node.h"
 #include "llvm/IR/Attributes.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/GlobalObject.h"
 #include "llvm/IR/OperandTraits.h"
 #include "llvm/IR/Value.h"
@@ -57,12 +58,15 @@ private:
 public:
   /// GlobalVariable ctor - If a parent module is specified, the global is
   /// automatically inserted into the end of the specified modules global list.
-  GlobalVariable(Type *Ty, bool isConstant, LinkageTypes Linkage,
-                 Constant *Initializer = nullptr, const Twine &Name = "",
-                 ThreadLocalMode = NotThreadLocal, unsigned AddressSpace = 0,
-                 bool isExternallyInitialized = false);
+  LLVM_CORE_ABI GlobalVariable(Type *Ty, bool isConstant, LinkageTypes Linkage,
+                               Constant *Initializer = nullptr,
+                               const Twine &Name = "",
+                               ThreadLocalMode = NotThreadLocal,
+                               unsigned AddressSpace = 0,
+                               bool isExternallyInitialized = false);
   /// GlobalVariable ctor - This creates a global and inserts it before the
   /// specified other global.
+  LLVM_CORE_ABI
   GlobalVariable(Module &M, Type *Ty, bool isConstant, LinkageTypes Linkage,
                  Constant *Initializer, const Twine &Name = "",
                  GlobalVariable *InsertBefore = nullptr,
@@ -95,7 +99,8 @@ public:
   // allocate space for exactly one operand
   void *operator new(size_t s) { return User::operator new(s, AllocMarker); }
 
-  // delete space for exactly one operand as created in the corresponding new operator
+  // delete space for exactly one operand as created in the corresponding new
+  // operator
   void operator delete(void *ptr) { User::operator delete(ptr); }
 
   /// Provide fast operand accessors
@@ -123,12 +128,13 @@ public:
   /// unique.
   inline bool hasDefinitiveInitializer() const {
     return hasInitializer() &&
-      // The initializer of a global variable may change to something arbitrary
-      // at link time.
-      !isInterposable() &&
-      // The initializer of a global variable with the externally_initialized
-      // marker may change at runtime before C++ initializers are evaluated.
-      !isExternallyInitialized();
+           // The initializer of a global variable may change to something
+           // arbitrary at link time.
+           !isInterposable() &&
+           // The initializer of a global variable with the
+           // externally_initialized marker may change at runtime before C++
+           // initializers are evaluated.
+           !isExternallyInitialized();
   }
 
   /// hasUniqueInitializer - Whether the global variable has an initializer, and
@@ -149,22 +155,22 @@ public:
   ///
   inline const Constant *getInitializer() const {
     assert(hasInitializer() && "GV doesn't have initializer!");
-    return static_cast<Constant*>(Op<0>().get());
+    return static_cast<Constant *>(Op<0>().get());
   }
   inline Constant *getInitializer() {
     assert(hasInitializer() && "GV doesn't have initializer!");
-    return static_cast<Constant*>(Op<0>().get());
+    return static_cast<Constant *>(Op<0>().get());
   }
   /// setInitializer - Sets the initializer for this global variable, removing
   /// any existing initializer if InitVal==NULL. The initializer must have the
   /// type getValueType().
-  void setInitializer(Constant *InitVal);
+  LLVM_CORE_ABI void setInitializer(Constant *InitVal);
 
   /// replaceInitializer - Sets the initializer for this global variable, and
   /// sets the value type of the global to the type of the initializer. The
   /// initializer must not be null.  This may affect the global's alignment if
   /// it isn't explicitly set.
-  void replaceInitializer(Constant *InitVal);
+  LLVM_CORE_ABI void replaceInitializer(Constant *InitVal);
 
   /// If the value is a global constant, its value is immutable throughout the
   /// runtime execution of the program.  Assigning a value into the constant
@@ -182,27 +188,28 @@ public:
 
   /// copyAttributesFrom - copy all additional attributes (those not needed to
   /// create a GlobalVariable) from the GlobalVariable Src to this one.
-  void copyAttributesFrom(const GlobalVariable *Src);
+  LLVM_CORE_ABI void copyAttributesFrom(const GlobalVariable *Src);
 
   /// removeFromParent - This method unlinks 'this' from the containing module,
   /// but does not delete it.
   ///
-  void removeFromParent();
+  LLVM_CORE_ABI void removeFromParent();
 
   /// eraseFromParent - This method unlinks 'this' from the containing module
   /// and deletes it.
   ///
-  void eraseFromParent();
+  LLVM_CORE_ABI void eraseFromParent();
 
   /// Drop all references in preparation to destroy the GlobalVariable. This
   /// drops not only the reference to the initializer but also to any metadata.
-  void dropAllReferences();
+  LLVM_CORE_ABI void dropAllReferences();
 
   /// Attach a DIGlobalVariableExpression.
-  void addDebugInfo(DIGlobalVariableExpression *GV);
+  LLVM_CORE_ABI void addDebugInfo(DIGlobalVariableExpression *GV);
 
   /// Fill the vector with all debug info attachements.
-  void getDebugInfo(SmallVectorImpl<DIGlobalVariableExpression *> &GVs) const;
+  LLVM_CORE_ABI void
+  getDebugInfo(SmallVectorImpl<DIGlobalVariableExpression *> &GVs) const;
 
   /// Add attribute to this global.
   void addAttribute(Attribute::AttrKind Kind) {
@@ -220,14 +227,10 @@ public:
   }
 
   /// Return true if the attribute exists.
-  bool hasAttribute(StringRef Kind) const {
-    return Attrs.hasAttribute(Kind);
-  }
+  bool hasAttribute(StringRef Kind) const { return Attrs.hasAttribute(Kind); }
 
   /// Return true if any attributes exist.
-  bool hasAttributes() const {
-    return Attrs.hasAttributes();
-  }
+  bool hasAttributes() const { return Attrs.hasAttributes(); }
 
   /// Return the attribute object.
   Attribute getAttribute(Attribute::AttrKind Kind) const {
@@ -240,9 +243,7 @@ public:
   }
 
   /// Return the attribute set for this global
-  AttributeSet getAttributes() const {
-    return Attrs;
-  }
+  AttributeSet getAttributes() const { return Attrs; }
 
   /// Return attribute set as list with index.
   /// FIXME: This may not be required once ValueEnumerators
@@ -255,9 +256,7 @@ public:
   }
 
   /// Set attribute list for this global
-  void setAttributes(AttributeSet A) {
-    Attrs = A;
-  }
+  void setAttributes(AttributeSet A) { Attrs = A; }
 
   /// Check if section name is present
   bool hasImplicitSection() const {
@@ -287,7 +286,7 @@ public:
 
   /// Change the code model for this global.
   ///
-  void setCodeModel(CodeModel::Model CM);
+  LLVM_CORE_ABI void setCodeModel(CodeModel::Model CM);
 
   // Methods for support type inquiry through isa, cast, and dyn_cast:
   static bool classof(const Value *V) {
@@ -296,9 +295,8 @@ public:
 };
 
 template <>
-struct OperandTraits<GlobalVariable> :
-  public OptionalOperandTraits<GlobalVariable> {
-};
+struct OperandTraits<GlobalVariable>
+    : public OptionalOperandTraits<GlobalVariable> {};
 
 DEFINE_TRANSPARENT_OPERAND_ACCESSORS(GlobalVariable, Value)
 

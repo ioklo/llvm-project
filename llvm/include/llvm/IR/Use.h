@@ -25,6 +25,7 @@
 #define LLVM_IR_USE_H
 
 #include "llvm-c/Types.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/Support/CBindingWrapping.h"
 #include "llvm/Support/Compiler.h"
 
@@ -82,14 +83,13 @@ public:
   Use *getNext() const { return Next; }
 
   /// Return the operand # of this use in its User.
-  unsigned getOperandNo() const;
+  LLVM_CORE_ABI unsigned getOperandNo() const;
 
   /// Destroys Use operands when the number of operands of
   /// a User changes.
-  static void zap(Use *Start, const Use *Stop, bool del = false);
+  LLVM_CORE_ABI static void zap(Use *Start, const Use *Stop, bool del = false);
 
 private:
-
   Value *Val = nullptr;
   Use *Next = nullptr;
   Use **Prev = nullptr;

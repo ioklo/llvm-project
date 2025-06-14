@@ -1,4 +1,4 @@
-//===- optdriver.cpp - The LLVM Modular Optimizer -------------------------===//
+﻿//===- optdriver.cpp - The LLVM Modular Optimizer -------------------------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -23,6 +23,7 @@
 #include "llvm/CodeGen/CommandFlags.h"
 #include "llvm/CodeGen/TargetPassConfig.h"
 #include "llvm/Config/llvm-config.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/DataLayout.h"
 #include "llvm/IR/DebugInfo.h"
 #include "llvm/IR/LLVMContext.h"
@@ -285,7 +286,7 @@ static cl::opt<bool> TryUseNewDbgInfoFormat(
     cl::desc("Enable debuginfo iterator positions, if they're built in"),
     cl::init(false), cl::Hidden);
 
-extern cl::opt<bool> UseNewDbgInfoFormat;
+LLVM_CORE_ABI extern cl::opt<bool> UseNewDbgInfoFormat;
 
 //===----------------------------------------------------------------------===//
 // CodeGen-related helper functions.

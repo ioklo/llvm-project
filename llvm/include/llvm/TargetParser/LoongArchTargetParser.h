@@ -1,4 +1,4 @@
-//==-- LoongArch64TargetParser - Parser for LoongArch64 features --*- C++ -*-=//
+﻿//==-- LoongArch64TargetParser - Parser for LoongArch64 features --*- C++ -*-=//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -14,6 +14,7 @@
 #ifndef LLVM_TARGETPARSER_LOONGARCHTARGETPARSER_H
 #define LLVM_TARGETPARSER_LOONGARCHTARGETPARSER_H
 
+#include "llvm/TargetParser/TargetParserConfig.h"
 #include "llvm/TargetParser/Triple.h"
 #include <vector>
 
@@ -84,11 +85,12 @@ struct ArchInfo {
   uint32_t Features;
 };
 
-bool isValidArchName(StringRef Arch);
-bool getArchFeatures(StringRef Arch, std::vector<StringRef> &Features);
-bool isValidCPUName(StringRef TuneCPU);
-void fillValidCPUList(SmallVectorImpl<StringRef> &Values);
-StringRef getDefaultArch(bool Is64Bit);
+LLVM_TARGETPARSER_ABI bool isValidArchName(StringRef Arch);
+LLVM_TARGETPARSER_ABI bool getArchFeatures(StringRef Arch,
+                                           std::vector<StringRef> &Features);
+LLVM_TARGETPARSER_ABI bool isValidCPUName(StringRef TuneCPU);
+LLVM_TARGETPARSER_ABI void fillValidCPUList(SmallVectorImpl<StringRef> &Values);
+LLVM_TARGETPARSER_ABI StringRef getDefaultArch(bool Is64Bit);
 
 } // namespace LoongArch
 

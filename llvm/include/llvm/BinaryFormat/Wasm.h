@@ -1,4 +1,4 @@
-//===- Wasm.h - Wasm object file format -------------------------*- C++ -*-===//
+﻿//===- Wasm.h - Wasm object file format -------------------------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -17,6 +17,7 @@
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/ADT/StringRef.h"
+#include "llvm/BinaryFormat/BinaryFormatConfig.h"
 #include <optional>
 
 namespace llvm {
@@ -539,10 +540,10 @@ inline bool operator==(const WasmTableType &LHS, const WasmTableType &RHS) {
   return LHS.ElemType == RHS.ElemType && LHS.Limits == RHS.Limits;
 }
 
-llvm::StringRef toString(WasmSymbolType type);
-llvm::StringRef relocTypetoString(uint32_t type);
-llvm::StringRef sectionTypeToString(uint32_t type);
-bool relocTypeHasAddend(uint32_t type);
+LLVM_BINARYFORMAT_ABI llvm::StringRef toString(WasmSymbolType type);
+LLVM_BINARYFORMAT_ABI llvm::StringRef relocTypetoString(uint32_t type);
+LLVM_BINARYFORMAT_ABI llvm::StringRef sectionTypeToString(uint32_t type);
+LLVM_BINARYFORMAT_ABI bool relocTypeHasAddend(uint32_t type);
 
 } // end namespace wasm
 } // end namespace llvm

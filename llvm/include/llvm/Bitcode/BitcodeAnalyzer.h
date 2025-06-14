@@ -1,4 +1,4 @@
-//===- llvm/Bitcode/BitcodeAnalyzer.h - Bitcode analyzer --------*- C++ -*-===//
+﻿//===- llvm/Bitcode/BitcodeAnalyzer.h - Bitcode analyzer --------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -15,6 +15,7 @@
 
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/ADT/StringRef.h"
+#include "llvm/Bitcode/BitReaderConfig.h"
 #include "llvm/Bitstream/BitstreamReader.h"
 #include "llvm/Support/Error.h"
 #include <map>
@@ -83,13 +84,15 @@ class BitcodeAnalyzer {
   std::map<unsigned, PerBlockIDStats> BlockIDStats;
 
 public:
-  BitcodeAnalyzer(StringRef Buffer,
+  LLVM_BITREADER_ABI BitcodeAnalyzer(StringRef Buffer,
                   std::optional<StringRef> BlockInfoBuffer = std::nullopt);
   /// Analyze the bitcode file.
-  Error analyze(std::optional<BCDumpOptions> O = std::nullopt,
+  LLVM_BITREADER_ABI Error
+  analyze(std::optional<BCDumpOptions> O = std::nullopt,
                 std::optional<StringRef> CheckHash = std::nullopt);
   /// Print stats about the bitcode file.
-  void printStats(BCDumpOptions O,
+  LLVM_BITREADER_ABI void
+  printStats(BCDumpOptions O,
                   std::optional<StringRef> Filename = std::nullopt);
 
 private:

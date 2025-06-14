@@ -26,6 +26,7 @@
 #include "llvm/IR/Attributes.h"
 #include "llvm/IR/BasicBlock.h"
 #include "llvm/IR/CallingConv.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/DerivedTypes.h"
 #include "llvm/IR/GlobalObject.h"
 #include "llvm/IR/GlobalValue.h"
@@ -60,7 +61,7 @@ class User;
 class BranchProbabilityInfo;
 class BlockFrequencyInfo;
 
-class LLVM_ABI Function : public GlobalObject, public ilist_node<Function> {
+class Function : public GlobalObject, public ilist_node<Function> {
 public:
   using BasicBlockListType = SymbolTableList<BasicBlock>;
 
@@ -75,19 +76,19 @@ private:
   constexpr static HungOffOperandsAllocMarker AllocMarker{};
 
   // Important things that make up a function!
-  BasicBlockListType BasicBlocks;         ///< The basic blocks
+  BasicBlockListType BasicBlocks; ///< The basic blocks
 
   // Basic blocks need to get their number when added to a function.
-  friend void BasicBlock::setParent(Function *);
+  friend LLVM_CORE_ABI void BasicBlock::setParent(Function *);
   unsigned NextBlockNum = 0;
   /// Epoch of block numbers. (Could be shrinked to uint8_t if required.)
   unsigned BlockNumEpoch = 0;
 
-  mutable Argument *Arguments = nullptr;  ///< The formal arguments
+  mutable Argument *Arguments = nullptr; ///< The formal arguments
   size_t NumArgs;
   std::unique_ptr<ValueSymbolTable>
-      SymTab;                             ///< Symbol table of args/instructions
-  AttributeList AttributeSets;            ///< Parameter attributes
+      SymTab;                  ///< Symbol table of args/instructions
+  AttributeList AttributeSets; ///< Parameter attributes
 
   /*
    * Value::SubclassData
@@ -120,17 +121,17 @@ public:
   /// needs it.  The hasLazyArguments predicate returns true if the arg list
   /// hasn't been set up yet.
   bool hasLazyArguments() const {
-    return getSubclassDataFromValue() & (1<<0);
+    return getSubclassDataFromValue() & (1 << 0);
   }
 
   /// \see BasicBlock::convertToNewDbgValues.
-  void convertToNewDbgValues();
+  LLVM_CORE_ABI void convertToNewDbgValues();
 
   /// \see BasicBlock::convertFromNewDbgValues.
-  void convertFromNewDbgValues();
+  LLVM_CORE_ABI void convertFromNewDbgValues();
 
-  void setIsNewDbgInfoFormat(bool NewVal);
-  void setNewDbgInfoFormatFlag(bool NewVal);
+  LLVM_CORE_ABI void setIsNewDbgInfoFormat(bool NewVal);
+  LLVM_CORE_ABI void setNewDbgInfoFormatFlag(bool NewVal);
 
 private:
   friend class TargetLibraryInfoImpl;
@@ -147,32 +148,33 @@ private:
       BuildLazyArguments();
   }
 
-  void BuildLazyArguments() const;
+  LLVM_CORE_ABI void BuildLazyArguments() const;
 
-  void clearArguments();
+  LLVM_CORE_ABI void clearArguments();
 
-  void deleteBodyImpl(bool ShouldDrop);
+  LLVM_CORE_ABI void deleteBodyImpl(bool ShouldDrop);
 
   /// Function ctor - If the (optional) Module argument is specified, the
   /// function is automatically inserted into the end of the function list for
   /// the module.
   ///
-  Function(FunctionType *Ty, LinkageTypes Linkage, unsigned AddrSpace,
-           const Twine &N = "", Module *M = nullptr);
+  LLVM_CORE_ABI Function(FunctionType *Ty, LinkageTypes Linkage,
+                         unsigned AddrSpace, const Twine &N = "",
+                         Module *M = nullptr);
 
 public:
-  Function(const Function&) = delete;
-  void operator=(const Function&) = delete;
-  ~Function();
+  Function(const Function &) = delete;
+  void operator=(const Function &) = delete;
+  LLVM_CORE_ABI ~Function();
 
   // This is here to help easily convert from FunctionT * (Function * or
   // MachineFunction *) in BlockFrequencyInfoImpl to Function * by calling
   // FunctionT->getFunction().
   const Function &getFunction() const { return *this; }
 
-  static Function *Create(FunctionType *Ty, LinkageTypes Linkage,
-                          unsigned AddrSpace, const Twine &N = "",
-                          Module *M = nullptr) {
+  LLVM_CORE_ABI static Function *Create(FunctionType *Ty, LinkageTypes Linkage,
+                                        unsigned AddrSpace, const Twine &N = "",
+                                        Module *M = nullptr) {
     return new (AllocMarker) Function(Ty, Linkage, AddrSpace, N, M);
   }
 
@@ -187,8 +189,8 @@ public:
   ///
   /// Places the function in the program address space as specified
   /// by the module's data layout.
-  static Function *Create(FunctionType *Ty, LinkageTypes Linkage,
-                          const Twine &N, Module &M);
+  LLVM_CORE_ABI static Function *Create(FunctionType *Ty, LinkageTypes Linkage,
+                                        const Twine &N, Module &M);
 
   /// Creates a function with some attributes recorded in llvm.module.flags
   /// and the LLVMContext applied.
@@ -199,10 +201,11 @@ public:
   /// This function should not be called from backends or the LTO pipeline. If
   /// it is called from one of those places, some default attributes will not be
   /// applied to the function.
-  static Function *createWithDefaultAttr(FunctionType *Ty, LinkageTypes Linkage,
-                                         unsigned AddrSpace,
-                                         const Twine &N = "",
-                                         Module *M = nullptr);
+  LLVM_CORE_ABI static Function *createWithDefaultAttr(FunctionType *Ty,
+                                                       LinkageTypes Linkage,
+                                                       unsigned AddrSpace,
+                                                       const Twine &N = "",
+                                                       Module *M = nullptr);
 
   // Provide fast operand accessors.
   DECLARE_TRANSPARENT_OPERAND_ACCESSORS(Value);
@@ -210,7 +213,7 @@ public:
   /// Returns the number of non-debug IR instructions in this function.
   /// This is equivalent to the sum of the sizes of each basic block contained
   /// within this function.
-  unsigned getInstructionCount() const;
+  LLVM_CORE_ABI unsigned getInstructionCount() const;
 
   /// Returns the FunctionType for me.
   FunctionType *getFunctionType() const {
@@ -222,12 +225,12 @@ public:
 
   /// getContext - Return a reference to the LLVMContext associated with this
   /// function.
-  LLVMContext &getContext() const;
+  LLVM_CORE_ABI LLVMContext &getContext() const;
 
   /// Get the data layout of the module this function belongs to.
   ///
   /// Requires the function to have a parent module.
-  const DataLayout &getDataLayout() const;
+  LLVM_CORE_ABI const DataLayout &getDataLayout() const;
 
   /// isVarArg - Return true if this function takes a variable number of
   /// arguments.
@@ -258,18 +261,18 @@ public:
   /// isTargetIntrinsic - Returns true if this function is an intrinsic and the
   /// intrinsic is specific to a certain target. If this is not an intrinsic
   /// or a generic intrinsic, false is returned.
-  bool isTargetIntrinsic() const;
+  LLVM_CORE_ABI bool isTargetIntrinsic() const;
 
   /// Returns true if the function is one of the "Constrained Floating-Point
   /// Intrinsics". Returns false if not, and returns false when
   /// getIntrinsicID() returns Intrinsic::not_intrinsic.
-  bool isConstrainedFPIntrinsic() const;
+  LLVM_CORE_ABI bool isConstrainedFPIntrinsic() const;
 
   /// Update internal caches that depend on the function name (such as the
   /// intrinsic ID and libcall cache).
   /// Note, this method does not need to be called directly, as it is called
   /// from Value::setName() whenever the name of this function changes.
-  void updateAfterNameChange();
+  LLVM_CORE_ABI void updateAfterNameChange();
 
   /// getCallingConv()/setCallingConv(CC) - These method get and set the
   /// calling convention of this function.  The enum values for the known
@@ -308,18 +311,21 @@ public:
   /// pgo data. \p Imports points to a set of GUIDs that needs to
   /// be imported by the function for sample PGO, to enable the same inlines as
   /// the profiled optimized binary.
-  void setEntryCount(ProfileCount Count,
-                     const DenseSet<GlobalValue::GUID> *Imports = nullptr);
+  LLVM_CORE_ABI void
+  setEntryCount(ProfileCount Count,
+                const DenseSet<GlobalValue::GUID> *Imports = nullptr);
 
   /// A convenience wrapper for setting entry count
-  void setEntryCount(uint64_t Count, ProfileCountType Type = PCT_Real,
-                     const DenseSet<GlobalValue::GUID> *Imports = nullptr);
+  LLVM_CORE_ABI void
+  setEntryCount(uint64_t Count, ProfileCountType Type = PCT_Real,
+                const DenseSet<GlobalValue::GUID> *Imports = nullptr);
 
   /// Get the entry count for this function.
   ///
   /// Entry count is the number of times the function was executed.
   /// When AllowSynthetic is false, only pgo_data will be returned.
-  std::optional<ProfileCount> getEntryCount(bool AllowSynthetic = false) const;
+  LLVM_CORE_ABI std::optional<ProfileCount>
+  getEntryCount(bool AllowSynthetic = false) const;
 
   /// Return true if the function is annotated with profile data.
   ///
@@ -332,22 +338,20 @@ public:
 
   /// Returns the set of GUIDs that needs to be imported to the function for
   /// sample PGO, to enable the same inlines as the profiled optimized binary.
-  DenseSet<GlobalValue::GUID> getImportGUIDs() const;
+  LLVM_CORE_ABI DenseSet<GlobalValue::GUID> getImportGUIDs() const;
 
   /// Set the section prefix for this function.
-  void setSectionPrefix(StringRef Prefix);
+  LLVM_CORE_ABI void setSectionPrefix(StringRef Prefix);
 
   /// Get the section prefix for this function.
-  std::optional<StringRef> getSectionPrefix() const;
+  LLVM_CORE_ABI std::optional<StringRef> getSectionPrefix() const;
 
   /// hasGC/getGC/setGC/clearGC - The name of the garbage collection algorithm
   ///                             to use during code generation.
-  bool hasGC() const {
-    return getSubclassDataFromValue() & (1<<14);
-  }
-  const std::string &getGC() const;
-  void setGC(std::string Str);
-  void clearGC();
+  bool hasGC() const { return getSubclassDataFromValue() & (1 << 14); }
+  LLVM_CORE_ABI const std::string &getGC() const;
+  LLVM_CORE_ABI void setGC(std::string Str);
+  LLVM_CORE_ABI void clearGC();
 
   /// Return the attribute list for this Function.
   AttributeList getAttributes() const { return AttributeSets; }
@@ -357,102 +361,107 @@ public:
 
   // TODO: remove non-AtIndex versions of these methods.
   /// adds the attribute to the list of attributes.
-  void addAttributeAtIndex(unsigned i, Attribute Attr);
+  LLVM_CORE_ABI void addAttributeAtIndex(unsigned i, Attribute Attr);
 
   /// Add function attributes to this function.
-  void addFnAttr(Attribute::AttrKind Kind);
+  LLVM_CORE_ABI void addFnAttr(Attribute::AttrKind Kind);
 
   /// Add function attributes to this function.
-  void addFnAttr(StringRef Kind, StringRef Val = StringRef());
+  LLVM_CORE_ABI void addFnAttr(StringRef Kind, StringRef Val = StringRef());
 
   /// Add function attributes to this function.
-  void addFnAttr(Attribute Attr);
+  LLVM_CORE_ABI void addFnAttr(Attribute Attr);
 
   /// Add function attributes to this function.
-  void addFnAttrs(const AttrBuilder &Attrs);
+  LLVM_CORE_ABI void addFnAttrs(const AttrBuilder &Attrs);
 
   /// Add return value attributes to this function.
-  void addRetAttr(Attribute::AttrKind Kind);
+  LLVM_CORE_ABI void addRetAttr(Attribute::AttrKind Kind);
 
   /// Add return value attributes to this function.
-  void addRetAttr(Attribute Attr);
+  LLVM_CORE_ABI void addRetAttr(Attribute Attr);
 
   /// Add return value attributes to this function.
-  void addRetAttrs(const AttrBuilder &Attrs);
+  LLVM_CORE_ABI void addRetAttrs(const AttrBuilder &Attrs);
 
   /// adds the attribute to the list of attributes for the given arg.
-  void addParamAttr(unsigned ArgNo, Attribute::AttrKind Kind);
+  LLVM_CORE_ABI void addParamAttr(unsigned ArgNo, Attribute::AttrKind Kind);
 
   /// adds the attribute to the list of attributes for the given arg.
-  void addParamAttr(unsigned ArgNo, Attribute Attr);
+  LLVM_CORE_ABI void addParamAttr(unsigned ArgNo, Attribute Attr);
 
   /// adds the attributes to the list of attributes for the given arg.
-  void addParamAttrs(unsigned ArgNo, const AttrBuilder &Attrs);
+  LLVM_CORE_ABI void addParamAttrs(unsigned ArgNo, const AttrBuilder &Attrs);
 
   /// removes the attribute from the list of attributes.
-  void removeAttributeAtIndex(unsigned i, Attribute::AttrKind Kind);
+  LLVM_CORE_ABI void removeAttributeAtIndex(unsigned i,
+                                            Attribute::AttrKind Kind);
 
   /// removes the attribute from the list of attributes.
-  void removeAttributeAtIndex(unsigned i, StringRef Kind);
+  LLVM_CORE_ABI void removeAttributeAtIndex(unsigned i, StringRef Kind);
 
   /// Remove function attributes from this function.
-  void removeFnAttr(Attribute::AttrKind Kind);
+  LLVM_CORE_ABI void removeFnAttr(Attribute::AttrKind Kind);
 
   /// Remove function attribute from this function.
-  void removeFnAttr(StringRef Kind);
+  LLVM_CORE_ABI void removeFnAttr(StringRef Kind);
 
-  void removeFnAttrs(const AttributeMask &Attrs);
-
-  /// removes the attribute from the return value list of attributes.
-  void removeRetAttr(Attribute::AttrKind Kind);
+  LLVM_CORE_ABI void removeFnAttrs(const AttributeMask &Attrs);
 
   /// removes the attribute from the return value list of attributes.
-  void removeRetAttr(StringRef Kind);
+  LLVM_CORE_ABI void removeRetAttr(Attribute::AttrKind Kind);
+
+  /// removes the attribute from the return value list of attributes.
+  LLVM_CORE_ABI void removeRetAttr(StringRef Kind);
 
   /// removes the attributes from the return value list of attributes.
-  void removeRetAttrs(const AttributeMask &Attrs);
+  LLVM_CORE_ABI void removeRetAttrs(const AttributeMask &Attrs);
 
   /// removes the attribute from the list of attributes.
-  void removeParamAttr(unsigned ArgNo, Attribute::AttrKind Kind);
+  LLVM_CORE_ABI void removeParamAttr(unsigned ArgNo, Attribute::AttrKind Kind);
 
   /// removes the attribute from the list of attributes.
-  void removeParamAttr(unsigned ArgNo, StringRef Kind);
+  LLVM_CORE_ABI void removeParamAttr(unsigned ArgNo, StringRef Kind);
 
   /// removes the attribute from the list of attributes.
-  void removeParamAttrs(unsigned ArgNo, const AttributeMask &Attrs);
+  LLVM_CORE_ABI void removeParamAttrs(unsigned ArgNo,
+                                      const AttributeMask &Attrs);
 
   /// Return true if the function has the attribute.
-  bool hasFnAttribute(Attribute::AttrKind Kind) const;
+  LLVM_CORE_ABI bool hasFnAttribute(Attribute::AttrKind Kind) const;
 
   /// Return true if the function has the attribute.
-  bool hasFnAttribute(StringRef Kind) const;
+  LLVM_CORE_ABI bool hasFnAttribute(StringRef Kind) const;
 
   /// check if an attribute is in the list of attributes for the return value.
-  bool hasRetAttribute(Attribute::AttrKind Kind) const;
+  LLVM_CORE_ABI bool hasRetAttribute(Attribute::AttrKind Kind) const;
 
   /// check if an attributes is in the list of attributes.
-  bool hasParamAttribute(unsigned ArgNo, Attribute::AttrKind Kind) const;
+  LLVM_CORE_ABI bool hasParamAttribute(unsigned ArgNo,
+                                       Attribute::AttrKind Kind) const;
 
   /// Check if an attribute is in the list of attributes.
-  bool hasParamAttribute(unsigned ArgNo, StringRef Kind) const;
+  LLVM_CORE_ABI bool hasParamAttribute(unsigned ArgNo, StringRef Kind) const;
 
   /// gets the attribute from the list of attributes.
-  Attribute getAttributeAtIndex(unsigned i, Attribute::AttrKind Kind) const;
+  LLVM_CORE_ABI Attribute getAttributeAtIndex(unsigned i,
+                                              Attribute::AttrKind Kind) const;
 
   /// gets the attribute from the list of attributes.
-  Attribute getAttributeAtIndex(unsigned i, StringRef Kind) const;
+  LLVM_CORE_ABI Attribute getAttributeAtIndex(unsigned i, StringRef Kind) const;
 
   /// Check if attribute of the given kind is set at the given index.
-  bool hasAttributeAtIndex(unsigned Idx, Attribute::AttrKind Kind) const;
+  LLVM_CORE_ABI bool hasAttributeAtIndex(unsigned Idx,
+                                         Attribute::AttrKind Kind) const;
 
   /// Return the attribute for the given attribute kind.
-  Attribute getFnAttribute(Attribute::AttrKind Kind) const;
+  LLVM_CORE_ABI Attribute getFnAttribute(Attribute::AttrKind Kind) const;
 
   /// Return the attribute for the given attribute kind.
-  Attribute getFnAttribute(StringRef Kind) const;
+  LLVM_CORE_ABI Attribute getFnAttribute(StringRef Kind) const;
 
   /// Return the attribute for the given attribute kind for the return value.
-  Attribute getRetAttribute(Attribute::AttrKind Kind) const;
+  LLVM_CORE_ABI Attribute getRetAttribute(Attribute::AttrKind Kind) const;
 
   /// For a string attribute \p Kind, parse attribute as an integer.
   ///
@@ -460,11 +469,12 @@ public:
   ///
   /// \returns \p Default if there is an error parsing the attribute integer,
   /// and error is emitted to the LLVMContext
-  uint64_t getFnAttributeAsParsedInteger(StringRef Kind,
-                                         uint64_t Default = 0) const;
+  LLVM_CORE_ABI uint64_t
+  getFnAttributeAsParsedInteger(StringRef Kind, uint64_t Default = 0) const;
 
   /// gets the specified attribute from the list of attributes.
-  Attribute getParamAttribute(unsigned ArgNo, Attribute::AttrKind Kind) const;
+  LLVM_CORE_ABI Attribute getParamAttribute(unsigned ArgNo,
+                                            Attribute::AttrKind Kind) const;
 
   /// Return the stack alignment for the function.
   MaybeAlign getFnStackAlign() const {
@@ -472,18 +482,20 @@ public:
   }
 
   /// Returns true if the function has ssp, sspstrong, or sspreq fn attrs.
-  bool hasStackProtectorFnAttr() const;
+  LLVM_CORE_ABI bool hasStackProtectorFnAttr() const;
 
   /// adds the dereferenceable attribute to the list of attributes for
   /// the given arg.
-  void addDereferenceableParamAttr(unsigned ArgNo, uint64_t Bytes);
+  LLVM_CORE_ABI void addDereferenceableParamAttr(unsigned ArgNo,
+                                                 uint64_t Bytes);
 
   /// adds the dereferenceable_or_null attribute to the list of
   /// attributes for the given arg.
-  void addDereferenceableOrNullParamAttr(unsigned ArgNo, uint64_t Bytes);
+  LLVM_CORE_ABI void addDereferenceableOrNullParamAttr(unsigned ArgNo,
+                                                       uint64_t Bytes);
 
   /// adds the range attribute to the list of attributes for the return value.
-  void addRangeRetAttr(const ConstantRange &CR);
+  LLVM_CORE_ABI void addRangeRetAttr(const ConstantRange &CR);
 
   MaybeAlign getParamAlign(unsigned ArgNo) const {
     return AttributeSets.getParamAlignment(ArgNo);
@@ -550,106 +562,78 @@ public:
     addFnAttr(Attribute::CoroDestroyOnlyWhenComplete);
   }
 
-  MemoryEffects getMemoryEffects() const;
-  void setMemoryEffects(MemoryEffects ME);
+  LLVM_CORE_ABI MemoryEffects getMemoryEffects() const;
+  LLVM_CORE_ABI void setMemoryEffects(MemoryEffects ME);
 
   /// Determine if the function does not access memory.
-  bool doesNotAccessMemory() const;
-  void setDoesNotAccessMemory();
+  LLVM_CORE_ABI bool doesNotAccessMemory() const;
+  LLVM_CORE_ABI void setDoesNotAccessMemory();
 
   /// Determine if the function does not access or only reads memory.
-  bool onlyReadsMemory() const;
-  void setOnlyReadsMemory();
+  LLVM_CORE_ABI bool onlyReadsMemory() const;
+  LLVM_CORE_ABI void setOnlyReadsMemory();
 
   /// Determine if the function does not access or only writes memory.
-  bool onlyWritesMemory() const;
-  void setOnlyWritesMemory();
+  LLVM_CORE_ABI bool onlyWritesMemory() const;
+  LLVM_CORE_ABI void setOnlyWritesMemory();
 
   /// Determine if the call can access memmory only using pointers based
   /// on its arguments.
-  bool onlyAccessesArgMemory() const;
-  void setOnlyAccessesArgMemory();
+  LLVM_CORE_ABI bool onlyAccessesArgMemory() const;
+  LLVM_CORE_ABI void setOnlyAccessesArgMemory();
 
   /// Determine if the function may only access memory that is
   ///  inaccessible from the IR.
-  bool onlyAccessesInaccessibleMemory() const;
-  void setOnlyAccessesInaccessibleMemory();
+  LLVM_CORE_ABI bool onlyAccessesInaccessibleMemory() const;
+  LLVM_CORE_ABI void setOnlyAccessesInaccessibleMemory();
 
   /// Determine if the function may only access memory that is
   ///  either inaccessible from the IR or pointed to by its arguments.
-  bool onlyAccessesInaccessibleMemOrArgMem() const;
-  void setOnlyAccessesInaccessibleMemOrArgMem();
+  LLVM_CORE_ABI bool onlyAccessesInaccessibleMemOrArgMem() const;
+  LLVM_CORE_ABI void setOnlyAccessesInaccessibleMemOrArgMem();
 
   /// Determine if the function cannot return.
-  bool doesNotReturn() const {
-    return hasFnAttribute(Attribute::NoReturn);
-  }
-  void setDoesNotReturn() {
-    addFnAttr(Attribute::NoReturn);
-  }
+  bool doesNotReturn() const { return hasFnAttribute(Attribute::NoReturn); }
+  void setDoesNotReturn() { addFnAttr(Attribute::NoReturn); }
 
   /// Determine if the function should not perform indirect branch tracking.
   bool doesNoCfCheck() const { return hasFnAttribute(Attribute::NoCfCheck); }
 
   /// Determine if the function cannot unwind.
-  bool doesNotThrow() const {
-    return hasFnAttribute(Attribute::NoUnwind);
-  }
-  void setDoesNotThrow() {
-    addFnAttr(Attribute::NoUnwind);
-  }
+  bool doesNotThrow() const { return hasFnAttribute(Attribute::NoUnwind); }
+  void setDoesNotThrow() { addFnAttr(Attribute::NoUnwind); }
 
   /// Determine if the call cannot be duplicated.
   bool cannotDuplicate() const {
     return hasFnAttribute(Attribute::NoDuplicate);
   }
-  void setCannotDuplicate() {
-    addFnAttr(Attribute::NoDuplicate);
-  }
+  void setCannotDuplicate() { addFnAttr(Attribute::NoDuplicate); }
 
   /// Determine if the call is convergent.
-  bool isConvergent() const {
-    return hasFnAttribute(Attribute::Convergent);
-  }
-  void setConvergent() {
-    addFnAttr(Attribute::Convergent);
-  }
-  void setNotConvergent() {
-    removeFnAttr(Attribute::Convergent);
-  }
+  bool isConvergent() const { return hasFnAttribute(Attribute::Convergent); }
+  void setConvergent() { addFnAttr(Attribute::Convergent); }
+  void setNotConvergent() { removeFnAttr(Attribute::Convergent); }
 
   /// Determine if the call has sideeffects.
   bool isSpeculatable() const {
     return hasFnAttribute(Attribute::Speculatable);
   }
-  void setSpeculatable() {
-    addFnAttr(Attribute::Speculatable);
-  }
+  void setSpeculatable() { addFnAttr(Attribute::Speculatable); }
 
   /// Determine if the call might deallocate memory.
   bool doesNotFreeMemory() const {
     return onlyReadsMemory() || hasFnAttribute(Attribute::NoFree);
   }
-  void setDoesNotFreeMemory() {
-    addFnAttr(Attribute::NoFree);
-  }
+  void setDoesNotFreeMemory() { addFnAttr(Attribute::NoFree); }
 
   /// Determine if the call can synchroize with other threads
-  bool hasNoSync() const {
-    return hasFnAttribute(Attribute::NoSync);
-  }
-  void setNoSync() {
-    addFnAttr(Attribute::NoSync);
-  }
+  bool hasNoSync() const { return hasFnAttribute(Attribute::NoSync); }
+  void setNoSync() { addFnAttr(Attribute::NoSync); }
 
   /// Determine if the function is known not to recurse, directly or
   /// indirectly.
-  bool doesNotRecurse() const {
-    return hasFnAttribute(Attribute::NoRecurse);
-  }
-  void setDoesNotRecurse() {
-    addFnAttr(Attribute::NoRecurse);
-  }
+  bool doesNotRecurse() const { return hasFnAttribute(Attribute::NoRecurse); }
+  void setDoesNotRecurse() { addFnAttr(Attribute::NoRecurse); }
 
   /// Determine if the function is required to make forward progress.
   bool mustProgress() const {
@@ -663,15 +647,11 @@ public:
   void setWillReturn() { addFnAttr(Attribute::WillReturn); }
 
   /// Get what kind of unwind table entry to generate for this function.
-  UWTableKind getUWTableKind() const {
-    return AttributeSets.getUWTableKind();
-  }
+  UWTableKind getUWTableKind() const { return AttributeSets.getUWTableKind(); }
 
   /// True if the ABI mandates (or the user requested) that this
   /// function be in a unwind table.
-  bool hasUWTable() const {
-    return getUWTableKind() != UWTableKind::None;
-  }
+  bool hasUWTable() const { return getUWTableKind() != UWTableKind::None; }
   void setUWTableKind(UWTableKind K) {
     if (K == UWTableKind::None)
       removeFnAttr(Attribute::UWTable);
@@ -710,20 +690,20 @@ public:
 
   /// Returns the denormal handling type for the default rounding mode of the
   /// function.
-  DenormalMode getDenormalMode(const fltSemantics &FPType) const;
+  LLVM_CORE_ABI DenormalMode getDenormalMode(const fltSemantics &FPType) const;
 
   /// Return the representational value of "denormal-fp-math". Code interested
   /// in the semantics of the function should use getDenormalMode instead.
-  DenormalMode getDenormalModeRaw() const;
+  LLVM_CORE_ABI DenormalMode getDenormalModeRaw() const;
 
   /// Return the representational value of "denormal-fp-math-f32". Code
   /// interested in the semantics of the function should use getDenormalMode
   /// instead.
-  DenormalMode getDenormalModeF32Raw() const;
+  LLVM_CORE_ABI DenormalMode getDenormalModeF32Raw() const;
 
   /// copyAttributesFrom - copy all additional attributes (those not needed to
   /// create a Function) from the Function Src to this one.
-  void copyAttributesFrom(const Function *Src);
+  LLVM_CORE_ABI void copyAttributesFrom(const Function *Src);
 
   /// deleteBody - This method deletes the body of the function, and converts
   /// the linkage to external.
@@ -736,18 +716,18 @@ public:
   /// removeFromParent - This method unlinks 'this' from the containing module,
   /// but does not delete it.
   ///
-  void removeFromParent();
+  LLVM_CORE_ABI void removeFromParent();
 
   /// eraseFromParent - This method unlinks 'this' from the containing module
   /// and deletes it.
   ///
-  void eraseFromParent();
+  LLVM_CORE_ABI void eraseFromParent();
 
   /// Steal arguments from another function.
   ///
   /// Drop this function's arguments and splice in the ones from \c Src.
   /// Requires that this has no function body.
-  void stealArgumentListFrom(Function &Src);
+  LLVM_CORE_ABI void stealArgumentListFrom(Function &Src);
 
   /// Insert \p BB in the basic block list at \p Position. \Returns an iterator
   /// to the newly inserted BB.
@@ -775,18 +755,20 @@ public:
 
   /// Transfer a range of basic blocks that belong to \p FromF from \p
   /// FromBeginIt to \p FromEndIt, to this function at \p ToIt.
-  void splice(Function::iterator ToIt, Function *FromF,
-              Function::iterator FromBeginIt,
-              Function::iterator FromEndIt);
+  LLVM_CORE_ABI void splice(Function::iterator ToIt, Function *FromF,
+                            Function::iterator FromBeginIt,
+                            Function::iterator FromEndIt);
 
   /// Erases a range of BasicBlocks from \p FromIt to (not including) \p ToIt.
   /// \Returns \p ToIt.
-  Function::iterator erase(Function::iterator FromIt, Function::iterator ToIt);
+  LLVM_CORE_ABI Function::iterator erase(Function::iterator FromIt,
+                                         Function::iterator ToIt);
 
 private:
   // These need access to the underlying BB list.
-  friend void BasicBlock::removeFromParent();
-  friend iplist<BasicBlock>::iterator BasicBlock::eraseFromParent();
+  friend LLVM_CORE_ABI void BasicBlock::removeFromParent();
+  friend LLVM_CORE_ABI iplist<BasicBlock>::iterator
+  BasicBlock::eraseFromParent();
   template <class BB_t, class BB_i_t, class BI_t, class II_t>
   friend class InstIterator;
   friend class llvm::SymbolTableListTraits<llvm::BasicBlock>;
@@ -799,15 +781,15 @@ private:
   /// of functions to modify the list, including Function::splice(),
   /// Function::erase(), Function::insert() etc.
   const BasicBlockListType &getBasicBlockList() const { return BasicBlocks; }
-        BasicBlockListType &getBasicBlockList()       { return BasicBlocks; }
+  BasicBlockListType &getBasicBlockList() { return BasicBlocks; }
 
-  static BasicBlockListType Function::*getSublistAccess(BasicBlock*) {
+  static BasicBlockListType Function::*getSublistAccess(BasicBlock *) {
     return &Function::BasicBlocks;
   }
 
 public:
-  const BasicBlock       &getEntryBlock() const   { return front(); }
-        BasicBlock       &getEntryBlock()         { return front(); }
+  const BasicBlock &getEntryBlock() const { return front(); }
+  BasicBlock &getEntryBlock() { return front(); }
 
   //===--------------------------------------------------------------------===//
   // Symbol Table Accessing functions...
@@ -830,7 +812,7 @@ public:
   /// Renumber basic blocks into a dense value range starting from 0. Be aware
   /// that other data structures and analyses (e.g., DominatorTree) may depend
   /// on the value numbers and need to be updated or invalidated.
-  void renumberBlocks();
+  LLVM_CORE_ABI void renumberBlocks();
 
   /// Return the "epoch" of current block numbers. This will return a different
   /// value after every renumbering. The intention is: if something (e.g., an
@@ -844,26 +826,26 @@ public:
 private:
   /// Assert that all blocks have unique numbers within 0..NextBlockNum. This
   /// has O(n) runtime complexity.
-  void validateBlockNumbers() const;
+  LLVM_CORE_ABI void validateBlockNumbers() const;
 
 public:
   //===--------------------------------------------------------------------===//
   // BasicBlock iterator forwarding functions
   //
-  iterator                begin()       { return BasicBlocks.begin(); }
-  const_iterator          begin() const { return BasicBlocks.begin(); }
-  iterator                end  ()       { return BasicBlocks.end();   }
-  const_iterator          end  () const { return BasicBlocks.end();   }
+  iterator begin() { return BasicBlocks.begin(); }
+  const_iterator begin() const { return BasicBlocks.begin(); }
+  iterator end() { return BasicBlocks.end(); }
+  const_iterator end() const { return BasicBlocks.end(); }
 
-  size_t                   size() const { return BasicBlocks.size();  }
-  bool                    empty() const { return BasicBlocks.empty(); }
-  const BasicBlock       &front() const { return BasicBlocks.front(); }
-        BasicBlock       &front()       { return BasicBlocks.front(); }
-  const BasicBlock        &back() const { return BasicBlocks.back();  }
-        BasicBlock        &back()       { return BasicBlocks.back();  }
+  size_t size() const { return BasicBlocks.size(); }
+  bool empty() const { return BasicBlocks.empty(); }
+  const BasicBlock &front() const { return BasicBlocks.front(); }
+  BasicBlock &front() { return BasicBlocks.front(); }
+  const BasicBlock &back() const { return BasicBlocks.back(); }
+  BasicBlock &back() { return BasicBlocks.back(); }
 
-/// @name Function Argument Iteration
-/// @{
+  /// @name Function Argument Iteration
+  /// @{
 
   arg_iterator arg_begin() {
     CheckLazyArguments();
@@ -883,8 +865,8 @@ public:
     return Arguments + NumArgs;
   }
 
-  Argument* getArg(unsigned i) const {
-    assert (i < NumArgs && "getArg() out of range!");
+  Argument *getArg(unsigned i) const {
+    assert(i < NumArgs && "getArg() out of range!");
     CheckLazyArguments();
     return Arguments + i;
   }
@@ -896,43 +878,40 @@ public:
     return make_range(arg_begin(), arg_end());
   }
 
-/// @}
+  /// @}
 
   size_t arg_size() const { return NumArgs; }
   bool arg_empty() const { return arg_size() == 0; }
 
   /// Check whether this function has a personality function.
   bool hasPersonalityFn() const {
-    return getSubclassDataFromValue() & (1<<3);
+    return getSubclassDataFromValue() & (1 << 3);
   }
 
   /// Get the personality function associated with this function.
-  Constant *getPersonalityFn() const;
-  void setPersonalityFn(Constant *Fn);
+  LLVM_CORE_ABI Constant *getPersonalityFn() const;
+  LLVM_CORE_ABI void setPersonalityFn(Constant *Fn);
 
   /// Check whether this function has prefix data.
-  bool hasPrefixData() const {
-    return getSubclassDataFromValue() & (1<<1);
-  }
+  bool hasPrefixData() const { return getSubclassDataFromValue() & (1 << 1); }
 
   /// Get the prefix data associated with this function.
-  Constant *getPrefixData() const;
-  void setPrefixData(Constant *PrefixData);
+  LLVM_CORE_ABI Constant *getPrefixData() const;
+  LLVM_CORE_ABI void setPrefixData(Constant *PrefixData);
 
   /// Check whether this function has prologue data.
-  bool hasPrologueData() const {
-    return getSubclassDataFromValue() & (1<<2);
-  }
+  bool hasPrologueData() const { return getSubclassDataFromValue() & (1 << 2); }
 
   /// Get the prologue data associated with this function.
-  Constant *getPrologueData() const;
-  void setPrologueData(Constant *PrologueData);
+  LLVM_CORE_ABI Constant *getPrologueData() const;
+  LLVM_CORE_ABI void setPrologueData(Constant *PrologueData);
 
   /// Print the function to an output stream with an optional
   /// AssemblyAnnotationWriter.
-  void print(raw_ostream &OS, AssemblyAnnotationWriter *AAW = nullptr,
-             bool ShouldPreserveUseListOrder = false,
-             bool IsForDebug = false) const;
+  LLVM_CORE_ABI void print(raw_ostream &OS,
+                           AssemblyAnnotationWriter *AAW = nullptr,
+                           bool ShouldPreserveUseListOrder = false,
+                           bool IsForDebug = false) const;
 
   /// viewCFG - This function is meant for use from the debugger.  You can just
   /// say 'call F->viewCFG()' and a ghostview window should pop up from the
@@ -940,31 +919,31 @@ public:
   /// basic block inside.  This depends on there being a 'dot' and 'gv' program
   /// in your path.
   ///
-  void viewCFG() const;
+  LLVM_CORE_ABI void viewCFG() const;
 
   /// viewCFG - This function is meant for use from the debugger. It works just
   /// like viewCFG(), but generates the dot file with the given file name.
-  void viewCFG(const char *OutputFileName) const;
+  LLVM_CORE_ABI void viewCFG(const char *OutputFileName) const;
 
   /// Extended form to print edge weights.
-  void viewCFG(bool ViewCFGOnly, const BlockFrequencyInfo *BFI,
-               const BranchProbabilityInfo *BPI,
-               const char *OutputFileName = nullptr) const;
+  LLVM_CORE_ABI void viewCFG(bool ViewCFGOnly, const BlockFrequencyInfo *BFI,
+                             const BranchProbabilityInfo *BPI,
+                             const char *OutputFileName = nullptr) const;
 
   /// viewCFGOnly - This function is meant for use from the debugger.  It works
   /// just like viewCFG, but it does not include the contents of basic blocks
   /// into the nodes, just the label.  If you are only interested in the CFG
   /// this can make the graph smaller.
   ///
-  void viewCFGOnly() const;
+  LLVM_CORE_ABI void viewCFGOnly() const;
 
   /// viewCFG - This function is meant for use from the debugger. It works just
   /// like viewCFGOnly(), but generates the dot file with the given file name.
-  void viewCFGOnly(const char *OutputFileName) const;
+  LLVM_CORE_ABI void viewCFGOnly(const char *OutputFileName) const;
 
   /// Extended form to print edge weights.
-  void viewCFGOnly(const BlockFrequencyInfo *BFI,
-                   const BranchProbabilityInfo *BPI) const;
+  LLVM_CORE_ABI void viewCFGOnly(const BlockFrequencyInfo *BFI,
+                                 const BranchProbabilityInfo *BPI) const;
 
   /// Methods for support type inquiry through isa, cast, and dyn_cast:
   static bool classof(const Value *V) {
@@ -983,9 +962,7 @@ public:
   /// function, dropping all references deletes the entire body of the function,
   /// including any contained basic blocks.
   ///
-  void dropAllReferences() {
-    deleteBodyImpl(/*ShouldDrop=*/true);
-  }
+  void dropAllReferences() { deleteBodyImpl(/*ShouldDrop=*/true); }
 
   /// hasAddressTaken - returns true if there are any uses of this function
   /// other than direct calls or invokes to it, or blockaddress expressions.
@@ -994,52 +971,53 @@ public:
   /// llvm.used and llvm.compiler.used variables, operand bundle
   /// "clang.arc.attachedcall", and direct calls with a different call site
   /// signature (the function is implicitly casted).
-  bool hasAddressTaken(const User ** = nullptr, bool IgnoreCallbackUses = false,
-                       bool IgnoreAssumeLikeCalls = true,
-                       bool IngoreLLVMUsed = false,
-                       bool IgnoreARCAttachedCall = false,
-                       bool IgnoreCastedDirectCall = false) const;
+  LLVM_CORE_ABI bool hasAddressTaken(const User ** = nullptr,
+                                     bool IgnoreCallbackUses = false,
+                                     bool IgnoreAssumeLikeCalls = true,
+                                     bool IngoreLLVMUsed = false,
+                                     bool IgnoreARCAttachedCall = false,
+                                     bool IgnoreCastedDirectCall = false) const;
 
   /// isDefTriviallyDead - Return true if it is trivially safe to remove
   /// this function definition from the module (because it isn't externally
   /// visible, does not have its address taken, and has no callers).  To make
   /// this more accurate, call removeDeadConstantUsers first.
-  bool isDefTriviallyDead() const;
+  LLVM_CORE_ABI bool isDefTriviallyDead() const;
 
   /// callsFunctionThatReturnsTwice - Return true if the function has a call to
   /// setjmp or other function that gcc recognizes as "returning twice".
-  bool callsFunctionThatReturnsTwice() const;
+  LLVM_CORE_ABI bool callsFunctionThatReturnsTwice() const;
 
   /// Set the attached subprogram.
   ///
   /// Calls \a setMetadata() with \a LLVMContext::MD_dbg.
-  void setSubprogram(DISubprogram *SP);
+  LLVM_CORE_ABI void setSubprogram(DISubprogram *SP);
 
   /// Get the attached subprogram.
   ///
   /// Calls \a getMetadata() with \a LLVMContext::MD_dbg and casts the result
   /// to \a DISubprogram.
-  DISubprogram *getSubprogram() const;
+  LLVM_CORE_ABI DISubprogram *getSubprogram() const;
 
   /// Returns true if we should emit debug info for profiling.
-  bool shouldEmitDebugInfoForProfiling() const;
+  LLVM_CORE_ABI bool shouldEmitDebugInfoForProfiling() const;
 
   /// Check if null pointer dereferencing is considered undefined behavior for
   /// the function.
   /// Return value: false => null pointer dereference is undefined.
   /// Return value: true =>  null pointer dereference is not undefined.
-  bool nullPointerIsDefined() const;
+  LLVM_CORE_ABI bool nullPointerIsDefined() const;
 
 private:
-  void allocHungoffUselist();
-  template<int Idx> void setHungoffOperand(Constant *C);
+  LLVM_CORE_ABI void allocHungoffUselist();
+  template <int Idx> void setHungoffOperand(Constant *C);
 
   /// Shadow Value::setValueSubclassData with a private forwarding method so
   /// that subclasses cannot accidentally use it.
   void setValueSubclassData(unsigned short D) {
     Value::setValueSubclassData(D);
   }
-  void setValueSubclassDataBit(unsigned Bit, bool On);
+  LLVM_CORE_ABI void setValueSubclassDataBit(unsigned Bit, bool On);
 };
 
 /// Check whether null pointer dereferencing is considered undefined behavior

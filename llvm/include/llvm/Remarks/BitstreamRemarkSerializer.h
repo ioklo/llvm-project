@@ -1,4 +1,4 @@
-//===-- BitstreamRemarkSerializer.h - Bitstream serializer ------*- C++ -*-===//
+﻿//===-- BitstreamRemarkSerializer.h - Bitstream serializer ------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -16,6 +16,7 @@
 
 #include "llvm/Bitstream/BitstreamWriter.h"
 #include "llvm/Remarks/BitstreamRemarkContainer.h"
+#include "llvm/Remarks/RemarksConfig.h"
 #include "llvm/Remarks/RemarkSerializer.h"
 #include <optional>
 
@@ -73,6 +74,7 @@ struct BitstreamRemarkSerializerHelper {
   uint64_t RecordRemarkArgWithDebugLocAbbrevID = 0;
   uint64_t RecordRemarkArgWithoutDebugLocAbbrevID = 0;
 
+  LLVM_REMARKS_ABI
   BitstreamRemarkSerializerHelper(BitstreamRemarkContainerType ContainerType);
 
   // Disable copy and move: Bitstream points to Encoded, which needs special
@@ -87,37 +89,39 @@ struct BitstreamRemarkSerializerHelper {
   operator=(BitstreamRemarkSerializerHelper &&) = delete;
 
   /// Set up the necessary block info entries according to the container type.
-  void setupBlockInfo();
+  LLVM_REMARKS_ABI void setupBlockInfo();
 
   /// Set up the block info for the metadata block.
-  void setupMetaBlockInfo();
+  LLVM_REMARKS_ABI void setupMetaBlockInfo();
   /// The remark version in the metadata block.
-  void setupMetaRemarkVersion();
-  void emitMetaRemarkVersion(uint64_t RemarkVersion);
+  LLVM_REMARKS_ABI void setupMetaRemarkVersion();
+  LLVM_REMARKS_ABI void emitMetaRemarkVersion(uint64_t RemarkVersion);
   /// The strtab in the metadata block.
-  void setupMetaStrTab();
-  void emitMetaStrTab(const StringTable &StrTab);
+  LLVM_REMARKS_ABI void setupMetaStrTab();
+  LLVM_REMARKS_ABI void emitMetaStrTab(const StringTable &StrTab);
   /// The external file in the metadata block.
-  void setupMetaExternalFile();
-  void emitMetaExternalFile(StringRef Filename);
+  LLVM_REMARKS_ABI void setupMetaExternalFile();
+  LLVM_REMARKS_ABI void emitMetaExternalFile(StringRef Filename);
 
   /// The block info for the remarks block.
-  void setupRemarkBlockInfo();
+  LLVM_REMARKS_ABI void setupRemarkBlockInfo();
 
   /// Emit the metadata for the remarks.
-  void emitMetaBlock(uint64_t ContainerVersion,
-                     std::optional<uint64_t> RemarkVersion,
-                     std::optional<const StringTable *> StrTab = std::nullopt,
-                     std::optional<StringRef> Filename = std::nullopt);
+  LLVM_REMARKS_ABI void
+  emitMetaBlock(uint64_t ContainerVersion,
+                std::optional<uint64_t> RemarkVersion,
+                std::optional<const StringTable *> StrTab = std::nullopt,
+                std::optional<StringRef> Filename = std::nullopt);
 
   /// Emit a remark block. The string table is required.
-  void emitRemarkBlock(const Remark &Remark, StringTable &StrTab);
+  LLVM_REMARKS_ABI void emitRemarkBlock(const Remark &Remark,
+                                        StringTable &StrTab);
   /// Finalize the writing to \p OS.
-  void flushToStream(raw_ostream &OS);
+  LLVM_REMARKS_ABI void flushToStream(raw_ostream &OS);
   /// Finalize the writing to a buffer.
   /// The contents of the buffer remain valid for the lifetime of the object.
   /// Any call to any other function in this class will invalidate the buffer.
-  StringRef getBuffer();
+  LLVM_REMARKS_ABI StringRef getBuffer();
 };
 
 /// Implementation of the remark serializer using LLVM bitstream.
@@ -135,19 +139,21 @@ struct BitstreamRemarkSerializer : public RemarkSerializer {
   BitstreamRemarkSerializerHelper Helper;
 
   /// Construct a serializer that will create its own string table.
-  BitstreamRemarkSerializer(raw_ostream &OS, SerializerMode Mode);
+  LLVM_REMARKS_ABI BitstreamRemarkSerializer(raw_ostream &OS,
+                                             SerializerMode Mode);
   /// Construct a serializer with a pre-filled string table.
-  BitstreamRemarkSerializer(raw_ostream &OS, SerializerMode Mode,
-                            StringTable StrTab);
+  LLVM_REMARKS_ABI BitstreamRemarkSerializer(raw_ostream &OS,
+                                             SerializerMode Mode,
+                                             StringTable StrTab);
 
   /// Emit a remark to the stream. This also emits the metadata associated to
   /// the remarks based on the SerializerMode specified at construction.
   /// This writes the serialized output to the provided stream.
-  void emit(const Remark &Remark) override;
+  LLVM_REMARKS_ABI void emit(const Remark &Remark) override;
   /// The metadata serializer associated to this remark serializer. Based on the
   /// container type of the current serializer, the container type of the
   /// metadata serializer will change.
-  std::unique_ptr<MetaSerializer> metaSerializer(
+  LLVM_REMARKS_ABI std::unique_ptr<MetaSerializer> metaSerializer(
       raw_ostream &OS,
       std::optional<StringRef> ExternalFilename = std::nullopt) override;
 
@@ -189,7 +195,7 @@ struct BitstreamMetaSerializer : public MetaSerializer {
       : MetaSerializer(OS), TmpHelper(std::nullopt), Helper(&Helper),
         StrTab(StrTab), ExternalFilename(ExternalFilename) {}
 
-  void emit() override;
+  LLVM_REMARKS_ABI void emit() override;
 };
 
 } // end namespace remarks

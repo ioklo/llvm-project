@@ -1,4 +1,4 @@
-//===- MSFCommon.h - Common types and functions for MSF files ---*- C++ -*-===//
+﻿//===- MSFCommon.h - Common types and functions for MSF files ---*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -11,6 +11,7 @@
 
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/ADT/BitVector.h"
+#include "llvm/DebugInfo/MSF/DebugInfoMSFConfig.h"
 #include "llvm/Support/Endian.h"
 #include "llvm/Support/Error.h"
 #include "llvm/Support/MathExtras.h"
@@ -83,6 +84,7 @@ public:
 /// Determine the layout of the FPM stream, given the MSF layout.  An FPM
 /// stream spans 1 or more blocks, each at equally spaced intervals throughout
 /// the file.
+LLVM_DEBUGINFOMSF_ABI
 MSFStreamLayout getFpmStreamLayout(const MSFLayout &Msf,
                                    bool IncludeUnusedFpmData = false,
                                    bool AltFpm = false);
@@ -176,6 +178,7 @@ inline uint32_t getNumFpmIntervals(const MSFLayout &L,
                             AltFpm ? L.alternateFpmBlock() : L.mainFpmBlock());
 }
 
+LLVM_DEBUGINFOMSF_ABI
 Error validateSuperBlock(const SuperBlock &SB);
 
 } // end namespace msf

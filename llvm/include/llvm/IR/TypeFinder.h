@@ -15,6 +15,7 @@
 
 #include "llvm/ADT/DenseSet.h"
 #include "llvm/IR/Attributes.h"
+#include "llvm/IR/CoreConfig.h"
 #include <cstddef>
 #include <vector>
 
@@ -31,22 +32,22 @@ class Value;
 class TypeFinder {
   // To avoid walking constant expressions multiple times and other IR
   // objects, we keep several helper maps.
-  DenseSet<const Value*> VisitedConstants;
+  DenseSet<const Value *> VisitedConstants;
   DenseSet<const MDNode *> VisitedMetadata;
   DenseSet<AttributeList> VisitedAttributes;
-  DenseSet<Type*> VisitedTypes;
+  DenseSet<Type *> VisitedTypes;
 
-  std::vector<StructType*> StructTypes;
+  std::vector<StructType *> StructTypes;
   bool OnlyNamed = false;
 
 public:
   TypeFinder() = default;
 
-  void run(const Module &M, bool onlyNamed);
-  void clear();
+  LLVM_CORE_ABI void run(const Module &M, bool onlyNamed);
+  LLVM_CORE_ABI void clear();
 
-  using iterator = std::vector<StructType*>::iterator;
-  using const_iterator = std::vector<StructType*>::const_iterator;
+  using iterator = std::vector<StructType *>::iterator;
+  using const_iterator = std::vector<StructType *>::const_iterator;
 
   iterator begin() { return StructTypes.begin(); }
   iterator end() { return StructTypes.end(); }
@@ -65,20 +66,20 @@ public:
 private:
   /// incorporateType - This method adds the type to the list of used
   /// structures if it's not in there already.
-  void incorporateType(Type *Ty);
+  LLVM_CORE_ABI void incorporateType(Type *Ty);
 
   /// incorporateValue - This method is used to walk operand lists finding types
   /// hiding in constant expressions and other operands that won't be walked in
   /// other ways.  GlobalValues, basic blocks, instructions, and inst operands
   /// are all explicitly enumerated.
-  void incorporateValue(const Value *V);
+  LLVM_CORE_ABI void incorporateValue(const Value *V);
 
   /// incorporateMDNode - This method is used to walk the operands of an MDNode
   /// to find types hiding within.
-  void incorporateMDNode(const MDNode *V);
+  LLVM_CORE_ABI void incorporateMDNode(const MDNode *V);
 
   /// Incorporate types referenced by attributes.
-  void incorporateAttributes(AttributeList AL);
+  LLVM_CORE_ABI void incorporateAttributes(AttributeList AL);
 };
 
 } // end namespace llvm

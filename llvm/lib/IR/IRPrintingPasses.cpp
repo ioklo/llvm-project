@@ -1,4 +1,4 @@
-//===--- IRPrintingPasses.cpp - Module and Function printing passes -------===//
+﻿//===--- IRPrintingPasses.cpp - Module and Function printing passes -------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -13,6 +13,7 @@
 
 #include "llvm/IR/IRPrintingPasses.h"
 #include "llvm/ADT/StringRef.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/Function.h"
 #include "llvm/IR/Module.h"
 #include "llvm/IR/PrintPasses.h"
@@ -23,7 +24,7 @@
 
 using namespace llvm;
 
-cl::opt<bool> WriteNewDbgInfoFormat(
+LLVM_CORE_ABI cl::opt<bool> WriteNewDbgInfoFormat(
     "write-experimental-debuginfo",
     cl::desc("Write debug info in the new non-intrinsic format. Has no effect "
              "if --preserve-input-debuginfo-format=true."),

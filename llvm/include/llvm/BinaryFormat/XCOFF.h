@@ -1,4 +1,4 @@
-//===-- llvm/BinaryFormat/XCOFF.h - The XCOFF file format -------*- C++/-*-===//
+﻿//===-- llvm/BinaryFormat/XCOFF.h - The XCOFF file format -------*- C++/-*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -13,6 +13,7 @@
 #ifndef LLVM_BINARYFORMAT_XCOFF_H
 #define LLVM_BINARYFORMAT_XCOFF_H
 
+#include "llvm/BinaryFormat/BinaryFormatConfig.h"
 #include <stddef.h>
 #include <stdint.h>
 
@@ -371,17 +372,19 @@ enum SymbolAuxType : uint8_t {
   AUX_SECT = 250    ///< Identifies a SECT auxiliary entry.
 };                  // 64-bit XCOFF file only.
 
-StringRef getMappingClassString(XCOFF::StorageMappingClass SMC);
-StringRef getRelocationTypeString(XCOFF::RelocationType Type);
-StringRef getTCPUString(XCOFF::CFileCpuId TCPU);
-Expected<SmallString<32>> parseParmsType(uint32_t Value, unsigned FixedParmsNum,
-                                         unsigned FloatingParmsNum);
-Expected<SmallString<32>> parseParmsTypeWithVecInfo(uint32_t Value,
-                                                    unsigned FixedParmsNum,
-                                                    unsigned FloatingParmsNum,
-                                                    unsigned VectorParmsNum);
-Expected<SmallString<32>> parseVectorParmsType(uint32_t Value,
-                                               unsigned ParmsNum);
+LLVM_BINARYFORMAT_ABI StringRef
+getMappingClassString(XCOFF::StorageMappingClass SMC);
+LLVM_BINARYFORMAT_ABI StringRef
+getRelocationTypeString(XCOFF::RelocationType Type);
+LLVM_BINARYFORMAT_ABI StringRef getTCPUString(XCOFF::CFileCpuId TCPU);
+LLVM_BINARYFORMAT_ABI Expected<SmallString<32>>
+parseParmsType(uint32_t Value, unsigned FixedParmsNum,
+               unsigned FloatingParmsNum);
+LLVM_BINARYFORMAT_ABI Expected<SmallString<32>>
+parseParmsTypeWithVecInfo(uint32_t Value, unsigned FixedParmsNum,
+                          unsigned FloatingParmsNum, unsigned VectorParmsNum);
+LLVM_BINARYFORMAT_ABI Expected<SmallString<32>>
+parseVectorParmsType(uint32_t Value, unsigned ParmsNum);
 
 struct TracebackTable {
   enum LanguageID : uint8_t {
@@ -490,9 +493,11 @@ enum ExtendedTBTableFlag : uint8_t {
   TB_LONGTBTABLE2 = 0x01 ///< Additional tbtable extension exists.
 };
 
-StringRef getNameForTracebackTableLanguageId(TracebackTable::LanguageID LangId);
-SmallString<32> getExtendedTBTableFlagString(uint8_t Flag);
-XCOFF::CFileCpuId getCpuID(StringRef CPU);
+LLVM_BINARYFORMAT_ABI StringRef
+getNameForTracebackTableLanguageId(TracebackTable::LanguageID LangId);
+LLVM_BINARYFORMAT_ABI SmallString<32>
+getExtendedTBTableFlagString(uint8_t Flag);
+LLVM_BINARYFORMAT_ABI XCOFF::CFileCpuId getCpuID(StringRef CPU);
 
 struct CsectProperties {
   CsectProperties(StorageMappingClass SMC, SymbolType ST)

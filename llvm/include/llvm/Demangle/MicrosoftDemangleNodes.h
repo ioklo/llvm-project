@@ -1,4 +1,4 @@
-//===- MicrosoftDemangleNodes.h ---------------------------------*- C++ -*-===//
+﻿//===- MicrosoftDemangleNodes.h ---------------------------------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -13,6 +13,7 @@
 #ifndef LLVM_DEMANGLE_MICROSOFTDEMANGLENODES_H
 #define LLVM_DEMANGLE_MICROSOFTDEMANGLENODES_H
 
+#include "llvm/Demangle/DemangleConfig.h"
 #include <array>
 #include <cstdint>
 #include <string>
@@ -264,7 +265,7 @@ struct Node {
 
   virtual void output(OutputBuffer &OB, OutputFlags Flags) const = 0;
 
-  std::string toString(OutputFlags Flags = OF_Default) const;
+  LLVM_DEMANGLE_ABI std::string toString(OutputFlags Flags = OF_Default) const;
 
 private:
   NodeKind Kind;
@@ -314,7 +315,8 @@ struct PrimitiveTypeNode : public TypeNode {
   explicit PrimitiveTypeNode(PrimitiveKind K)
       : TypeNode(NodeKind::PrimitiveType), PrimKind(K) {}
 
-  void outputPre(OutputBuffer &OB, OutputFlags Flags) const override;
+  LLVM_DEMANGLE_ABI void outputPre(OutputBuffer &OB,
+                                   OutputFlags Flags) const override;
   void outputPost(OutputBuffer &OB, OutputFlags Flags) const override {}
 
   PrimitiveKind PrimKind;
@@ -324,8 +326,10 @@ struct FunctionSignatureNode : public TypeNode {
   explicit FunctionSignatureNode(NodeKind K) : TypeNode(K) {}
   FunctionSignatureNode() : TypeNode(NodeKind::FunctionSignature) {}
 
-  void outputPre(OutputBuffer &OB, OutputFlags Flags) const override;
-  void outputPost(OutputBuffer &OB, OutputFlags Flags) const override;
+  LLVM_DEMANGLE_ABI void outputPre(OutputBuffer &OB,
+                                   OutputFlags Flags) const override;
+  LLVM_DEMANGLE_ABI void outputPost(OutputBuffer &OB,
+                                    OutputFlags Flags) const override;
 
   // Valid if this FunctionTypeNode is the Pointee of a PointerType or
   // MemberPointerType.
@@ -358,13 +362,15 @@ struct IdentifierNode : public Node {
   NodeArrayNode *TemplateParams = nullptr;
 
 protected:
-  void outputTemplateParameters(OutputBuffer &OB, OutputFlags Flags) const;
+  LLVM_DEMANGLE_ABI void outputTemplateParameters(OutputBuffer &OB,
+                                                  OutputFlags Flags) const;
 };
 
 struct VcallThunkIdentifierNode : public IdentifierNode {
   VcallThunkIdentifierNode() : IdentifierNode(NodeKind::VcallThunkIdentifier) {}
 
-  void output(OutputBuffer &OB, OutputFlags Flags) const override;
+  LLVM_DEMANGLE_ABI void output(OutputBuffer &OB,
+                                OutputFlags Flags) const override;
 
   uint64_t OffsetInVTable = 0;
 };
@@ -373,7 +379,8 @@ struct DynamicStructorIdentifierNode : public IdentifierNode {
   DynamicStructorIdentifierNode()
       : IdentifierNode(NodeKind::DynamicStructorIdentifier) {}
 
-  void output(OutputBuffer &OB, OutputFlags Flags) const override;
+  LLVM_DEMANGLE_ABI void output(OutputBuffer &OB,
+                                OutputFlags Flags) const override;
 
   VariableSymbolNode *Variable = nullptr;
   QualifiedNameNode *Name = nullptr;
@@ -383,7 +390,8 @@ struct DynamicStructorIdentifierNode : public IdentifierNode {
 struct NamedIdentifierNode : public IdentifierNode {
   NamedIdentifierNode() : IdentifierNode(NodeKind::NamedIdentifier) {}
 
-  void output(OutputBuffer &OB, OutputFlags Flags) const override;
+  LLVM_DEMANGLE_ABI void output(OutputBuffer &OB,
+                                OutputFlags Flags) const override;
 
   std::string_view Name;
 };
@@ -393,7 +401,8 @@ struct IntrinsicFunctionIdentifierNode : public IdentifierNode {
       : IdentifierNode(NodeKind::IntrinsicFunctionIdentifier),
         Operator(Operator) {}
 
-  void output(OutputBuffer &OB, OutputFlags Flags) const override;
+  LLVM_DEMANGLE_ABI void output(OutputBuffer &OB,
+                                OutputFlags Flags) const override;
 
   IntrinsicFunctionKind Operator;
 };
@@ -402,7 +411,8 @@ struct LiteralOperatorIdentifierNode : public IdentifierNode {
   LiteralOperatorIdentifierNode()
       : IdentifierNode(NodeKind::LiteralOperatorIdentifier) {}
 
-  void output(OutputBuffer &OB, OutputFlags Flags) const override;
+  LLVM_DEMANGLE_ABI void output(OutputBuffer &OB,
+                                OutputFlags Flags) const override;
 
   std::string_view Name;
 };
@@ -411,7 +421,8 @@ struct LocalStaticGuardIdentifierNode : public IdentifierNode {
   LocalStaticGuardIdentifierNode()
       : IdentifierNode(NodeKind::LocalStaticGuardIdentifier) {}
 
-  void output(OutputBuffer &OB, OutputFlags Flags) const override;
+  LLVM_DEMANGLE_ABI void output(OutputBuffer &OB,
+                                OutputFlags Flags) const override;
 
   bool IsThread = false;
   uint32_t ScopeIndex = 0;
@@ -421,7 +432,8 @@ struct ConversionOperatorIdentifierNode : public IdentifierNode {
   ConversionOperatorIdentifierNode()
       : IdentifierNode(NodeKind::ConversionOperatorIdentifier) {}
 
-  void output(OutputBuffer &OB, OutputFlags Flags) const override;
+  LLVM_DEMANGLE_ABI void output(OutputBuffer &OB,
+                                OutputFlags Flags) const override;
 
   // The type that this operator converts too.
   TypeNode *TargetType = nullptr;
@@ -433,7 +445,8 @@ struct StructorIdentifierNode : public IdentifierNode {
       : IdentifierNode(NodeKind::StructorIdentifier),
         IsDestructor(IsDestructor) {}
 
-  void output(OutputBuffer &OB, OutputFlags Flags) const override;
+  LLVM_DEMANGLE_ABI void output(OutputBuffer &OB,
+                                OutputFlags Flags) const override;
 
   // The name of the class that this is a structor of.
   IdentifierNode *Class = nullptr;
@@ -443,8 +456,10 @@ struct StructorIdentifierNode : public IdentifierNode {
 struct ThunkSignatureNode : public FunctionSignatureNode {
   ThunkSignatureNode() : FunctionSignatureNode(NodeKind::ThunkSignature) {}
 
-  void outputPre(OutputBuffer &OB, OutputFlags Flags) const override;
-  void outputPost(OutputBuffer &OB, OutputFlags Flags) const override;
+  LLVM_DEMANGLE_ABI void outputPre(OutputBuffer &OB,
+                                   OutputFlags Flags) const override;
+  LLVM_DEMANGLE_ABI void outputPost(OutputBuffer &OB,
+                                    OutputFlags Flags) const override;
 
   struct ThisAdjustor {
     uint32_t StaticOffset = 0;
@@ -458,8 +473,10 @@ struct ThunkSignatureNode : public FunctionSignatureNode {
 
 struct PointerTypeNode : public TypeNode {
   PointerTypeNode() : TypeNode(NodeKind::PointerType) {}
-  void outputPre(OutputBuffer &OB, OutputFlags Flags) const override;
-  void outputPost(OutputBuffer &OB, OutputFlags Flags) const override;
+  LLVM_DEMANGLE_ABI void outputPre(OutputBuffer &OB,
+                                   OutputFlags Flags) const override;
+  LLVM_DEMANGLE_ABI void outputPost(OutputBuffer &OB,
+                                    OutputFlags Flags) const override;
 
   // Is this a pointer, reference, or rvalue-reference?
   PointerAffinity Affinity = PointerAffinity::None;
@@ -475,8 +492,10 @@ struct PointerTypeNode : public TypeNode {
 struct TagTypeNode : public TypeNode {
   explicit TagTypeNode(TagKind Tag) : TypeNode(NodeKind::TagType), Tag(Tag) {}
 
-  void outputPre(OutputBuffer &OB, OutputFlags Flags) const override;
-  void outputPost(OutputBuffer &OB, OutputFlags Flags) const override;
+  LLVM_DEMANGLE_ABI void outputPre(OutputBuffer &OB,
+                                   OutputFlags Flags) const override;
+  LLVM_DEMANGLE_ABI void outputPost(OutputBuffer &OB,
+                                    OutputFlags Flags) const override;
 
   QualifiedNameNode *QualifiedName = nullptr;
   TagKind Tag;
@@ -485,11 +504,15 @@ struct TagTypeNode : public TypeNode {
 struct ArrayTypeNode : public TypeNode {
   ArrayTypeNode() : TypeNode(NodeKind::ArrayType) {}
 
-  void outputPre(OutputBuffer &OB, OutputFlags Flags) const override;
-  void outputPost(OutputBuffer &OB, OutputFlags Flags) const override;
+  LLVM_DEMANGLE_ABI void outputPre(OutputBuffer &OB,
+                                   OutputFlags Flags) const override;
+  LLVM_DEMANGLE_ABI void outputPost(OutputBuffer &OB,
+                                    OutputFlags Flags) const override;
 
-  void outputDimensionsImpl(OutputBuffer &OB, OutputFlags Flags) const;
-  void outputOneDimension(OutputBuffer &OB, OutputFlags Flags, Node *N) const;
+  LLVM_DEMANGLE_ABI void outputDimensionsImpl(OutputBuffer &OB,
+                                              OutputFlags Flags) const;
+  LLVM_DEMANGLE_ABI void outputOneDimension(OutputBuffer &OB, OutputFlags Flags,
+                                            Node *N) const;
 
   // A list of array dimensions.  e.g. [3,4,5] in `int Foo[3][4][5]`
   NodeArrayNode *Dimensions = nullptr;
@@ -506,8 +529,10 @@ struct IntrinsicNode : public TypeNode {
 struct CustomTypeNode : public TypeNode {
   CustomTypeNode() : TypeNode(NodeKind::Custom) {}
 
-  void outputPre(OutputBuffer &OB, OutputFlags Flags) const override;
-  void outputPost(OutputBuffer &OB, OutputFlags Flags) const override;
+  LLVM_DEMANGLE_ABI void outputPre(OutputBuffer &OB,
+                                   OutputFlags Flags) const override;
+  LLVM_DEMANGLE_ABI void outputPost(OutputBuffer &OB,
+                                    OutputFlags Flags) const override;
 
   IdentifierNode *Identifier = nullptr;
 };
@@ -515,10 +540,11 @@ struct CustomTypeNode : public TypeNode {
 struct NodeArrayNode : public Node {
   NodeArrayNode() : Node(NodeKind::NodeArray) {}
 
-  void output(OutputBuffer &OB, OutputFlags Flags) const override;
+  LLVM_DEMANGLE_ABI void output(OutputBuffer &OB,
+                                OutputFlags Flags) const override;
 
-  void output(OutputBuffer &OB, OutputFlags Flags,
-              std::string_view Separator) const;
+  LLVM_DEMANGLE_ABI void output(OutputBuffer &OB, OutputFlags Flags,
+                                std::string_view Separator) const;
 
   Node **Nodes = nullptr;
   size_t Count = 0;
@@ -527,7 +553,8 @@ struct NodeArrayNode : public Node {
 struct QualifiedNameNode : public Node {
   QualifiedNameNode() : Node(NodeKind::QualifiedName) {}
 
-  void output(OutputBuffer &OB, OutputFlags Flags) const override;
+  LLVM_DEMANGLE_ABI void output(OutputBuffer &OB,
+                                OutputFlags Flags) const override;
 
   NodeArrayNode *Components = nullptr;
 
@@ -541,7 +568,8 @@ struct TemplateParameterReferenceNode : public Node {
   TemplateParameterReferenceNode()
       : Node(NodeKind::TemplateParameterReference) {}
 
-  void output(OutputBuffer &OB, OutputFlags Flags) const override;
+  LLVM_DEMANGLE_ABI void output(OutputBuffer &OB,
+                                OutputFlags Flags) const override;
 
   SymbolNode *Symbol = nullptr;
 
@@ -556,7 +584,8 @@ struct IntegerLiteralNode : public Node {
   IntegerLiteralNode(uint64_t Value, bool IsNegative)
       : Node(NodeKind::IntegerLiteral), Value(Value), IsNegative(IsNegative) {}
 
-  void output(OutputBuffer &OB, OutputFlags Flags) const override;
+  LLVM_DEMANGLE_ABI void output(OutputBuffer &OB,
+                                OutputFlags Flags) const override;
 
   uint64_t Value = 0;
   bool IsNegative = false;
@@ -566,7 +595,8 @@ struct RttiBaseClassDescriptorNode : public IdentifierNode {
   RttiBaseClassDescriptorNode()
       : IdentifierNode(NodeKind::RttiBaseClassDescriptor) {}
 
-  void output(OutputBuffer &OB, OutputFlags Flags) const override;
+  LLVM_DEMANGLE_ABI void output(OutputBuffer &OB,
+                                OutputFlags Flags) const override;
 
   uint32_t NVOffset = 0;
   int32_t VBPtrOffset = 0;
@@ -576,7 +606,8 @@ struct RttiBaseClassDescriptorNode : public IdentifierNode {
 
 struct SymbolNode : public Node {
   explicit SymbolNode(NodeKind K) : Node(K) {}
-  void output(OutputBuffer &OB, OutputFlags Flags) const override;
+  LLVM_DEMANGLE_ABI void output(OutputBuffer &OB,
+                                OutputFlags Flags) const override;
   QualifiedNameNode *Name = nullptr;
 };
 
@@ -584,7 +615,8 @@ struct SpecialTableSymbolNode : public SymbolNode {
   explicit SpecialTableSymbolNode()
       : SymbolNode(NodeKind::SpecialTableSymbol) {}
 
-  void output(OutputBuffer &OB, OutputFlags Flags) const override;
+  LLVM_DEMANGLE_ABI void output(OutputBuffer &OB,
+                                OutputFlags Flags) const override;
   QualifiedNameNode *TargetName = nullptr;
   Qualifiers Quals = Qualifiers::Q_None;
 };
@@ -601,7 +633,8 @@ struct LocalStaticGuardVariableNode : public SymbolNode {
 struct EncodedStringLiteralNode : public SymbolNode {
   EncodedStringLiteralNode() : SymbolNode(NodeKind::EncodedStringLiteral) {}
 
-  void output(OutputBuffer &OB, OutputFlags Flags) const override;
+  LLVM_DEMANGLE_ABI void output(OutputBuffer &OB,
+                                OutputFlags Flags) const override;
 
   std::string_view DecodedString;
   bool IsTruncated = false;
@@ -611,7 +644,8 @@ struct EncodedStringLiteralNode : public SymbolNode {
 struct VariableSymbolNode : public SymbolNode {
   VariableSymbolNode() : SymbolNode(NodeKind::VariableSymbol) {}
 
-  void output(OutputBuffer &OB, OutputFlags Flags) const override;
+  LLVM_DEMANGLE_ABI void output(OutputBuffer &OB,
+                                OutputFlags Flags) const override;
 
   StorageClass SC = StorageClass::None;
   TypeNode *Type = nullptr;
@@ -620,7 +654,8 @@ struct VariableSymbolNode : public SymbolNode {
 struct FunctionSymbolNode : public SymbolNode {
   FunctionSymbolNode() : SymbolNode(NodeKind::FunctionSymbol) {}
 
-  void output(OutputBuffer &OB, OutputFlags Flags) const override;
+  LLVM_DEMANGLE_ABI void output(OutputBuffer &OB,
+                                OutputFlags Flags) const override;
 
   FunctionSignatureNode *Signature = nullptr;
 };

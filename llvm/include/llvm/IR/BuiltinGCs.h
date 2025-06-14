@@ -1,4 +1,4 @@
-//===-- BuiltinGCs.h - Garbage collector linkage hacks --------------------===//
+﻿//===-- BuiltinGCs.h - Garbage collector linkage hacks --------------------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -14,19 +14,21 @@
 #ifndef LLVM_IR_BUILTINGCS_H
 #define LLVM_IR_BUILTINGCS_H
 
+#include "llvm/IR/CoreConfig.h"
+
 namespace llvm {
 
 /// FIXME: Collector instances are not useful on their own. These no longer
 ///        serve any purpose except to link in the plugins.
 
 /// Ensure the definition of the builtin GCs gets linked in
-void linkAllBuiltinGCs();
+LLVM_CORE_ABI void linkAllBuiltinGCs();
 
 /// Creates an ocaml-compatible metadata printer.
-void linkOcamlGCPrinter();
+LLVM_CORE_ABI void linkOcamlGCPrinter();
 
 /// Creates an erlang-compatible metadata printer.
-void linkErlangGCPrinter();
+LLVM_CORE_ABI void linkErlangGCPrinter();
 
 } // namespace llvm
 

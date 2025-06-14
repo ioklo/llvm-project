@@ -13,6 +13,8 @@
 #ifndef LLVM_IR_FMF_H
 #define LLVM_IR_FMF_H
 
+#include "llvm/IR/CoreConfig.h"
+
 namespace llvm {
 class raw_ostream;
 
@@ -77,11 +79,8 @@ public:
     Flags = (Flags & ~AllowReassoc) | B * AllowReassoc;
   }
   void setNoNaNs(bool B = true) {
-    Flags = (Flags & ~NoNaNs) | B * NoNaNs;
-  }
-  void setNoInfs(bool B = true) {
-    Flags = (Flags & ~NoInfs) | B * NoInfs;
-  }
+    Flags = (Flags & ~NoNaNs) | B * NoNaNs; }
+  void setNoInfs(bool B = true) { Flags = (Flags & ~NoInfs) | B * NoInfs; }
   void setNoSignedZeros(bool B = true) {
     Flags = (Flags & ~NoSignedZeros) | B * NoSignedZeros;
   }
@@ -107,7 +106,7 @@ public:
   }
 
   /// Print fast-math flags to \p O.
-  void print(raw_ostream &O) const;
+  LLVM_CORE_ABI void print(raw_ostream &O) const;
 
   /// Intersect rewrite-based flags
   static inline FastMathFlags intersectRewrite(FastMathFlags LHS,

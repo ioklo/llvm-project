@@ -1,4 +1,4 @@
-//===-LTO.cpp - LLVM Link Time Optimizer ----------------------------------===//
+﻿//===-LTO.cpp - LLVM Link Time Optimizer ----------------------------------===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -26,6 +26,7 @@
 #include "llvm/CodeGen/Analysis.h"
 #include "llvm/Config/llvm-config.h"
 #include "llvm/IR/AutoUpgrade.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/IR/DiagnosticPrinter.h"
 #include "llvm/IR/Intrinsics.h"
 #include "llvm/IR/LLVMRemarkStreamer.h"
@@ -67,7 +68,7 @@ using namespace object;
 
 #define DEBUG_TYPE "lto"
 
-extern cl::opt<bool> UseNewDbgInfoFormat;
+LLVM_CORE_ABI extern cl::opt<bool> UseNewDbgInfoFormat;
 
 static cl::opt<bool>
     DumpThinCGSCCs("dump-thin-cg-sccs", cl::init(false), cl::Hidden,

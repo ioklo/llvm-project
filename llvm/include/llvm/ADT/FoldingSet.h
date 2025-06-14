@@ -368,8 +368,8 @@ public:
   }
 
   void AddBoolean(bool B) { AddInteger(B ? 1U : 0U); }
-  void AddString(StringRef String);
-  void AddNodeID(const FoldingSetNodeID &ID);
+  LLVM_SUPPORT_ABI void AddString(StringRef String);
+  LLVM_SUPPORT_ABI void AddNodeID(const FoldingSetNodeID &ID);
 
   template <typename T>
   inline void Add(const T &x) { FoldingSetTrait<T>::Profile(x, *this); }

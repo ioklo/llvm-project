@@ -1,4 +1,4 @@
-//===--- Demangle.h ---------------------------------------------*- C++ -*-===//
+﻿//===--- Demangle.h ---------------------------------------------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -9,12 +9,11 @@
 #ifndef LLVM_DEMANGLE_DEMANGLE_H
 #define LLVM_DEMANGLE_DEMANGLE_H
 
+#include "llvm/Demangle/DemangleConfig.h"
 #include <cstddef>
 #include <optional>
 #include <string>
 #include <string_view>
-
-#include "Compiler.h"
 
 namespace llvm {
 /// This is a llvm local version of __cxa_demangle. Other than the name and
@@ -54,26 +53,28 @@ enum MSDemangleFlags {
 /// bytes of the input string were consumed.
 /// status receives one of the demangle_ enum entries above if it's not nullptr.
 /// Flags controls various details of the demangled representation.
-char *microsoftDemangle(std::string_view mangled_name, size_t *n_read,
+LLVM_DEMANGLE_ABI char *microsoftDemangle(std::string_view mangled_name,
+                                          size_t *n_read,
                         int *status, MSDemangleFlags Flags = MSDF_None);
 
-std::optional<size_t>
+LLVM_DEMANGLE_ABI std::optional<size_t>
 getArm64ECInsertionPointInMangledName(std::string_view MangledName);
 
 // Demangles a Rust v0 mangled symbol.
-char *rustDemangle(std::string_view MangledName);
+LLVM_DEMANGLE_ABI char *rustDemangle(std::string_view MangledName);
 
 // Demangles a D mangled symbol.
-char *dlangDemangle(std::string_view MangledName);
+LLVM_DEMANGLE_ABI char *dlangDemangle(std::string_view MangledName);
 
 /// Attempt to demangle a string using different demangling schemes.
 /// The function uses heuristics to determine which demangling scheme to use.
 /// \param MangledName - reference to string to demangle.
 /// \returns - the demangled string, or a copy of the input string if no
 /// demangling occurred.
-std::string demangle(std::string_view MangledName);
+LLVM_DEMANGLE_ABI std::string demangle(std::string_view MangledName);
 
-bool nonMicrosoftDemangle(std::string_view MangledName, std::string &Result,
+LLVM_DEMANGLE_ABI bool nonMicrosoftDemangle(std::string_view MangledName,
+                                            std::string &Result,
                           bool CanHaveLeadingDot = true,
                           bool ParseParams = true);
 
@@ -81,53 +82,55 @@ bool nonMicrosoftDemangle(std::string_view MangledName, std::string &Result,
 /// (typically an intermediate stage in itaniumDemangle) and querying certain
 /// properties or partially printing the demangled name.
 struct ItaniumPartialDemangler {
-  ItaniumPartialDemangler();
+  LLVM_DEMANGLE_ABI ItaniumPartialDemangler();
 
-  ItaniumPartialDemangler(ItaniumPartialDemangler &&Other);
-  ItaniumPartialDemangler &operator=(ItaniumPartialDemangler &&Other);
+  LLVM_DEMANGLE_ABI ItaniumPartialDemangler(ItaniumPartialDemangler &&Other);
+  LLVM_DEMANGLE_ABI ItaniumPartialDemangler &
+  operator=(ItaniumPartialDemangler &&Other);
 
   /// Demangle into an AST. Subsequent calls to the rest of the member functions
   /// implicitly operate on the AST this produces.
   /// \return true on error, false otherwise
-  bool partialDemangle(const char *MangledName);
+  LLVM_DEMANGLE_ABI bool partialDemangle(const char *MangledName);
 
   /// Just print the entire mangled name into Buf. Buf and N behave like the
   /// second and third parameters to __cxa_demangle.
-  char *finishDemangle(char *Buf, size_t *N) const;
+  LLVM_DEMANGLE_ABI char *finishDemangle(char *Buf, size_t *N) const;
 
   /// Get the base name of a function. This doesn't include trailing template
   /// arguments, ie for "a::b<int>" this function returns "b".
-  char *getFunctionBaseName(char *Buf, size_t *N) const;
+  LLVM_DEMANGLE_ABI char *getFunctionBaseName(char *Buf, size_t *N) const;
 
   /// Get the context name for a function. For "a::b::c", this function returns
   /// "a::b".
-  char *getFunctionDeclContextName(char *Buf, size_t *N) const;
+  LLVM_DEMANGLE_ABI char *getFunctionDeclContextName(char *Buf,
+                                                     size_t *N) const;
 
   /// Get the entire name of this function.
-  char *getFunctionName(char *Buf, size_t *N) const;
+  LLVM_DEMANGLE_ABI char *getFunctionName(char *Buf, size_t *N) const;
 
   /// Get the parameters for this function.
-  char *getFunctionParameters(char *Buf, size_t *N) const;
-  char *getFunctionReturnType(char *Buf, size_t *N) const;
+  LLVM_DEMANGLE_ABI char *getFunctionParameters(char *Buf, size_t *N) const;
+  LLVM_DEMANGLE_ABI char *getFunctionReturnType(char *Buf, size_t *N) const;
 
   /// If this function has any cv or reference qualifiers. These imply that
   /// the function is a non-static member function.
-  bool hasFunctionQualifiers() const;
+  LLVM_DEMANGLE_ABI bool hasFunctionQualifiers() const;
 
   /// If this symbol describes a constructor or destructor.
-  bool isCtorOrDtor() const;
+  LLVM_DEMANGLE_ABI bool isCtorOrDtor() const;
 
   /// If this symbol describes a function.
-  bool isFunction() const;
+  LLVM_DEMANGLE_ABI bool isFunction() const;
 
   /// If this symbol describes a variable.
-  bool isData() const;
+  LLVM_DEMANGLE_ABI bool isData() const;
 
   /// If this symbol is a <special-name>. These are generally implicitly
   /// generated by the implementation, such as vtables and typeinfo names.
-  bool isSpecialName() const;
+  LLVM_DEMANGLE_ABI bool isSpecialName() const;
 
-  ~ItaniumPartialDemangler();
+  LLVM_DEMANGLE_ABI ~ItaniumPartialDemangler();
 
 private:
   void *RootNode;

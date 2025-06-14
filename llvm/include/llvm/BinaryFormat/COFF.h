@@ -1,4 +1,4 @@
-//===-- llvm/BinaryFormat/COFF.h --------------------------------*- C++ -*-===//
+﻿//===-- llvm/BinaryFormat/COFF.h --------------------------------*- C++ -*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -22,6 +22,7 @@
 #ifndef LLVM_BINARYFORMAT_COFF_H
 #define LLVM_BINARYFORMAT_COFF_H
 
+#include "llvm/BinaryFormat/BinaryFormatConfig.h"
 #include "llvm/Support/DataTypes.h"
 #include <cassert>
 
@@ -851,7 +852,7 @@ inline bool isReservedSectionNumber(int32_t SectionNumber) {
 
 /// Encode section name based on string table offset.
 /// The size of Out must be at least COFF::NameSize.
-bool encodeSectionName(char *Out, uint64_t Offset);
+LLVM_BINARYFORMAT_ABI bool encodeSectionName(char *Out, uint64_t Offset);
 
 } // End namespace COFF.
 } // End namespace llvm.
