@@ -18,6 +18,7 @@
 
 #include "llvm/MC/MCAsmBackend.h"
 #include "llvm/MC/MCCodeEmitter.h"
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCObjectStreamer.h"
 #include "llvm/MC/MCObjectWriter.h"
 
@@ -40,7 +41,8 @@ public:
                     SMLoc Loc = SMLoc()) override {}
 
 private:
-  void emitInstToData(const MCInst &, const MCSubtargetInfo &) override;
+  LLVM_MC_ABI void emitInstToData(const MCInst &,
+                                  const MCSubtargetInfo &) override;
 };
 
 } // end namespace llvm

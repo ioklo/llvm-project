@@ -14,6 +14,7 @@
 #define LLVM_MC_MCINSTRINFO_H
 
 #include "llvm/ADT/StringRef.h"
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCInstrDesc.h"
 #include <cassert>
 
@@ -40,7 +41,7 @@ private:
   // A complex method to determine if a certain instruction is deprecated or
   // not, and return the reason for deprecation.
   const ComplexDeprecationPredicate *ComplexDeprecationInfos;
-  unsigned NumOpcodes;              // Number of entries in the desc array
+  unsigned NumOpcodes; // Number of entries in the desc array
 
 public:
   /// Initialize MCInstrInfo, called by TableGen auto-generated routines.
@@ -74,10 +75,10 @@ public:
 
   /// Returns true if a certain instruction is deprecated and if so
   /// returns the reason in \p Info.
-  bool getDeprecatedInfo(MCInst &MI, const MCSubtargetInfo &STI,
-                         std::string &Info) const;
+  LLVM_MC_ABI bool getDeprecatedInfo(MCInst &MI, const MCSubtargetInfo &STI,
+                                     std::string &Info) const;
 };
 
-} // End llvm namespace
+} // namespace llvm
 
 #endif

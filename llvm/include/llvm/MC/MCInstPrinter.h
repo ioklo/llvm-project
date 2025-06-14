@@ -10,6 +10,7 @@
 #define LLVM_MC_MCINSTPRINTER_H
 
 #include "llvm/ADT/SmallVector.h"
+#include "llvm/MC/MCConfig.h"
 #include "llvm/Support/Compiler.h"
 #include "llvm/Support/Format.h"
 #include "llvm/Support/raw_ostream.h"
@@ -28,7 +29,7 @@ class MCSubtargetInfo;
 class StringRef;
 
 /// Convert `Bytes' to a hex string and output to `OS'
-void dumpBytes(ArrayRef<uint8_t> Bytes, raw_ostream &OS);
+LLVM_MC_ABI void dumpBytes(ArrayRef<uint8_t> Bytes, raw_ostream &OS);
 
 namespace HexStyle {
 
@@ -80,17 +81,19 @@ protected:
   SmallVector<raw_ostream::Colors, 4> ColorStack{raw_ostream::Colors::RESET};
 
   /// Utility function for printing annotations.
-  void printAnnotation(raw_ostream &OS, StringRef Annot);
+  LLVM_MC_ABI void printAnnotation(raw_ostream &OS, StringRef Annot);
 
   /// Helper for matching MCInsts to alias patterns when printing instructions.
-  const char *matchAliasPatterns(const MCInst *MI, const MCSubtargetInfo *STI,
-                                 const AliasMatchingData &M);
+  LLVM_MC_ABI const char *matchAliasPatterns(const MCInst *MI,
+                                             const MCSubtargetInfo *STI,
+                                             const AliasMatchingData &M);
 
 public:
   MCInstPrinter(const MCAsmInfo &mai, const MCInstrInfo &mii,
-                const MCRegisterInfo &mri) : MAI(mai), MII(mii), MRI(mri) {}
+                const MCRegisterInfo &mri)
+      : MAI(mai), MII(mii), MRI(mri) {}
 
-  virtual ~MCInstPrinter();
+  LLVM_MC_ABI virtual ~MCInstPrinter();
 
   enum class Markup {
     Immediate,
@@ -101,9 +104,11 @@ public:
 
   class WithMarkup {
   public:
-    LLVM_CTOR_NODISCARD WithMarkup(MCInstPrinter &IP, raw_ostream &OS, Markup M,
-                                   bool EnableMarkup, bool EnableColor);
-    ~WithMarkup();
+    LLVM_CTOR_NODISCARD LLVM_MC_ABI WithMarkup(MCInstPrinter &IP,
+                                               raw_ostream &OS, Markup M,
+                                               bool EnableMarkup,
+                                               bool EnableColor);
+    LLVM_MC_ABI ~WithMarkup();
 
     template <typename T> WithMarkup &operator<<(T &O) {
       OS << O;
@@ -146,10 +151,10 @@ public:
 
   /// Return the name of the specified opcode enum (e.g. "MOV32ri") or
   /// empty if we can't resolve it.
-  StringRef getOpcodeName(unsigned Opcode) const;
+  LLVM_MC_ABI StringRef getOpcodeName(unsigned Opcode) const;
 
   /// Print the assembler register name.
-  virtual void printRegName(raw_ostream &OS, MCRegister Reg);
+  LLVM_MC_ABI virtual void printRegName(raw_ostream &OS, MCRegister Reg);
 
   bool getUseMarkup() const { return UseMarkup; }
   void setUseMarkup(bool Value) { UseMarkup = Value; }
@@ -157,7 +162,7 @@ public:
   bool getUseColor() const { return UseColor; }
   void setUseColor(bool Value) { UseColor = Value; }
 
-  WithMarkup markup(raw_ostream &OS, Markup M);
+  LLVM_MC_ABI WithMarkup markup(raw_ostream &OS, Markup M);
 
   bool getPrintImmHex() const { return PrintImmHex; }
   void setPrintImmHex(bool Value) { PrintImmHex = Value; }
@@ -177,9 +182,9 @@ public:
   }
 
   /// Utility functions to print decimal/hexadecimal values.
-  format_object<int64_t> formatDec(int64_t Value) const;
-  format_object<int64_t> formatHex(int64_t Value) const;
-  format_object<uint64_t> formatHex(uint64_t Value) const;
+  LLVM_MC_ABI format_object<int64_t> formatDec(int64_t Value) const;
+  LLVM_MC_ABI format_object<int64_t> formatHex(int64_t Value) const;
+  LLVM_MC_ABI format_object<uint64_t> formatHex(uint64_t Value) const;
 };
 
 /// Map from opcode to pattern list by binary search.

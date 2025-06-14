@@ -9,6 +9,7 @@
 #ifndef LLVM_MC_MCWINCOFFSTREAMER_H
 #define LLVM_MC_MCWINCOFFSTREAMER_H
 
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCDirectives.h"
 #include "llvm/MC/MCObjectStreamer.h"
 
@@ -27,9 +28,10 @@ class raw_pwrite_stream;
 
 class MCWinCOFFStreamer : public MCObjectStreamer {
 public:
-  MCWinCOFFStreamer(MCContext &Context, std::unique_ptr<MCAsmBackend> MAB,
-                    std::unique_ptr<MCCodeEmitter> CE,
-                    std::unique_ptr<MCObjectWriter> OW);
+  LLVM_MC_ABI MCWinCOFFStreamer(MCContext &Context,
+                                std::unique_ptr<MCAsmBackend> MAB,
+                                std::unique_ptr<MCCodeEmitter> CE,
+                                std::unique_ptr<MCObjectWriter> OW);
 
   /// state management
   void reset() override {
@@ -37,55 +39,65 @@ public:
     MCObjectStreamer::reset();
   }
 
-  WinCOFFObjectWriter &getWriter();
+  LLVM_MC_ABI WinCOFFObjectWriter &getWriter();
 
   /// \name MCStreamer interface
   /// \{
 
-  void initSections(bool NoExecStack, const MCSubtargetInfo &STI) override;
-  void changeSection(MCSection *Section, uint32_t Subsection = 0) override;
-  void emitLabel(MCSymbol *Symbol, SMLoc Loc = SMLoc()) override;
-  void emitAssemblerFlag(MCAssemblerFlag Flag) override;
-  void emitThumbFunc(MCSymbol *Func) override;
-  bool emitSymbolAttribute(MCSymbol *Symbol, MCSymbolAttr Attribute) override;
-  void emitSymbolDesc(MCSymbol *Symbol, unsigned DescValue) override;
-  void beginCOFFSymbolDef(MCSymbol const *Symbol) override;
-  void emitCOFFSymbolStorageClass(int StorageClass) override;
-  void emitCOFFSymbolType(int Type) override;
-  void endCOFFSymbolDef() override;
-  void emitCOFFSafeSEH(MCSymbol const *Symbol) override;
-  void emitCOFFSymbolIndex(MCSymbol const *Symbol) override;
-  void emitCOFFSectionIndex(MCSymbol const *Symbol) override;
-  void emitCOFFSecRel32(MCSymbol const *Symbol, uint64_t Offset) override;
-  void emitCOFFImgRel32(MCSymbol const *Symbol, int64_t Offset) override;
-  void emitCOFFSecNumber(MCSymbol const *Symbol) override;
-  void emitCOFFSecOffset(MCSymbol const *Symbol) override;
-  void emitCommonSymbol(MCSymbol *Symbol, uint64_t Size,
-                        Align ByteAlignment) override;
-  void emitLocalCommonSymbol(MCSymbol *Symbol, uint64_t Size,
-                             Align ByteAlignment) override;
-  void emitWeakReference(MCSymbol *Alias, const MCSymbol *Symbol) override;
-  void emitZerofill(MCSection *Section, MCSymbol *Symbol, uint64_t Size,
-                    Align ByteAlignment, SMLoc Loc = SMLoc()) override;
-  void emitTBSSSymbol(MCSection *Section, MCSymbol *Symbol, uint64_t Size,
-                      Align ByteAlignment) override;
-  void emitIdent(StringRef IdentString) override;
-  void emitWinEHHandlerData(SMLoc Loc) override;
-  void emitCGProfileEntry(const MCSymbolRefExpr *From,
-                          const MCSymbolRefExpr *To, uint64_t Count) override;
-  void finishImpl() override;
+  LLVM_MC_ABI void initSections(bool NoExecStack,
+                                const MCSubtargetInfo &STI) override;
+  LLVM_MC_ABI void changeSection(MCSection *Section,
+                                 uint32_t Subsection = 0) override;
+  LLVM_MC_ABI void emitLabel(MCSymbol *Symbol, SMLoc Loc = SMLoc()) override;
+  LLVM_MC_ABI void emitAssemblerFlag(MCAssemblerFlag Flag) override;
+  LLVM_MC_ABI void emitThumbFunc(MCSymbol *Func) override;
+  LLVM_MC_ABI bool emitSymbolAttribute(MCSymbol *Symbol,
+                                       MCSymbolAttr Attribute) override;
+  LLVM_MC_ABI void emitSymbolDesc(MCSymbol *Symbol,
+                                  unsigned DescValue) override;
+  LLVM_MC_ABI void beginCOFFSymbolDef(MCSymbol const *Symbol) override;
+  LLVM_MC_ABI void emitCOFFSymbolStorageClass(int StorageClass) override;
+  LLVM_MC_ABI void emitCOFFSymbolType(int Type) override;
+  LLVM_MC_ABI void endCOFFSymbolDef() override;
+  LLVM_MC_ABI void emitCOFFSafeSEH(MCSymbol const *Symbol) override;
+  LLVM_MC_ABI void emitCOFFSymbolIndex(MCSymbol const *Symbol) override;
+  LLVM_MC_ABI void emitCOFFSectionIndex(MCSymbol const *Symbol) override;
+  LLVM_MC_ABI void emitCOFFSecRel32(MCSymbol const *Symbol,
+                                    uint64_t Offset) override;
+  LLVM_MC_ABI void emitCOFFImgRel32(MCSymbol const *Symbol,
+                                    int64_t Offset) override;
+  LLVM_MC_ABI void emitCOFFSecNumber(MCSymbol const *Symbol) override;
+  LLVM_MC_ABI void emitCOFFSecOffset(MCSymbol const *Symbol) override;
+  LLVM_MC_ABI void emitCommonSymbol(MCSymbol *Symbol, uint64_t Size,
+                                    Align ByteAlignment) override;
+  LLVM_MC_ABI void emitLocalCommonSymbol(MCSymbol *Symbol, uint64_t Size,
+                                         Align ByteAlignment) override;
+  LLVM_MC_ABI void emitWeakReference(MCSymbol *Alias,
+                                     const MCSymbol *Symbol) override;
+  LLVM_MC_ABI void emitZerofill(MCSection *Section, MCSymbol *Symbol,
+                                uint64_t Size, Align ByteAlignment,
+                                SMLoc Loc = SMLoc()) override;
+  LLVM_MC_ABI void emitTBSSSymbol(MCSection *Section, MCSymbol *Symbol,
+                                  uint64_t Size, Align ByteAlignment) override;
+  LLVM_MC_ABI void emitIdent(StringRef IdentString) override;
+  LLVM_MC_ABI void emitWinEHHandlerData(SMLoc Loc) override;
+  LLVM_MC_ABI void emitCGProfileEntry(const MCSymbolRefExpr *From,
+                                      const MCSymbolRefExpr *To,
+                                      uint64_t Count) override;
+  LLVM_MC_ABI void finishImpl() override;
 
   /// \}
 
 protected:
   const MCSymbol *CurSymbol;
 
-  void emitInstToData(const MCInst &Inst, const MCSubtargetInfo &STI) override;
+  LLVM_MC_ABI void emitInstToData(const MCInst &Inst,
+                                  const MCSubtargetInfo &STI) override;
 
-  void finalizeCGProfileEntry(const MCSymbolRefExpr *&S);
+  LLVM_MC_ABI void finalizeCGProfileEntry(const MCSymbolRefExpr *&S);
 
 private:
-  void Error(const Twine &Msg) const;
+  LLVM_MC_ABI void Error(const Twine &Msg) const;
 };
 
 } // end namespace llvm

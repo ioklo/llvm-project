@@ -10,6 +10,7 @@
 #define LLVM_MC_MCASMBACKEND_H
 
 #include "llvm/ADT/ArrayRef.h"
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCDirectives.h"
 #include "llvm/MC/MCFixup.h"
 #include "llvm/Support/Endian.h"
@@ -41,12 +42,13 @@ class raw_ostream;
 /// Generic interface to target specific assembler backends.
 class MCAsmBackend {
 protected: // Can only create subclasses.
-  MCAsmBackend(llvm::endianness Endian, unsigned RelaxFixupKind = MaxFixupKind);
+  LLVM_MC_ABI MCAsmBackend(llvm::endianness Endian,
+                           unsigned RelaxFixupKind = MaxFixupKind);
 
 public:
   MCAsmBackend(const MCAsmBackend &) = delete;
   MCAsmBackend &operator=(const MCAsmBackend &) = delete;
-  virtual ~MCAsmBackend();
+  LLVM_MC_ABI virtual ~MCAsmBackend();
 
   const llvm::endianness Endian;
 
@@ -68,13 +70,13 @@ public:
 
   /// Create a new MCObjectWriter instance for use by the assembler backend to
   /// emit the final object file.
-  std::unique_ptr<MCObjectWriter>
+  LLVM_MC_ABI std::unique_ptr<MCObjectWriter>
   createObjectWriter(raw_pwrite_stream &OS) const;
 
   /// Create an MCObjectWriter that writes two object files: a .o file which is
   /// linked into the final program and a .dwo file which is used by debuggers.
   /// This function is only supported with ELF targets.
-  std::unique_ptr<MCObjectWriter>
+  LLVM_MC_ABI std::unique_ptr<MCObjectWriter>
   createDwoObjectWriter(raw_pwrite_stream &OS, raw_pwrite_stream &DwoOS) const;
 
   virtual std::unique_ptr<MCObjectTargetWriter>
@@ -116,9 +118,8 @@ public:
     return false;
   }
 
-  virtual bool evaluateTargetFixup(const MCAssembler &Asm,
-                                   const MCFixup &Fixup, const MCFragment *DF,
-                                   const MCValue &Target,
+  virtual bool evaluateTargetFixup(const MCAssembler &Asm, const MCFixup &Fixup,
+                                   const MCFragment *DF, const MCValue &Target,
                                    const MCSubtargetInfo *STI, uint64_t &Value,
                                    bool &WasForced) {
     llvm_unreachable("Need to implement hook if target has custom fixups");
@@ -160,11 +161,11 @@ public:
 
   /// Target specific predicate for whether a given fixup requires the
   /// associated instruction to be relaxed.
-  virtual bool fixupNeedsRelaxationAdvanced(const MCAssembler &Asm,
-                                            const MCFixup &Fixup, bool Resolved,
-                                            uint64_t Value,
-                                            const MCRelaxableFragment *DF,
-                                            const bool WasForced) const;
+  LLVM_MC_ABI virtual bool
+  fixupNeedsRelaxationAdvanced(const MCAssembler &Asm, const MCFixup &Fixup,
+                               bool Resolved, uint64_t Value,
+                               const MCRelaxableFragment *DF,
+                               const bool WasForced) const;
 
   /// Simple predicate for targets where !Resolved implies requiring relaxation
   virtual bool fixupNeedsRelaxation(const MCFixup &Fixup,
@@ -233,11 +234,9 @@ public:
   }
 
   /// Check whether a given symbol has been flagged with MICROMIPS flag.
-  virtual bool isMicroMips(const MCSymbol *Sym) const {
-    return false;
-  }
+  virtual bool isMicroMips(const MCSymbol *Sym) const { return false; }
 
-  bool isDarwinCanonicalPersonality(const MCSymbol *Sym) const;
+  LLVM_MC_ABI bool isDarwinCanonicalPersonality(const MCSymbol *Sym) const;
 };
 
 } // end namespace llvm

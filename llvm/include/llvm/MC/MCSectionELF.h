@@ -16,6 +16,7 @@
 #include "llvm/ADT/PointerIntPair.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/BinaryFormat/ELF.h"
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCSection.h"
 #include "llvm/MC/MCSymbolELF.h"
 #include "llvm/MC/SectionKind.h"
@@ -75,7 +76,8 @@ private:
 public:
   /// Decides whether a '.section' directive should be printed before the
   /// section name
-  bool shouldOmitSectionDirective(StringRef Name, const MCAsmInfo &MAI) const;
+  LLVM_MC_ABI bool shouldOmitSectionDirective(StringRef Name,
+                                              const MCAsmInfo &MAI) const;
 
   unsigned getType() const { return Type; }
   unsigned getFlags() const { return Flags; }
@@ -84,11 +86,11 @@ public:
   const MCSymbolELF *getGroup() const { return Group.getPointer(); }
   bool isComdat() const { return Group.getInt(); }
 
-  void printSwitchToSection(const MCAsmInfo &MAI, const Triple &T,
-                            raw_ostream &OS,
-                            uint32_t Subsection) const override;
-  bool useCodeAlign() const override;
-  StringRef getVirtualSectionKind() const override;
+  LLVM_MC_ABI void printSwitchToSection(const MCAsmInfo &MAI, const Triple &T,
+                                        raw_ostream &OS,
+                                        uint32_t Subsection) const override;
+  LLVM_MC_ABI bool useCodeAlign() const override;
+  LLVM_MC_ABI StringRef getVirtualSectionKind() const override;
 
   bool isUnique() const { return UniqueID != NonUniqueID; }
   unsigned getUniqueID() const { return UniqueID; }
@@ -106,9 +108,7 @@ public:
     return std::make_pair(StartOffset, EndOffset);
   }
 
-  static bool classof(const MCSection *S) {
-    return S->getVariant() == SV_ELF;
-  }
+  static bool classof(const MCSection *S) { return S->getVariant() == SV_ELF; }
 };
 
 } // end namespace llvm

@@ -14,6 +14,7 @@
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/ADT/ilist_node.h"
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCFixup.h"
 #include "llvm/MC/MCInst.h"
 #include "llvm/Support/Alignment.h"
@@ -79,7 +80,7 @@ protected:
   /// MCRelaxableFragment: x86-specific
   bool AllowAutoPadding : 1;
 
-  MCFragment(FragmentType Kind, bool HasInstructions);
+  LLVM_MC_ABI MCFragment(FragmentType Kind, bool HasInstructions);
 
 public:
   MCFragment() = delete;
@@ -90,7 +91,7 @@ public:
   ///
   /// This must be used instead of delete as MCFragment is non-virtual.
   /// This method will dispatch to the appropriate subclass.
-  void destroy();
+  LLVM_MC_ABI void destroy();
 
   MCFragment *getNext() const { return Next; }
 
@@ -99,7 +100,7 @@ public:
   MCSection *getParent() const { return Parent; }
   void setParent(MCSection *Value) { Parent = Value; }
 
-  const MCSymbol *getAtom() const;
+  LLVM_MC_ABI const MCSymbol *getAtom() const;
 
   unsigned getLayoutOrder() const { return LayoutOrder; }
   void setLayoutOrder(unsigned Value) { LayoutOrder = Value; }
@@ -108,7 +109,7 @@ public:
   /// this is false, but specific fragment types may set it to true.
   bool hasInstructions() const { return HasInstructions; }
 
-  void dump() const;
+  LLVM_MC_ABI void dump() const;
 };
 
 class MCDummyFragment : public MCFragment {

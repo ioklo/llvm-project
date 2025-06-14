@@ -10,6 +10,7 @@
 #define LLVM_MC_MCASMINFOCOFF_H
 
 #include "llvm/MC/MCAsmInfo.h"
+#include "llvm/MC/MCConfig.h"
 
 namespace llvm {
 
@@ -17,21 +18,21 @@ class MCAsmInfoCOFF : public MCAsmInfo {
   virtual void anchor();
 
 protected:
-  explicit MCAsmInfoCOFF();
+  LLVM_MC_ABI explicit MCAsmInfoCOFF();
 };
 
 class MCAsmInfoMicrosoft : public MCAsmInfoCOFF {
-  void anchor() override;
+  LLVM_MC_ABI void anchor() override;
 
 protected:
-  explicit MCAsmInfoMicrosoft();
+  LLVM_MC_ABI explicit MCAsmInfoMicrosoft();
 };
 
 class MCAsmInfoGNUCOFF : public MCAsmInfoCOFF {
-  void anchor() override;
+  LLVM_MC_ABI void anchor() override;
 
 protected:
-  explicit MCAsmInfoGNUCOFF();
+  LLVM_MC_ABI explicit MCAsmInfoGNUCOFF();
 };
 
 } // end namespace llvm

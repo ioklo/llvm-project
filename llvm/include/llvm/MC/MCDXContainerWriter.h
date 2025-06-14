@@ -9,6 +9,7 @@
 #ifndef LLVM_MC_MCDXCONTAINERWRITER_H
 #define LLVM_MC_MCDXCONTAINERWRITER_H
 
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCObjectWriter.h"
 #include "llvm/MC/MCValue.h"
 #include "llvm/Support/EndianStream.h"
@@ -46,7 +47,7 @@ public:
                         const MCFixup &Fixup, MCValue Target,
                         uint64_t &FixedValue) override {}
 
-  uint64_t writeObject(MCAssembler &Asm) override;
+  LLVM_MC_ABI uint64_t writeObject(MCAssembler &Asm) override;
 };
 } // end namespace llvm
 

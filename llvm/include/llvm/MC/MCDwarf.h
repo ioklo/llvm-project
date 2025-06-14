@@ -18,6 +18,7 @@
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/ADT/StringMap.h"
 #include "llvm/ADT/StringRef.h"
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/StringTableBuilder.h"
 #include "llvm/Support/Error.h"
 #include "llvm/Support/MD5.h"
@@ -44,7 +45,7 @@ class SourceMgr;
 
 namespace mcdwarf {
 // Emit the common part of the DWARF 5 range/locations list tables header.
-MCSymbol *emitListsTableHeaderStart(MCStreamer &S);
+LLVM_MC_ABI MCSymbol *emitListsTableHeaderStart(MCStreamer &S);
 } // namespace mcdwarf
 
 /// Manage the .debug_line_str section contents, if we use it.
@@ -58,22 +59,22 @@ class MCDwarfLineStr {
 public:
   /// Construct an instance that can emit .debug_line_str (for use in a normal
   /// v5 line table).
-  explicit MCDwarfLineStr(MCContext &Ctx);
+  LLVM_MC_ABI explicit MCDwarfLineStr(MCContext &Ctx);
 
   StringSaver &getSaver() { return Saver; }
 
   /// Emit a reference to the string.
-  void emitRef(MCStreamer *MCOS, StringRef Path);
+  LLVM_MC_ABI void emitRef(MCStreamer *MCOS, StringRef Path);
 
   /// Emit the .debug_line_str section if appropriate.
-  void emitSection(MCStreamer *MCOS);
+  LLVM_MC_ABI void emitSection(MCStreamer *MCOS);
 
   /// Returns finalized section.
-  SmallString<0> getFinalizedData();
+  LLVM_MC_ABI SmallString<0> getFinalizedData();
 
   /// Adds path \p Path to the line string. Returns offset in the
   /// .debug_line_str section.
-  size_t addString(StringRef Path);
+  LLVM_MC_ABI size_t addString(StringRef Path);
 };
 
 /// Instances of this class represent the name of the dwarf .file directive and
@@ -223,7 +224,7 @@ public:
   // This is called when an instruction is assembled into the specified
   // section and if there is information from the last .loc directive that
   // has yet to have a line entry made for it is made.
-  static void make(MCStreamer *MCOS, MCSection *Section);
+  LLVM_MC_ABI static void make(MCStreamer *MCOS, MCSection *Section);
 };
 
 /// Instances of this class represent the line information for a compile
@@ -239,7 +240,7 @@ public:
 
   // Add an end entry by cloning the last entry, if exists, for the section
   // the given EndLabel belongs to. The label is replaced by the given EndLabel.
-  void addEndEntry(MCSymbol *EndLabel);
+  LLVM_MC_ABI void addEndEntry(MCSymbol *EndLabel);
 
   using MCDwarfLineEntryCollection = std::vector<MCDwarfLineEntry>;
   using iterator = MCDwarfLineEntryCollection::iterator;
@@ -252,9 +253,7 @@ private:
 
 public:
   // Returns the collection of MCDwarfLineEntry for a given Compile Unit ID.
-  const MCLineDivisionMap &getMCLineEntries() const {
-    return MCLineDivisions;
-  }
+  const MCLineDivisionMap &getMCLineEntries() const { return MCLineDivisions; }
 };
 
 struct MCDwarfLineTableParams {
@@ -286,14 +285,15 @@ private:
 public:
   MCDwarfLineTableHeader() = default;
 
-  Expected<unsigned> tryGetFile(StringRef &Directory, StringRef &FileName,
-                                std::optional<MD5::MD5Result> Checksum,
-                                std::optional<StringRef> Source,
-                                uint16_t DwarfVersion, unsigned FileNumber = 0);
-  std::pair<MCSymbol *, MCSymbol *>
+  LLVM_MC_ABI Expected<unsigned>
+  tryGetFile(StringRef &Directory, StringRef &FileName,
+             std::optional<MD5::MD5Result> Checksum,
+             std::optional<StringRef> Source, uint16_t DwarfVersion,
+             unsigned FileNumber = 0);
+  LLVM_MC_ABI std::pair<MCSymbol *, MCSymbol *>
   Emit(MCStreamer *MCOS, MCDwarfLineTableParams Params,
        std::optional<MCDwarfLineStr> &LineStr) const;
-  std::pair<MCSymbol *, MCSymbol *>
+  LLVM_MC_ABI std::pair<MCSymbol *, MCSymbol *>
   Emit(MCStreamer *MCOS, MCDwarfLineTableParams Params,
        ArrayRef<char> SpecialOpcodeLengths,
        std::optional<MCDwarfLineStr> &LineStr) const;
@@ -330,9 +330,10 @@ public:
   }
 
 private:
-  void emitV2FileDirTables(MCStreamer *MCOS) const;
-  void emitV5FileDirTables(MCStreamer *MCOS,
-                           std::optional<MCDwarfLineStr> &LineStr) const;
+  LLVM_MC_ABI void emitV2FileDirTables(MCStreamer *MCOS) const;
+  LLVM_MC_ABI void
+  emitV5FileDirTables(MCStreamer *MCOS,
+                      std::optional<MCDwarfLineStr> &LineStr) const;
 };
 
 class MCDwarfDwoLineTable {
@@ -352,12 +353,12 @@ public:
                    std::optional<MD5::MD5Result> Checksum,
                    uint16_t DwarfVersion, std::optional<StringRef> Source) {
     HasSplitLineTable = true;
-    return cantFail(Header.tryGetFile(Directory, FileName, Checksum, Source,
-                                      DwarfVersion));
+    return cantFail(
+        Header.tryGetFile(Directory, FileName, Checksum, Source, DwarfVersion));
   }
 
-  void Emit(MCStreamer &MCOS, MCDwarfLineTableParams Params,
-            MCSection *Section) const;
+  LLVM_MC_ABI void Emit(MCStreamer &MCOS, MCDwarfLineTableParams Params,
+                        MCSection *Section) const;
 };
 
 class MCDwarfLineTable {
@@ -366,24 +367,26 @@ class MCDwarfLineTable {
 
 public:
   // This emits the Dwarf file and the line tables for all Compile Units.
-  static void emit(MCStreamer *MCOS, MCDwarfLineTableParams Params);
+  LLVM_MC_ABI static void emit(MCStreamer *MCOS, MCDwarfLineTableParams Params);
 
   // This emits the Dwarf file and the line tables for a given Compile Unit.
-  void emitCU(MCStreamer *MCOS, MCDwarfLineTableParams Params,
-              std::optional<MCDwarfLineStr> &LineStr) const;
+  LLVM_MC_ABI void emitCU(MCStreamer *MCOS, MCDwarfLineTableParams Params,
+                          std::optional<MCDwarfLineStr> &LineStr) const;
 
   // This emits a single line table associated with a given Section.
-  static void
+  LLVM_MC_ABI static void
   emitOne(MCStreamer *MCOS, MCSection *Section,
           const MCLineSection::MCDwarfLineEntryCollection &LineEntries);
 
-  void endCurrentSeqAndEmitLineStreamLabel(MCStreamer *MCOS, SMLoc DefLoc,
-                                           StringRef Name);
+  LLVM_MC_ABI void endCurrentSeqAndEmitLineStreamLabel(MCStreamer *MCOS,
+                                                       SMLoc DefLoc,
+                                                       StringRef Name);
 
-  Expected<unsigned> tryGetFile(StringRef &Directory, StringRef &FileName,
-                                std::optional<MD5::MD5Result> Checksum,
-                                std::optional<StringRef> Source,
-                                uint16_t DwarfVersion, unsigned FileNumber = 0);
+  LLVM_MC_ABI Expected<unsigned>
+  tryGetFile(StringRef &Directory, StringRef &FileName,
+             std::optional<MD5::MD5Result> Checksum,
+             std::optional<StringRef> Source, uint16_t DwarfVersion,
+             unsigned FileNumber = 0);
   unsigned getFile(StringRef &Directory, StringRef &FileName,
                    std::optional<MD5::MD5Result> Checksum,
                    std::optional<StringRef> Source, uint16_t DwarfVersion,
@@ -414,21 +417,15 @@ public:
   // Report whether MD5 usage has been consistent (all-or-none).
   bool isMD5UsageConsistent() const { return Header.isMD5UsageConsistent(); }
 
-  MCSymbol *getLabel() const {
-    return Header.Label;
-  }
+  MCSymbol *getLabel() const { return Header.Label; }
 
-  void setLabel(MCSymbol *Label) {
-    Header.Label = Label;
-  }
+  void setLabel(MCSymbol *Label) { Header.Label = Label; }
 
   const SmallVectorImpl<std::string> &getMCDwarfDirs() const {
     return Header.MCDwarfDirs;
   }
 
-  SmallVectorImpl<std::string> &getMCDwarfDirs() {
-    return Header.MCDwarfDirs;
-  }
+  SmallVectorImpl<std::string> &getMCDwarfDirs() { return Header.MCDwarfDirs; }
 
   const SmallVectorImpl<MCDwarfFile> &getMCDwarfFiles() const {
     return Header.MCDwarfFiles;
@@ -438,23 +435,21 @@ public:
     return Header.MCDwarfFiles;
   }
 
-  const MCLineSection &getMCLineSections() const {
-    return MCLineSections;
-  }
-  MCLineSection &getMCLineSections() {
-    return MCLineSections;
-  }
+  const MCLineSection &getMCLineSections() const { return MCLineSections; }
+  MCLineSection &getMCLineSections() { return MCLineSections; }
 };
 
 class MCDwarfLineAddr {
 public:
   /// Utility function to encode a Dwarf pair of LineDelta and AddrDeltas.
-  static void encode(MCContext &Context, MCDwarfLineTableParams Params,
-                     int64_t LineDelta, uint64_t AddrDelta, SmallVectorImpl<char> &OS);
+  LLVM_MC_ABI static void encode(MCContext &Context,
+                                 MCDwarfLineTableParams Params,
+                                 int64_t LineDelta, uint64_t AddrDelta,
+                                 SmallVectorImpl<char> &OS);
 
   /// Utility function to emit the encoding to a streamer.
-  static void Emit(MCStreamer *MCOS, MCDwarfLineTableParams Params,
-                   int64_t LineDelta, uint64_t AddrDelta);
+  LLVM_MC_ABI static void Emit(MCStreamer *MCOS, MCDwarfLineTableParams Params,
+                               int64_t LineDelta, uint64_t AddrDelta);
 };
 
 class MCGenDwarfInfo {
@@ -463,7 +458,7 @@ public:
   // When generating dwarf for assembly source files this emits the Dwarf
   // sections.
   //
-  static void Emit(MCStreamer *MCOS);
+  LLVM_MC_ABI static void Emit(MCStreamer *MCOS);
 };
 
 // When generating dwarf for assembly source files this is the info that is
@@ -492,8 +487,8 @@ public:
 
   // This is called when label is created when we are generating dwarf for
   // assembly source files.
-  static void Make(MCSymbol *Symbol, MCStreamer *MCOS, SourceMgr &SrcMgr,
-                   SMLoc &Loc);
+  LLVM_MC_ABI static void Make(MCSymbol *Symbol, MCStreamer *MCOS,
+                               SourceMgr &SrcMgr, SMLoc &Loc);
 };
 
 class MCCFIInstruction {
@@ -780,9 +775,11 @@ public:
   //
   // This emits the frame info section.
   //
-  static void Emit(MCObjectStreamer &streamer, MCAsmBackend *MAB, bool isEH);
-  static void encodeAdvanceLoc(MCContext &Context, uint64_t AddrDelta,
-                               SmallVectorImpl<char> &OS);
+  LLVM_MC_ABI static void Emit(MCObjectStreamer &streamer, MCAsmBackend *MAB,
+                               bool isEH);
+  LLVM_MC_ABI static void encodeAdvanceLoc(MCContext &Context,
+                                           uint64_t AddrDelta,
+                                           SmallVectorImpl<char> &OS);
 };
 
 } // end namespace llvm

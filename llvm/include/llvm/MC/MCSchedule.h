@@ -15,6 +15,7 @@
 #define LLVM_MC_MCSCHEDULE_H
 
 #include "llvm/ADT/StringRef.h"
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCInstrDesc.h"
 #include "llvm/Support/ErrorHandling.h"
 #include <cassert>
@@ -56,8 +57,8 @@ struct MCProcResourceDesc {
   const unsigned *SubUnitsIdxBegin;
 
   bool operator==(const MCProcResourceDesc &Other) const {
-    return NumUnits == Other.NumUnits && SuperIdx == Other.SuperIdx
-      && BufferSize == Other.BufferSize;
+    return NumUnits == Other.NumUnits && SuperIdx == Other.SuperIdx &&
+           BufferSize == Other.BufferSize;
   }
 };
 
@@ -109,8 +110,8 @@ struct MCReadAdvanceEntry {
   int Cycles;
 
   bool operator==(const MCReadAdvanceEntry &Other) const {
-    return UseIdx == Other.UseIdx && WriteResourceID == Other.WriteResourceID
-      && Cycles == Other.Cycles;
+    return UseIdx == Other.UseIdx && WriteResourceID == Other.WriteResourceID &&
+           Cycles == Other.Cycles;
   }
 };
 
@@ -123,7 +124,7 @@ struct MCSchedClassDesc {
   static const unsigned short VariantNumMicroOps = InvalidNumMicroOps - 1;
 
 #if !defined(NDEBUG) || defined(LLVM_ENABLE_DUMP)
-  const char* Name;
+  const char *Name;
 #endif
   uint16_t NumMicroOps : 13;
   uint16_t BeginGroup : 1;
@@ -136,12 +137,8 @@ struct MCSchedClassDesc {
   uint16_t ReadAdvanceIdx; // First index into ReadAdvanceTable.
   uint16_t NumReadAdvanceEntries;
 
-  bool isValid() const {
-    return NumMicroOps != InvalidNumMicroOps;
-  }
-  bool isVariant() const {
-    return NumMicroOps == VariantNumMicroOps;
-  }
+  bool isValid() const { return NumMicroOps != InvalidNumMicroOps; }
+  bool isVariant() const { return NumMicroOps == VariantNumMicroOps; }
 };
 
 /// Specify the cost of a register definition in terms of number of physical
@@ -349,9 +346,7 @@ struct MCSchedModel {
   /// Return true if machine supports out of order execution.
   bool isOutOfOrder() const { return MicroOpBufferSize > 1; }
 
-  unsigned getNumProcResourceKinds() const {
-    return NumProcResourceKinds;
-  }
+  unsigned getNumProcResourceKinds() const { return NumProcResourceKinds; }
 
   const MCProcResourceDesc *getProcResource(unsigned ProcResourceIdx) const {
     assert(hasInstrSchedModel() && "No scheduling machine model");
@@ -368,13 +363,15 @@ struct MCSchedModel {
   }
 
   /// Returns the latency value for the scheduling class.
-  static int computeInstrLatency(const MCSubtargetInfo &STI,
-                                 const MCSchedClassDesc &SCDesc);
+  LLVM_MC_ABI static int computeInstrLatency(const MCSubtargetInfo &STI,
+                                             const MCSchedClassDesc &SCDesc);
 
-  int computeInstrLatency(const MCSubtargetInfo &STI, unsigned SClass) const;
+  LLVM_MC_ABI int computeInstrLatency(const MCSubtargetInfo &STI,
+                                      unsigned SClass) const;
 
-  int computeInstrLatency(const MCSubtargetInfo &STI, const MCInstrInfo &MCII,
-                          const MCInst &Inst) const;
+  LLVM_MC_ABI int computeInstrLatency(const MCSubtargetInfo &STI,
+                                      const MCInstrInfo &MCII,
+                                      const MCInst &Inst) const;
 
   template <typename MCSubtargetInfo, typename MCInstrInfo,
             typename InstrItineraryData, typename MCInstOrMachineInstr>
@@ -386,24 +383,25 @@ struct MCSchedModel {
               [](const MCSchedClassDesc *SCDesc) { return SCDesc; }) const;
 
   // Returns the reciprocal throughput information from a MCSchedClassDesc.
-  static double
+  LLVM_MC_ABI static double
   getReciprocalThroughput(const MCSubtargetInfo &STI,
                           const MCSchedClassDesc &SCDesc);
 
-  static double
+  LLVM_MC_ABI static double
   getReciprocalThroughput(unsigned SchedClass, const InstrItineraryData &IID);
 
-  double
-  getReciprocalThroughput(const MCSubtargetInfo &STI, const MCInstrInfo &MCII,
-                          const MCInst &Inst) const;
+  LLVM_MC_ABI double getReciprocalThroughput(const MCSubtargetInfo &STI,
+                                             const MCInstrInfo &MCII,
+                                             const MCInst &Inst) const;
 
   /// Returns the maximum forwarding delay for register reads dependent on
   /// writes of scheduling class WriteResourceIdx.
-  static unsigned getForwardingDelayCycles(ArrayRef<MCReadAdvanceEntry> Entries,
-                                           unsigned WriteResourceIdx = 0);
+  LLVM_MC_ABI static unsigned
+  getForwardingDelayCycles(ArrayRef<MCReadAdvanceEntry> Entries,
+                           unsigned WriteResourceIdx = 0);
 
   /// Returns the default initialized model.
-  static const MCSchedModel Default;
+  LLVM_MC_ABI static const MCSchedModel Default;
 };
 
 // The first three are only template'd arguments so we can get away with leaving

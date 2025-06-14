@@ -14,6 +14,7 @@
 #define LLVM_MC_MCSECTION_H
 
 #include "llvm/ADT/SmallVector.h"
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCFragment.h"
 #include "llvm/MC/SectionKind.h"
 #include "llvm/Support/Alignment.h"
@@ -119,9 +120,9 @@ protected:
   StringRef Name;
   SectionVariant Variant;
 
-  MCSection(SectionVariant V, StringRef Name, bool IsText, bool IsVirtual,
-            MCSymbol *Begin);
-  ~MCSection();
+  LLVM_MC_ABI MCSection(SectionVariant V, StringRef Name, bool IsText,
+                        bool IsVirtual, MCSymbol *Begin);
+  LLVM_MC_ABI ~MCSection();
 
 public:
   MCSection(const MCSection &) = delete;
@@ -140,8 +141,8 @@ public:
     assert(!Begin);
     Begin = Sym;
   }
-  MCSymbol *getEndSymbol(MCContext &Ctx);
-  bool hasEnded() const;
+  LLVM_MC_ABI MCSymbol *getEndSymbol(MCContext &Ctx);
+  LLVM_MC_ABI bool hasEnded() const;
 
   Align getAlign() const { return Alignment; }
   void setAlignment(Align Value) { Alignment = Value; }
@@ -156,7 +157,7 @@ public:
   void setOrdinal(unsigned Value) { Ordinal = Value; }
 
   BundleLockStateType getBundleLockState() const { return BundleLockState; }
-  void setBundleLockState(BundleLockStateType NewState);
+  LLVM_MC_ABI void setBundleLockState(BundleLockStateType NewState);
   bool isBundleLocked() const { return BundleLockState != NotBundleLocked; }
 
   bool isBundleGroupBeforeFirstInst() const {
@@ -182,7 +183,7 @@ public:
   iterator begin() const { return iterator(CurFragList->Head); }
   iterator end() const { return {}; }
 
-  void dump() const;
+  LLVM_MC_ABI void dump() const;
 
   virtual void printSwitchToSection(const MCAsmInfo &MAI, const Triple &T,
                                     raw_ostream &OS,

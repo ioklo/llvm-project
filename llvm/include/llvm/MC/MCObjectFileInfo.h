@@ -14,6 +14,7 @@
 #define LLVM_MC_MCOBJECTFILEINFO_H
 
 #include "llvm/BinaryFormat/Swift.h"
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCSection.h"
 #include "llvm/Support/VersionTuple.h"
 #include "llvm/TargetParser/Triple.h"
@@ -199,7 +200,7 @@ protected:
   MCSection *TLSTLVSection = nullptr; // Defaults to ".tlv".
 
   /// Section for thread local data initialization functions.
-   // Defaults to ".thread_init_func".
+  // Defaults to ".thread_init_func".
   const MCSection *TLSThreadInitSection = nullptr;
 
   MCSection *CStringSection = nullptr;
@@ -246,9 +247,9 @@ protected:
       Swift5ReflectionSections = {};
 
 public:
-  void initMCObjectFileInfo(MCContext &MCCtx, bool PIC,
-                            bool LargeCodeModel = false);
-  virtual ~MCObjectFileInfo();
+  LLVM_MC_ABI void initMCObjectFileInfo(MCContext &MCCtx, bool PIC,
+                                        bool LargeCodeModel = false);
+  LLVM_MC_ABI virtual ~MCObjectFileInfo();
   MCContext &getContext() const { return *Ctx; }
 
   bool getSupportsWeakOmittedEHFrame() const {
@@ -345,9 +346,7 @@ public:
   MCSection *getCOFFDebugSymbolsSection() const {
     return COFFDebugSymbolsSection;
   }
-  MCSection *getCOFFDebugTypesSection() const {
-    return COFFDebugTypesSection;
-  }
+  MCSection *getCOFFDebugTypesSection() const { return COFFDebugTypesSection; }
   MCSection *getCOFFGlobalTypeHashesSection() const {
     return COFFGlobalTypeHashesSection;
   }
@@ -360,19 +359,20 @@ public:
   MCSection *getFaultMapSection() const { return FaultMapSection; }
   MCSection *getRemarksSection() const { return RemarksSection; }
 
-  MCSection *getStackSizesSection(const MCSection &TextSec) const;
+  LLVM_MC_ABI MCSection *getStackSizesSection(const MCSection &TextSec) const;
 
-  MCSection *getBBAddrMapSection(const MCSection &TextSec) const;
+  LLVM_MC_ABI MCSection *getBBAddrMapSection(const MCSection &TextSec) const;
 
-  MCSection *getKCFITrapSection(const MCSection &TextSec) const;
+  LLVM_MC_ABI MCSection *getKCFITrapSection(const MCSection &TextSec) const;
 
-  MCSection *getPseudoProbeSection(const MCSection &TextSec) const;
+  LLVM_MC_ABI MCSection *getPseudoProbeSection(const MCSection &TextSec) const;
 
-  MCSection *getPseudoProbeDescSection(StringRef FuncName) const;
+  LLVM_MC_ABI MCSection *getPseudoProbeDescSection(StringRef FuncName) const;
 
-  MCSection *getLLVMStatsSection() const;
+  LLVM_MC_ABI MCSection *getLLVMStatsSection() const;
 
-  MCSection *getPCSection(StringRef Name, const MCSection *TextSec) const;
+  LLVM_MC_ABI MCSection *getPCSection(StringRef Name,
+                                      const MCSection *TextSec) const;
 
   // ELF specific sections.
   MCSection *getDataRelROSection() const { return DataRelROSection; }

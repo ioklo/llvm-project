@@ -9,23 +9,25 @@
 #ifndef LLVM_MC_MCCODEEMITTER_H
 #define LLVM_MC_MCCODEEMITTER_H
 
+#include "llvm/MC/MCConfig.h"
+
 namespace llvm {
 
 class MCFixup;
 class MCInst;
 class MCSubtargetInfo;
 class raw_ostream;
-template<typename T> class SmallVectorImpl;
+template <typename T> class SmallVectorImpl;
 
 /// MCCodeEmitter - Generic instruction encoding interface.
 class MCCodeEmitter {
 protected: // Can only create subclasses.
-  MCCodeEmitter();
+  LLVM_MC_ABI MCCodeEmitter();
 
 public:
   MCCodeEmitter(const MCCodeEmitter &) = delete;
   MCCodeEmitter &operator=(const MCCodeEmitter &) = delete;
-  virtual ~MCCodeEmitter();
+  LLVM_MC_ABI virtual ~MCCodeEmitter();
 
   /// Lifetime management
   virtual void reset() {}

@@ -15,6 +15,7 @@
 
 #include "llvm/ADT/StringRef.h"
 #include "llvm/BinaryFormat/MachO.h"
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCSection.h"
 
 namespace llvm {
@@ -22,7 +23,7 @@ namespace llvm {
 /// This represents a section on a Mach-O system (used by Mac OS X).  On a Mac
 /// system, these are also described in /usr/include/mach-o/loader.h.
 class MCSectionMachO final : public MCSection {
-  char SegmentName[16];  // Not necessarily null terminated!
+  char SegmentName[16]; // Not necessarily null terminated!
 
   /// This is the SECTION_TYPE and SECTION_ATTRIBUTES field of a section, drawn
   /// from the enums below.
@@ -39,11 +40,12 @@ class MCSectionMachO final : public MCSection {
   // The defining non-temporary symbol for each fragment.
   SmallVector<const MCSymbol *, 0> Atoms;
 
-  MCSectionMachO(StringRef Segment, StringRef Section, unsigned TAA,
-                 unsigned reserved2, SectionKind K, MCSymbol *Begin);
+  LLVM_MC_ABI MCSectionMachO(StringRef Segment, StringRef Section, unsigned TAA,
+                             unsigned reserved2, SectionKind K,
+                             MCSymbol *Begin);
   friend class MCContext;
-public:
 
+public:
   StringRef getSegmentName() const {
     // SegmentName is not necessarily null terminated!
     if (SegmentName[15])
@@ -68,21 +70,21 @@ public:
   /// empty string.  When an invalid section specifier is present, this returns
   /// an Error indicating the problem. If no TAA was parsed, TAA is not altered,
   /// and TAAWasSet becomes false.
-  static Error ParseSectionSpecifier(StringRef Spec,      // In.
-                                     StringRef &Segment,  // Out.
-                                     StringRef &Section,  // Out.
-                                     unsigned &TAA,       // Out.
-                                     bool &TAAParsed,     // Out.
-                                     unsigned &StubSize); // Out.
+  LLVM_MC_ABI static Error ParseSectionSpecifier(StringRef Spec,      // In.
+                                                 StringRef &Segment,  // Out.
+                                                 StringRef &Section,  // Out.
+                                                 unsigned &TAA,       // Out.
+                                                 bool &TAAParsed,     // Out.
+                                                 unsigned &StubSize); // Out.
 
   void printSwitchToSection(const MCAsmInfo &MAI, const Triple &T,
                             raw_ostream &OS,
                             uint32_t Subsection) const override;
-  bool useCodeAlign() const override;
+  LLVM_MC_ABI bool useCodeAlign() const override;
 
-  void allocAtoms();
-  const MCSymbol *getAtom(size_t I) const;
-  void setAtom(size_t I, const MCSymbol *Sym);
+  LLVM_MC_ABI void allocAtoms();
+  LLVM_MC_ABI const MCSymbol *getAtom(size_t I) const;
+  LLVM_MC_ABI void setAtom(size_t I, const MCSymbol *Sym);
 
   unsigned getLayoutOrder() const { return LayoutOrder; }
   void setLayoutOrder(unsigned Value) { LayoutOrder = Value; }

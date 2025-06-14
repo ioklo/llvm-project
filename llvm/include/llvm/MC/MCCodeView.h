@@ -18,6 +18,7 @@
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/ADT/StringMap.h"
 #include "llvm/ADT/StringRef.h"
+#include "llvm/MC/MCConfig.h"
 #include <map>
 #include <vector>
 
@@ -148,76 +149,82 @@ public:
   CodeViewContext &operator=(const CodeViewContext &other) = delete;
   CodeViewContext(const CodeViewContext &other) = delete;
 
-  void finish();
+  LLVM_MC_ABI void finish();
 
-  bool isValidFileNumber(unsigned FileNumber) const;
-  bool addFile(MCStreamer &OS, unsigned FileNumber, StringRef Filename,
-               ArrayRef<uint8_t> ChecksumBytes, uint8_t ChecksumKind);
+  LLVM_MC_ABI bool isValidFileNumber(unsigned FileNumber) const;
+  LLVM_MC_ABI bool addFile(MCStreamer &OS, unsigned FileNumber,
+                           StringRef Filename, ArrayRef<uint8_t> ChecksumBytes,
+                           uint8_t ChecksumKind);
 
   /// Records the function id of a normal function. Returns false if the
   /// function id has already been used, and true otherwise.
-  bool recordFunctionId(unsigned FuncId);
+  LLVM_MC_ABI bool recordFunctionId(unsigned FuncId);
 
   /// Records the function id of an inlined call site. Records the "inlined at"
   /// location info of the call site, including what function or inlined call
   /// site it was inlined into. Returns false if the function id has already
   /// been used, and true otherwise.
-  bool recordInlinedCallSiteId(unsigned FuncId, unsigned IAFunc,
-                               unsigned IAFile, unsigned IALine,
-                               unsigned IACol);
+  LLVM_MC_ABI bool recordInlinedCallSiteId(unsigned FuncId, unsigned IAFunc,
+                                           unsigned IAFile, unsigned IALine,
+                                           unsigned IACol);
 
   /// Retreive the function info if this is a valid function id, or nullptr.
-  MCCVFunctionInfo *getCVFunctionInfo(unsigned FuncId);
+  LLVM_MC_ABI MCCVFunctionInfo *getCVFunctionInfo(unsigned FuncId);
 
   /// Saves the information from the currently parsed .cv_loc directive
   /// and sets CVLocSeen.  When the next instruction is assembled an entry
   /// in the line number table with this information and the address of the
   /// instruction will be created.
-  void recordCVLoc(MCContext &Ctx, const MCSymbol *Label, unsigned FunctionId,
-                   unsigned FileNo, unsigned Line, unsigned Column,
-                   bool PrologueEnd, bool IsStmt);
+  LLVM_MC_ABI void recordCVLoc(MCContext &Ctx, const MCSymbol *Label,
+                               unsigned FunctionId, unsigned FileNo,
+                               unsigned Line, unsigned Column, bool PrologueEnd,
+                               bool IsStmt);
 
   /// Add a line entry.
-  void addLineEntry(const MCCVLoc &LineEntry);
+  LLVM_MC_ABI void addLineEntry(const MCCVLoc &LineEntry);
 
-  std::vector<MCCVLoc> getFunctionLineEntries(unsigned FuncId);
+  LLVM_MC_ABI std::vector<MCCVLoc> getFunctionLineEntries(unsigned FuncId);
 
-  std::pair<size_t, size_t> getLineExtent(unsigned FuncId);
-  std::pair<size_t, size_t> getLineExtentIncludingInlinees(unsigned FuncId);
+  LLVM_MC_ABI std::pair<size_t, size_t> getLineExtent(unsigned FuncId);
+  LLVM_MC_ABI std::pair<size_t, size_t>
+  getLineExtentIncludingInlinees(unsigned FuncId);
 
-  ArrayRef<MCCVLoc> getLinesForExtent(size_t L, size_t R);
+  LLVM_MC_ABI ArrayRef<MCCVLoc> getLinesForExtent(size_t L, size_t R);
 
   /// Emits a line table substream.
-  void emitLineTableForFunction(MCObjectStreamer &OS, unsigned FuncId,
-                                const MCSymbol *FuncBegin,
-                                const MCSymbol *FuncEnd);
+  LLVM_MC_ABI void emitLineTableForFunction(MCObjectStreamer &OS,
+                                            unsigned FuncId,
+                                            const MCSymbol *FuncBegin,
+                                            const MCSymbol *FuncEnd);
 
-  void emitInlineLineTableForFunction(MCObjectStreamer &OS,
-                                      unsigned PrimaryFunctionId,
-                                      unsigned SourceFileId,
-                                      unsigned SourceLineNum,
-                                      const MCSymbol *FnStartSym,
-                                      const MCSymbol *FnEndSym);
+  LLVM_MC_ABI void emitInlineLineTableForFunction(MCObjectStreamer &OS,
+                                                  unsigned PrimaryFunctionId,
+                                                  unsigned SourceFileId,
+                                                  unsigned SourceLineNum,
+                                                  const MCSymbol *FnStartSym,
+                                                  const MCSymbol *FnEndSym);
 
   /// Encodes the binary annotations once we have a layout.
-  void encodeInlineLineTable(const MCAssembler &Asm,
-                             MCCVInlineLineTableFragment &F);
+  LLVM_MC_ABI void encodeInlineLineTable(const MCAssembler &Asm,
+                                         MCCVInlineLineTableFragment &F);
 
-  MCFragment *
+  LLVM_MC_ABI MCFragment *
   emitDefRange(MCObjectStreamer &OS,
                ArrayRef<std::pair<const MCSymbol *, const MCSymbol *>> Ranges,
                StringRef FixedSizePortion);
 
-  void encodeDefRange(const MCAssembler &Asm, MCCVDefRangeFragment &F);
+  LLVM_MC_ABI void encodeDefRange(const MCAssembler &Asm,
+                                  MCCVDefRangeFragment &F);
 
   /// Emits the string table substream.
-  void emitStringTable(MCObjectStreamer &OS);
+  LLVM_MC_ABI void emitStringTable(MCObjectStreamer &OS);
 
   /// Emits the file checksum substream.
-  void emitFileChecksums(MCObjectStreamer &OS);
+  LLVM_MC_ABI void emitFileChecksums(MCObjectStreamer &OS);
 
   /// Emits the offset into the checksum table of the given file number.
-  void emitFileChecksumOffset(MCObjectStreamer &OS, unsigned FileNo);
+  LLVM_MC_ABI void emitFileChecksumOffset(MCObjectStreamer &OS,
+                                          unsigned FileNo);
 
   /// Add something to the string table.  Returns the final string as well as
   /// offset into the string table.

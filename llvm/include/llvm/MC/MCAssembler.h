@@ -15,6 +15,7 @@
 #include "llvm/ADT/StringRef.h"
 #include "llvm/ADT/iterator.h"
 #include "llvm/ADT/iterator_range.h"
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCDwarf.h"
 #include "llvm/MC/MCSymbol.h"
 #include "llvm/Support/SMLoc.h"
@@ -100,34 +101,35 @@ private:
   /// \return Whether the fixup value was fully resolved. This is true if the
   /// \p Value result is fixed, otherwise the value may change due to
   /// relocation.
-  bool evaluateFixup(const MCFixup &Fixup, const MCFragment *DF,
-                     MCValue &Target, const MCSubtargetInfo *STI,
-                     uint64_t &Value, bool &WasForced) const;
+  LLVM_MC_ABI bool evaluateFixup(const MCFixup &Fixup, const MCFragment *DF,
+                                 MCValue &Target, const MCSubtargetInfo *STI,
+                                 uint64_t &Value, bool &WasForced) const;
 
   /// Check whether a fixup can be satisfied, or whether it needs to be relaxed
   /// (increased in size, in order to hold its value correctly).
-  bool fixupNeedsRelaxation(const MCFixup &Fixup, const MCRelaxableFragment *DF) const;
+  LLVM_MC_ABI bool fixupNeedsRelaxation(const MCFixup &Fixup,
+                                        const MCRelaxableFragment *DF) const;
 
   /// Check whether the given fragment needs relaxation.
-  bool fragmentNeedsRelaxation(const MCRelaxableFragment *IF) const;
+  LLVM_MC_ABI bool fragmentNeedsRelaxation(const MCRelaxableFragment *IF) const;
 
   /// Perform one layout iteration and return true if any offsets
   /// were adjusted.
-  bool layoutOnce();
+  LLVM_MC_ABI bool layoutOnce();
 
   /// Perform relaxation on a single fragment - returns true if the fragment
   /// changes as a result of relaxation.
-  bool relaxFragment(MCFragment &F);
-  bool relaxInstruction(MCRelaxableFragment &IF);
-  bool relaxLEB(MCLEBFragment &IF);
-  bool relaxBoundaryAlign(MCBoundaryAlignFragment &BF);
-  bool relaxDwarfLineAddr(MCDwarfLineAddrFragment &DF);
-  bool relaxDwarfCallFrameFragment(MCDwarfCallFrameFragment &DF);
-  bool relaxCVInlineLineTable(MCCVInlineLineTableFragment &DF);
-  bool relaxCVDefRange(MCCVDefRangeFragment &DF);
-  bool relaxPseudoProbeAddr(MCPseudoProbeAddrFragment &DF);
+  LLVM_MC_ABI bool relaxFragment(MCFragment &F);
+  LLVM_MC_ABI bool relaxInstruction(MCRelaxableFragment &IF);
+  LLVM_MC_ABI bool relaxLEB(MCLEBFragment &IF);
+  LLVM_MC_ABI bool relaxBoundaryAlign(MCBoundaryAlignFragment &BF);
+  LLVM_MC_ABI bool relaxDwarfLineAddr(MCDwarfLineAddrFragment &DF);
+  LLVM_MC_ABI bool relaxDwarfCallFrameFragment(MCDwarfCallFrameFragment &DF);
+  LLVM_MC_ABI bool relaxCVInlineLineTable(MCCVInlineLineTableFragment &DF);
+  LLVM_MC_ABI bool relaxCVDefRange(MCCVDefRangeFragment &DF);
+  LLVM_MC_ABI bool relaxPseudoProbeAddr(MCPseudoProbeAddrFragment &DF);
 
-  std::tuple<MCValue, uint64_t, bool>
+  LLVM_MC_ABI std::tuple<MCValue, uint64_t, bool>
   handleFixup(MCFragment &F, const MCFixup &Fixup, const MCSubtargetInfo *STI);
 
 public:
@@ -137,47 +139,51 @@ public:
   // concrete and require clients to pass in a target like object. The other
   // option is to make this abstract, and have targets provide concrete
   // implementations as we do with AsmParser.
-  MCAssembler(MCContext &Context, std::unique_ptr<MCAsmBackend> Backend,
-              std::unique_ptr<MCCodeEmitter> Emitter,
-              std::unique_ptr<MCObjectWriter> Writer);
+  LLVM_MC_ABI MCAssembler(MCContext &Context,
+                          std::unique_ptr<MCAsmBackend> Backend,
+                          std::unique_ptr<MCCodeEmitter> Emitter,
+                          std::unique_ptr<MCObjectWriter> Writer);
   MCAssembler(const MCAssembler &) = delete;
   MCAssembler &operator=(const MCAssembler &) = delete;
 
   /// Compute the effective fragment size.
-  uint64_t computeFragmentSize(const MCFragment &F) const;
+  LLVM_MC_ABI uint64_t computeFragmentSize(const MCFragment &F) const;
 
-  void layoutBundle(MCFragment *Prev, MCFragment *F) const;
-  void ensureValid(MCSection &Sec) const;
+  LLVM_MC_ABI void layoutBundle(MCFragment *Prev, MCFragment *F) const;
+  LLVM_MC_ABI void ensureValid(MCSection &Sec) const;
 
   // Get the offset of the given fragment inside its containing section.
-  uint64_t getFragmentOffset(const MCFragment &F) const;
+  LLVM_MC_ABI uint64_t getFragmentOffset(const MCFragment &F) const;
 
-  uint64_t getSectionAddressSize(const MCSection &Sec) const;
-  uint64_t getSectionFileSize(const MCSection &Sec) const;
+  LLVM_MC_ABI uint64_t getSectionAddressSize(const MCSection &Sec) const;
+  LLVM_MC_ABI uint64_t getSectionFileSize(const MCSection &Sec) const;
 
   // Get the offset of the given symbol, as computed in the current
   // layout.
   // \return True on success.
-  bool getSymbolOffset(const MCSymbol &S, uint64_t &Val) const;
+  LLVM_MC_ABI bool getSymbolOffset(const MCSymbol &S, uint64_t &Val) const;
 
   // Variant that reports a fatal error if the offset is not computable.
-  uint64_t getSymbolOffset(const MCSymbol &S) const;
+  LLVM_MC_ABI uint64_t getSymbolOffset(const MCSymbol &S) const;
 
   // If this symbol is equivalent to A + Constant, return A.
-  const MCSymbol *getBaseSymbol(const MCSymbol &Symbol) const;
+  LLVM_MC_ABI const MCSymbol *getBaseSymbol(const MCSymbol &Symbol) const;
 
   /// Emit the section contents to \p OS.
-  void writeSectionData(raw_ostream &OS, const MCSection *Section) const;
+  LLVM_MC_ABI void writeSectionData(raw_ostream &OS,
+                                    const MCSection *Section) const;
 
   /// Check whether a given symbol has been flagged with .thumb_func.
-  bool isThumbFunc(const MCSymbol *Func) const;
+  LLVM_MC_ABI bool isThumbFunc(const MCSymbol *Func) const;
 
   /// Flag a function symbol as the target of a .thumb_func directive.
-  void setIsThumbFunc(const MCSymbol *Func) { ThumbFuncs.insert(Func); }
+  LLVM_MC_ABI void setIsThumbFunc(const MCSymbol *Func) {
+    ThumbFuncs.insert(Func);
+  }
 
   /// Reuse an assembler instance
   ///
-  void reset();
+  LLVM_MC_ABI void reset();
 
   MCContext &getContext() const { return Context; }
 
@@ -196,10 +202,10 @@ public:
   /// Finish - Do final processing and write the object to the output stream.
   /// \p Writer is used for custom object writer (as the MCJIT does),
   /// if not specified it is automatically created from backend.
-  void Finish();
+  LLVM_MC_ABI void Finish();
 
   // Layout all section and prepare them for emission.
-  void layout();
+  LLVM_MC_ABI void layout();
 
   bool hasLayout() const { return HasLayout; }
   bool getRelaxAll() const { return RelaxAll; }
@@ -225,15 +231,16 @@ public:
     return make_pointee_range(Symbols);
   }
 
-  bool registerSection(MCSection &Section);
-  bool registerSymbol(const MCSymbol &Symbol);
+  LLVM_MC_ABI bool registerSection(MCSection &Section);
+  LLVM_MC_ABI bool registerSymbol(const MCSymbol &Symbol);
 
   /// Write the necessary bundle padding to \p OS.
   /// Expects a fragment \p F containing instructions and its size \p FSize.
-  void writeFragmentPadding(raw_ostream &OS, const MCEncodedFragment &F,
-                            uint64_t FSize) const;
+  LLVM_MC_ABI void writeFragmentPadding(raw_ostream &OS,
+                                        const MCEncodedFragment &F,
+                                        uint64_t FSize) const;
 
-  void dump() const;
+  LLVM_MC_ABI void dump() const;
 };
 
 } // end namespace llvm

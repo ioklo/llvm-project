@@ -1,4 +1,5 @@
-//===- MCSymbolXCOFF.h -  ----------------------------------------*- C++ -*-===//
+//===- MCSymbolXCOFF.h -  ----------------------------------------*- C++
+//-*-===//
 //
 // Part of the LLVM Project, under the Apache License v2.0 with LLVM Exceptions.
 // See https://llvm.org/LICENSE.txt for license information.
@@ -10,6 +11,7 @@
 
 #include "llvm/ADT/StringRef.h"
 #include "llvm/BinaryFormat/XCOFF.h"
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCSymbol.h"
 #include "llvm/MC/MCSymbolTableEntry.h"
 
@@ -39,9 +41,7 @@ public:
     return Name;
   }
 
-  void setStorageClass(XCOFF::StorageClass SC) {
-    StorageClass = SC;
-  };
+  void setStorageClass(XCOFF::StorageClass SC) { StorageClass = SC; };
 
   XCOFF::StorageClass getStorageClass() const {
     assert(StorageClass && "StorageClass not set on XCOFF MCSymbol.");
@@ -50,9 +50,9 @@ public:
 
   StringRef getUnqualifiedName() const { return getUnqualifiedName(getName()); }
 
-  MCSectionXCOFF *getRepresentedCsect() const;
+  LLVM_MC_ABI MCSectionXCOFF *getRepresentedCsect() const;
 
-  void setRepresentedCsect(MCSectionXCOFF *C);
+  LLVM_MC_ABI void setRepresentedCsect(MCSectionXCOFF *C);
 
   void setVisibilityType(XCOFF::VisibilityType SVT) { VisibilityType = SVT; };
 

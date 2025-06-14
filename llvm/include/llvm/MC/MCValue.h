@@ -13,6 +13,7 @@
 #ifndef LLVM_MC_MCVALUE_H
 #define LLVM_MC_MCVALUE_H
 
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCExpr.h"
 #include "llvm/Support/DataTypes.h"
 
@@ -49,16 +50,16 @@ public:
   bool isAbsolute() const { return !SymA && !SymB; }
 
   /// Print the value to the stream \p OS.
-  void print(raw_ostream &OS) const;
+  LLVM_MC_ABI void print(raw_ostream &OS) const;
 
   /// Print the value to stderr.
-  void dump() const;
+  LLVM_MC_ABI void dump() const;
 
-  MCSymbolRefExpr::VariantKind getAccessVariant() const;
+  LLVM_MC_ABI MCSymbolRefExpr::VariantKind getAccessVariant() const;
 
   static MCValue get(const MCSymbolRefExpr *SymA,
-                     const MCSymbolRefExpr *SymB = nullptr,
-                     int64_t Val = 0, uint32_t RefKind = 0) {
+                     const MCSymbolRefExpr *SymB = nullptr, int64_t Val = 0,
+                     uint32_t RefKind = 0) {
     MCValue R;
     R.Cst = Val;
     R.SymA = SymA;
@@ -75,7 +76,6 @@ public:
     R.RefKind = 0;
     return R;
   }
-
 };
 
 } // end namespace llvm

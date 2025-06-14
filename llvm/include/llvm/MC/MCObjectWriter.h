@@ -9,6 +9,7 @@
 #ifndef LLVM_MC_MCOBJECTWRITER_H
 #define LLVM_MC_MCOBJECTWRITER_H
 
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCSymbol.h"
 #include "llvm/TargetParser/Triple.h"
 #include <cstdint>
@@ -52,10 +53,10 @@ protected:
 public:
   MCObjectWriter(const MCObjectWriter &) = delete;
   MCObjectWriter &operator=(const MCObjectWriter &) = delete;
-  virtual ~MCObjectWriter();
+  LLVM_MC_ABI virtual ~MCObjectWriter();
 
   /// lifetime management
-  virtual void reset();
+  LLVM_MC_ABI virtual void reset();
 
   /// \name High-Level API
   /// @{
@@ -82,21 +83,19 @@ public:
   ///
   /// Clients are not required to answer precisely and may conservatively return
   /// false, even when a difference is fully resolved.
-  bool isSymbolRefDifferenceFullyResolved(const MCAssembler &Asm,
-                                          const MCSymbolRefExpr *A,
-                                          const MCSymbolRefExpr *B,
-                                          bool InSet) const;
+  LLVM_MC_ABI bool isSymbolRefDifferenceFullyResolved(const MCAssembler &Asm,
+                                                      const MCSymbolRefExpr *A,
+                                                      const MCSymbolRefExpr *B,
+                                                      bool InSet) const;
 
-  virtual bool isSymbolRefDifferenceFullyResolvedImpl(const MCAssembler &Asm,
-                                                      const MCSymbol &SymA,
-                                                      const MCFragment &FB,
-                                                      bool InSet,
-                                                      bool IsPCRel) const;
+  LLVM_MC_ABI virtual bool isSymbolRefDifferenceFullyResolvedImpl(
+      const MCAssembler &Asm, const MCSymbol &SymA, const MCFragment &FB,
+      bool InSet, bool IsPCRel) const;
 
   MutableArrayRef<std::pair<std::string, size_t>> getFileNames() {
     return FileNames;
   }
-  void addFileName(MCAssembler &Asm, StringRef FileName);
+  LLVM_MC_ABI void addFileName(MCAssembler &Asm, StringRef FileName);
   void setCompilerVersion(StringRef CompilerVers) {
     CompilerVersion = CompilerVers;
   }

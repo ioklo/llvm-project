@@ -9,6 +9,7 @@
 #ifndef LLVM_MC_MCSPIRVOBJECTWRITER_H
 #define LLVM_MC_MCSPIRVOBJECTWRITER_H
 
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCObjectWriter.h"
 #include "llvm/MC/MCValue.h"
 #include "llvm/Support/EndianStream.h"
@@ -43,15 +44,16 @@ public:
                     raw_pwrite_stream &OS)
       : W(OS, llvm::endianness::little), TargetObjectWriter(std::move(MOTW)) {}
 
-  void setBuildVersion(unsigned Major, unsigned Minor, unsigned Bound);
+  LLVM_MC_ABI void setBuildVersion(unsigned Major, unsigned Minor,
+                                   unsigned Bound);
 
 private:
   void recordRelocation(MCAssembler &Asm, const MCFragment *Fragment,
                         const MCFixup &Fixup, MCValue Target,
                         uint64_t &FixedValue) override {}
 
-  uint64_t writeObject(MCAssembler &Asm) override;
-  void writeHeader(const MCAssembler &Asm);
+  LLVM_MC_ABI uint64_t writeObject(MCAssembler &Asm) override;
+  LLVM_MC_ABI void writeHeader(const MCAssembler &Asm);
 };
 
 /// Construct a new SPIR-V writer instance.
@@ -59,7 +61,7 @@ private:
 /// \param MOTW - The target specific SPIR-V writer subclass.
 /// \param OS - The stream to write to.
 /// \returns The constructed object writer.
-std::unique_ptr<MCObjectWriter>
+LLVM_MC_ABI std::unique_ptr<MCObjectWriter>
 createSPIRVObjectWriter(std::unique_ptr<MCSPIRVObjectTargetWriter> MOTW,
                         raw_pwrite_stream &OS);
 

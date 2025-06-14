@@ -18,6 +18,7 @@
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/ADT/bit.h"
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCRegister.h"
 #include "llvm/Support/SMLoc.h"
 #include <cassert>
@@ -174,10 +175,11 @@ public:
     return Op;
   }
 
-  void print(raw_ostream &OS, const MCRegisterInfo *RegInfo = nullptr) const;
-  void dump() const;
-  bool isBareSymbolRef() const;
-  bool evaluateAsConstantImm(int64_t &Imm) const;
+  LLVM_MC_ABI void print(raw_ostream &OS,
+                         const MCRegisterInfo *RegInfo = nullptr) const;
+  LLVM_MC_ABI void dump() const;
+  LLVM_MC_ABI bool isBareSymbolRef() const;
+  LLVM_MC_ABI bool evaluateAsConstantImm(int64_t &Imm) const;
 };
 
 /// Instances of this class represent a single low-level machine
@@ -226,25 +228,28 @@ public:
     return Operands.insert(I, Op);
   }
 
-  void print(raw_ostream &OS, const MCRegisterInfo *RegInfo = nullptr) const;
-  void dump() const;
+  LLVM_MC_ABI void print(raw_ostream &OS,
+                         const MCRegisterInfo *RegInfo = nullptr) const;
+  LLVM_MC_ABI void dump() const;
 
   /// Dump the MCInst as prettily as possible using the additional MC
   /// structures, if given. Operators are separated by the \p Separator
   /// string.
-  void dump_pretty(raw_ostream &OS, const MCInstPrinter *Printer = nullptr,
-                   StringRef Separator = " ",
-                   const MCRegisterInfo *RegInfo = nullptr) const;
-  void dump_pretty(raw_ostream &OS, StringRef Name, StringRef Separator = " ",
-                   const MCRegisterInfo *RegInfo = nullptr) const;
+  LLVM_MC_ABI void dump_pretty(raw_ostream &OS,
+                               const MCInstPrinter *Printer = nullptr,
+                               StringRef Separator = " ",
+                               const MCRegisterInfo *RegInfo = nullptr) const;
+  LLVM_MC_ABI void dump_pretty(raw_ostream &OS, StringRef Name,
+                               StringRef Separator = " ",
+                               const MCRegisterInfo *RegInfo = nullptr) const;
 };
 
-inline raw_ostream& operator<<(raw_ostream &OS, const MCOperand &MO) {
+inline raw_ostream &operator<<(raw_ostream &OS, const MCOperand &MO) {
   MO.print(OS);
   return OS;
 }
 
-inline raw_ostream& operator<<(raw_ostream &OS, const MCInst &MI) {
+inline raw_ostream &operator<<(raw_ostream &OS, const MCInst &MI) {
   MI.print(OS);
   return OS;
 }

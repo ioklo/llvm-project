@@ -16,13 +16,14 @@
 #define LLVM_MC_MCASMINFOGOFF_H
 
 #include "llvm/MC/MCAsmInfo.h"
+#include "llvm/MC/MCConfig.h"
 
 namespace llvm {
 class MCAsmInfoGOFF : public MCAsmInfo {
-  virtual void anchor();
+  LLVM_MC_ABI virtual void anchor();
 
 protected:
-  MCAsmInfoGOFF();
+  LLVM_MC_ABI MCAsmInfoGOFF();
 };
 } // end namespace llvm
 

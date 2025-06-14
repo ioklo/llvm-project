@@ -13,6 +13,7 @@
 #ifndef LLVM_MC_MCSECTIONDXCONTAINER_H
 #define LLVM_MC_MCSECTIONDXCONTAINER_H
 
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCSection.h"
 #include "llvm/MC/SectionKind.h"
 
@@ -28,8 +29,8 @@ class MCSectionDXContainer final : public MCSection {
                   Begin) {}
 
 public:
-  void printSwitchToSection(const MCAsmInfo &, const Triple &, raw_ostream &,
-                            uint32_t) const override;
+  LLVM_MC_ABI void printSwitchToSection(const MCAsmInfo &, const Triple &,
+                                        raw_ostream &, uint32_t) const override;
   bool useCodeAlign() const override { return false; }
 };
 

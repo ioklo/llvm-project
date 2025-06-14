@@ -10,6 +10,7 @@
 #define LLVM_MC_MCTARGETOPTIONS_H
 
 #include "llvm/ADT/ArrayRef.h"
+#include "llvm/MC/MCConfig.h"
 #include "llvm/Support/Compression.h"
 #include <string>
 #include <vector>
@@ -24,8 +25,8 @@ enum class ExceptionHandling {
   WinEH,    ///< Windows Exception Handling
   Wasm,     ///< WebAssembly Exception Handling
   AIX,      ///< AIX Exception Handling
-  ZOS,      ///< z/OS MVS Exception Handling. Very similar to DwarfCFI, but the PPA1
-            ///< is used instead of an .eh_frame section.
+  ZOS, ///< z/OS MVS Exception Handling. Very similar to DwarfCFI, but the PPA1
+       ///< is used instead of an .eh_frame section.
 };
 
 enum class EmitDwarfUnwindType {
@@ -38,10 +39,7 @@ class StringRef;
 
 class MCTargetOptions {
 public:
-  enum AsmInstrumentation {
-    AsmInstrumentationNone,
-    AsmInstrumentationAddress
-  };
+  enum AsmInstrumentation { AsmInstrumentationNone, AsmInstrumentationAddress };
 
   bool MCRelaxAll : 1;
   bool MCNoExecStack : 1;
@@ -97,7 +95,8 @@ public:
   std::string SplitDwarfFile;
   std::string AsSecureLogFile;
 
-  // Used for codeview debug info. These will be set as compiler path and commandline arguments in LF_BUILDINFO
+  // Used for codeview debug info. These will be set as compiler path and
+  // commandline arguments in LF_BUILDINFO
   std::string Argv0;
   std::string CommandlineArgs;
 
@@ -112,17 +111,17 @@ public:
   // Whether or not to use full register names on PowerPC.
   bool PPCUseFullRegisterNames : 1;
 
-  MCTargetOptions();
+  LLVM_MC_ABI MCTargetOptions();
 
   /// getABIName - If this returns a non-empty string this represents the
   /// textual name of the ABI that we want the backend to use, e.g. o32, or
   /// aapcs-linux.
-  StringRef getABIName() const;
+  LLVM_MC_ABI StringRef getABIName() const;
 
   /// getAssemblyLanguage - If this returns a non-empty string this represents
   /// the textual name of the assembly language that we will use for this
   /// target, e.g. masm.
-  StringRef getAssemblyLanguage() const;
+  LLVM_MC_ABI StringRef getAssemblyLanguage() const;
 };
 
 } // end namespace llvm

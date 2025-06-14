@@ -11,6 +11,7 @@
 
 #include "llvm/ADT/SetVector.h"
 #include "llvm/ADT/SmallVector.h"
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCFixup.h"
 #include "llvm/MC/MCFragment.h"
 #include "llvm/MC/MCSection.h"
@@ -60,28 +61,30 @@ class MCObjectStreamer : public MCStreamer {
   DenseMap<const MCSymbol *, SmallVector<PendingAssignment, 1>>
       pendingAssignments;
 
-  virtual void emitInstToData(const MCInst &Inst, const MCSubtargetInfo&) = 0;
-  void emitCFIStartProcImpl(MCDwarfFrameInfo &Frame) override;
-  void emitCFIEndProcImpl(MCDwarfFrameInfo &Frame) override;
-  MCSymbol *emitCFILabel() override;
-  void emitInstructionImpl(const MCInst &Inst, const MCSubtargetInfo &STI);
-  void resolvePendingFixups();
+  virtual void emitInstToData(const MCInst &Inst, const MCSubtargetInfo &) = 0;
+  LLVM_MC_ABI void emitCFIStartProcImpl(MCDwarfFrameInfo &Frame) override;
+  LLVM_MC_ABI void emitCFIEndProcImpl(MCDwarfFrameInfo &Frame) override;
+  LLVM_MC_ABI MCSymbol *emitCFILabel() override;
+  LLVM_MC_ABI void emitInstructionImpl(const MCInst &Inst,
+                                       const MCSubtargetInfo &STI);
+  LLVM_MC_ABI void resolvePendingFixups();
 
 protected:
-  MCObjectStreamer(MCContext &Context, std::unique_ptr<MCAsmBackend> TAB,
-                   std::unique_ptr<MCObjectWriter> OW,
-                   std::unique_ptr<MCCodeEmitter> Emitter);
-  ~MCObjectStreamer();
+  LLVM_MC_ABI MCObjectStreamer(MCContext &Context,
+                               std::unique_ptr<MCAsmBackend> TAB,
+                               std::unique_ptr<MCObjectWriter> OW,
+                               std::unique_ptr<MCCodeEmitter> Emitter);
+  LLVM_MC_ABI ~MCObjectStreamer();
 
 public:
   /// state management
-  void reset() override;
+  LLVM_MC_ABI void reset() override;
 
   /// Object streamers require the integrated assembler.
   bool isIntegratedAssemblerRequired() const override { return true; }
 
-  void emitFrames(MCAsmBackend *MAB);
-  void emitCFISections(bool EH, bool Debug) override;
+  LLVM_MC_ABI void emitFrames(MCAsmBackend *MAB);
+  LLVM_MC_ABI void emitCFISections(bool EH, bool Debug) override;
 
   void insert(MCFragment *F) {
     auto *Sec = CurFrag->getParent();
@@ -96,100 +99,111 @@ public:
   /// fragment is not a data fragment.
   /// Optionally a \p STI can be passed in so that a new fragment is created
   /// if the Subtarget differs from the current fragment.
-  MCDataFragment *getOrCreateDataFragment(const MCSubtargetInfo* STI = nullptr);
+  LLVM_MC_ABI MCDataFragment *
+  getOrCreateDataFragment(const MCSubtargetInfo *STI = nullptr);
 
 protected:
-  bool changeSectionImpl(MCSection *Section, uint32_t Subsection);
+  LLVM_MC_ABI bool changeSectionImpl(MCSection *Section, uint32_t Subsection);
 
 public:
-  void visitUsedSymbol(const MCSymbol &Sym) override;
+  LLVM_MC_ABI void visitUsedSymbol(const MCSymbol &Sym) override;
 
   MCAssembler &getAssembler() { return *Assembler; }
-  MCAssembler *getAssemblerPtr() override;
+  LLVM_MC_ABI MCAssembler *getAssemblerPtr() override;
   /// \name MCStreamer Interface
   /// @{
 
-  void emitLabel(MCSymbol *Symbol, SMLoc Loc = SMLoc()) override;
-  virtual void emitLabelAtPos(MCSymbol *Symbol, SMLoc Loc, MCDataFragment &F,
-                              uint64_t Offset);
-  void emitAssignment(MCSymbol *Symbol, const MCExpr *Value) override;
-  void emitConditionalAssignment(MCSymbol *Symbol,
-                                 const MCExpr *Value) override;
-  void emitValueImpl(const MCExpr *Value, unsigned Size,
-                     SMLoc Loc = SMLoc()) override;
-  void emitULEB128Value(const MCExpr *Value) override;
-  void emitSLEB128Value(const MCExpr *Value) override;
-  void emitWeakReference(MCSymbol *Alias, const MCSymbol *Symbol) override;
-  void changeSection(MCSection *Section, uint32_t Subsection = 0) override;
-  void switchSectionNoPrint(MCSection *Section) override;
-  void emitInstruction(const MCInst &Inst, const MCSubtargetInfo &STI) override;
+  LLVM_MC_ABI void emitLabel(MCSymbol *Symbol, SMLoc Loc = SMLoc()) override;
+  LLVM_MC_ABI virtual void emitLabelAtPos(MCSymbol *Symbol, SMLoc Loc,
+                                          MCDataFragment &F, uint64_t Offset);
+  LLVM_MC_ABI void emitAssignment(MCSymbol *Symbol,
+                                  const MCExpr *Value) override;
+  LLVM_MC_ABI void emitConditionalAssignment(MCSymbol *Symbol,
+                                             const MCExpr *Value) override;
+  LLVM_MC_ABI void emitValueImpl(const MCExpr *Value, unsigned Size,
+                                 SMLoc Loc = SMLoc()) override;
+  LLVM_MC_ABI void emitULEB128Value(const MCExpr *Value) override;
+  LLVM_MC_ABI void emitSLEB128Value(const MCExpr *Value) override;
+  LLVM_MC_ABI void emitWeakReference(MCSymbol *Alias,
+                                     const MCSymbol *Symbol) override;
+  LLVM_MC_ABI void changeSection(MCSection *Section,
+                                 uint32_t Subsection = 0) override;
+  LLVM_MC_ABI void switchSectionNoPrint(MCSection *Section) override;
+  LLVM_MC_ABI void emitInstruction(const MCInst &Inst,
+                                   const MCSubtargetInfo &STI) override;
 
   /// Emit an instruction to a special fragment, because this instruction
   /// can change its size during relaxation.
-  virtual void emitInstToFragment(const MCInst &Inst, const MCSubtargetInfo &);
+  LLVM_MC_ABI virtual void emitInstToFragment(const MCInst &Inst,
+                                              const MCSubtargetInfo &);
 
-  void emitBundleAlignMode(Align Alignment) override;
-  void emitBundleLock(bool AlignToEnd) override;
-  void emitBundleUnlock() override;
-  void emitBytes(StringRef Data) override;
-  void emitValueToAlignment(Align Alignment, int64_t Value = 0,
-                            unsigned ValueSize = 1,
-                            unsigned MaxBytesToEmit = 0) override;
-  void emitCodeAlignment(Align ByteAlignment, const MCSubtargetInfo *STI,
-                         unsigned MaxBytesToEmit = 0) override;
-  void emitValueToOffset(const MCExpr *Offset, unsigned char Value,
-                         SMLoc Loc) override;
-  void emitDwarfLocDirective(unsigned FileNo, unsigned Line, unsigned Column,
-                             unsigned Flags, unsigned Isa,
-                             unsigned Discriminator,
-                             StringRef FileName) override;
-  void emitDwarfAdvanceLineAddr(int64_t LineDelta, const MCSymbol *LastLabel,
-                                const MCSymbol *Label,
-                                unsigned PointerSize) override;
-  void emitDwarfLineEndEntry(MCSection *Section, MCSymbol *LastLabel,
-                             MCSymbol *EndLabel = nullptr) override;
-  void emitDwarfAdvanceFrameAddr(const MCSymbol *LastLabel,
-                                 const MCSymbol *Label, SMLoc Loc);
-  void emitCVLocDirective(unsigned FunctionId, unsigned FileNo, unsigned Line,
-                          unsigned Column, bool PrologueEnd, bool IsStmt,
-                          StringRef FileName, SMLoc Loc) override;
-  void emitCVLinetableDirective(unsigned FunctionId, const MCSymbol *Begin,
-                                const MCSymbol *End) override;
-  void emitCVInlineLinetableDirective(unsigned PrimaryFunctionId,
-                                      unsigned SourceFileId,
-                                      unsigned SourceLineNum,
-                                      const MCSymbol *FnStartSym,
-                                      const MCSymbol *FnEndSym) override;
-  void emitCVDefRangeDirective(
+  LLVM_MC_ABI void emitBundleAlignMode(Align Alignment) override;
+  LLVM_MC_ABI void emitBundleLock(bool AlignToEnd) override;
+  LLVM_MC_ABI void emitBundleUnlock() override;
+  LLVM_MC_ABI void emitBytes(StringRef Data) override;
+  LLVM_MC_ABI void emitValueToAlignment(Align Alignment, int64_t Value = 0,
+                                        unsigned ValueSize = 1,
+                                        unsigned MaxBytesToEmit = 0) override;
+  LLVM_MC_ABI void emitCodeAlignment(Align ByteAlignment,
+                                     const MCSubtargetInfo *STI,
+                                     unsigned MaxBytesToEmit = 0) override;
+  LLVM_MC_ABI void emitValueToOffset(const MCExpr *Offset, unsigned char Value,
+                                     SMLoc Loc) override;
+  LLVM_MC_ABI void emitDwarfLocDirective(unsigned FileNo, unsigned Line,
+                                         unsigned Column, unsigned Flags,
+                                         unsigned Isa, unsigned Discriminator,
+                                         StringRef FileName) override;
+  LLVM_MC_ABI void emitDwarfAdvanceLineAddr(int64_t LineDelta,
+                                            const MCSymbol *LastLabel,
+                                            const MCSymbol *Label,
+                                            unsigned PointerSize) override;
+  LLVM_MC_ABI void emitDwarfLineEndEntry(MCSection *Section,
+                                         MCSymbol *LastLabel,
+                                         MCSymbol *EndLabel = nullptr) override;
+  LLVM_MC_ABI void emitDwarfAdvanceFrameAddr(const MCSymbol *LastLabel,
+                                             const MCSymbol *Label, SMLoc Loc);
+  LLVM_MC_ABI void emitCVLocDirective(unsigned FunctionId, unsigned FileNo,
+                                      unsigned Line, unsigned Column,
+                                      bool PrologueEnd, bool IsStmt,
+                                      StringRef FileName, SMLoc Loc) override;
+  LLVM_MC_ABI void emitCVLinetableDirective(unsigned FunctionId,
+                                            const MCSymbol *Begin,
+                                            const MCSymbol *End) override;
+  LLVM_MC_ABI void emitCVInlineLinetableDirective(
+      unsigned PrimaryFunctionId, unsigned SourceFileId, unsigned SourceLineNum,
+      const MCSymbol *FnStartSym, const MCSymbol *FnEndSym) override;
+  LLVM_MC_ABI void emitCVDefRangeDirective(
       ArrayRef<std::pair<const MCSymbol *, const MCSymbol *>> Ranges,
       StringRef FixedSizePortion) override;
-  void emitCVStringTableDirective() override;
-  void emitCVFileChecksumsDirective() override;
-  void emitCVFileChecksumOffsetDirective(unsigned FileNo) override;
-  void emitDTPRel32Value(const MCExpr *Value) override;
-  void emitDTPRel64Value(const MCExpr *Value) override;
-  void emitTPRel32Value(const MCExpr *Value) override;
-  void emitTPRel64Value(const MCExpr *Value) override;
-  void emitGPRel32Value(const MCExpr *Value) override;
-  void emitGPRel64Value(const MCExpr *Value) override;
-  std::optional<std::pair<bool, std::string>>
+  LLVM_MC_ABI void emitCVStringTableDirective() override;
+  LLVM_MC_ABI void emitCVFileChecksumsDirective() override;
+  LLVM_MC_ABI void emitCVFileChecksumOffsetDirective(unsigned FileNo) override;
+  LLVM_MC_ABI void emitDTPRel32Value(const MCExpr *Value) override;
+  LLVM_MC_ABI void emitDTPRel64Value(const MCExpr *Value) override;
+  LLVM_MC_ABI void emitTPRel32Value(const MCExpr *Value) override;
+  LLVM_MC_ABI void emitTPRel64Value(const MCExpr *Value) override;
+  LLVM_MC_ABI void emitGPRel32Value(const MCExpr *Value) override;
+  LLVM_MC_ABI void emitGPRel64Value(const MCExpr *Value) override;
+  LLVM_MC_ABI std::optional<std::pair<bool, std::string>>
   emitRelocDirective(const MCExpr &Offset, StringRef Name, const MCExpr *Expr,
                      SMLoc Loc, const MCSubtargetInfo &STI) override;
   using MCStreamer::emitFill;
-  void emitFill(const MCExpr &NumBytes, uint64_t FillValue,
-                SMLoc Loc = SMLoc()) override;
-  void emitFill(const MCExpr &NumValues, int64_t Size, int64_t Expr,
-                SMLoc Loc = SMLoc()) override;
-  void emitNops(int64_t NumBytes, int64_t ControlledNopLength, SMLoc Loc,
-                const MCSubtargetInfo &STI) override;
-  void emitFileDirective(StringRef Filename) override;
-  void emitFileDirective(StringRef Filename, StringRef CompilerVersion,
-                         StringRef TimeStamp, StringRef Description) override;
+  LLVM_MC_ABI void emitFill(const MCExpr &NumBytes, uint64_t FillValue,
+                            SMLoc Loc = SMLoc()) override;
+  LLVM_MC_ABI void emitFill(const MCExpr &NumValues, int64_t Size, int64_t Expr,
+                            SMLoc Loc = SMLoc()) override;
+  LLVM_MC_ABI void emitNops(int64_t NumBytes, int64_t ControlledNopLength,
+                            SMLoc Loc, const MCSubtargetInfo &STI) override;
+  LLVM_MC_ABI void emitFileDirective(StringRef Filename) override;
+  LLVM_MC_ABI void emitFileDirective(StringRef Filename,
+                                     StringRef CompilerVersion,
+                                     StringRef TimeStamp,
+                                     StringRef Description) override;
 
-  void emitAddrsig() override;
-  void emitAddrsigSym(const MCSymbol *Sym) override;
+  LLVM_MC_ABI void emitAddrsig() override;
+  LLVM_MC_ABI void emitAddrsigSym(const MCSymbol *Sym) override;
 
-  void finishImpl() override;
+  LLVM_MC_ABI void finishImpl() override;
 
   /// Emit the absolute difference between two symbols if possible.
   ///
@@ -200,17 +214,18 @@ public:
   /// \c false.
   ///
   /// \pre Offset of \c Hi is greater than the offset \c Lo.
-  void emitAbsoluteSymbolDiff(const MCSymbol *Hi, const MCSymbol *Lo,
-                              unsigned Size) override;
+  LLVM_MC_ABI void emitAbsoluteSymbolDiff(const MCSymbol *Hi,
+                                          const MCSymbol *Lo,
+                                          unsigned Size) override;
 
-  void emitAbsoluteSymbolDiffAsULEB128(const MCSymbol *Hi,
-                                       const MCSymbol *Lo) override;
+  LLVM_MC_ABI void emitAbsoluteSymbolDiffAsULEB128(const MCSymbol *Hi,
+                                                   const MCSymbol *Lo) override;
 
-  bool mayHaveInstructions(MCSection &Sec) const override;
+  LLVM_MC_ABI bool mayHaveInstructions(MCSection &Sec) const override;
 
   /// Emits pending conditional assignments that depend on \p Symbol
   /// being emitted.
-  void emitPendingAssignments(MCSymbol *Symbol);
+  LLVM_MC_ABI void emitPendingAssignments(MCSymbol *Symbol);
 };
 
 } // end namespace llvm

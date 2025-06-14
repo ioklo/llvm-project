@@ -12,6 +12,7 @@
 #include "llvm/ADT/DenseMap.h"
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/BinaryFormat/ELF.h"
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCObjectWriter.h"
 #include "llvm/MC/MCSectionELF.h"
 #include "llvm/Support/Casting.h"
@@ -33,10 +34,10 @@ class MCTargetOptions;
 class MCValue;
 
 struct ELFRelocationEntry {
-  uint64_t Offset; // Where is the relocation.
+  uint64_t Offset;           // Where is the relocation.
   const MCSymbolELF *Symbol; // The symbol to relocate with.
-  unsigned Type;   // The type of the relocation.
-  uint64_t Addend; // The addend to use.
+  unsigned Type;             // The type of the relocation.
+  uint64_t Addend;           // The addend to use.
 
   ELFRelocationEntry(uint64_t Offset, const MCSymbolELF *Symbol, unsigned Type,
                      uint64_t Addend)
@@ -58,8 +59,10 @@ class MCELFObjectTargetWriter : public MCObjectTargetWriter {
   const unsigned Is64Bit : 1;
 
 protected:
-  MCELFObjectTargetWriter(bool Is64Bit_, uint8_t OSABI_, uint16_t EMachine_,
-                          bool HasRelocationAddend_, uint8_t ABIVersion_ = 0);
+  LLVM_MC_ABI MCELFObjectTargetWriter(bool Is64Bit_, uint8_t OSABI_,
+                                      uint16_t EMachine_,
+                                      bool HasRelocationAddend_,
+                                      uint8_t ABIVersion_ = 0);
 
 public:
   virtual ~MCELFObjectTargetWriter() = default;
@@ -71,28 +74,29 @@ public:
 
   static uint8_t getOSABI(Triple::OSType OSType) {
     switch (OSType) {
-      case Triple::HermitCore:
-        return ELF::ELFOSABI_STANDALONE;
-      case Triple::PS4:
-      case Triple::FreeBSD:
-        return ELF::ELFOSABI_FREEBSD;
-      case Triple::Solaris:
-        return ELF::ELFOSABI_SOLARIS;
-      case Triple::OpenBSD:
-        return ELF::ELFOSABI_OPENBSD;
-      default:
-        return ELF::ELFOSABI_NONE;
+    case Triple::HermitCore:
+      return ELF::ELFOSABI_STANDALONE;
+    case Triple::PS4:
+    case Triple::FreeBSD:
+      return ELF::ELFOSABI_FREEBSD;
+    case Triple::Solaris:
+      return ELF::ELFOSABI_SOLARIS;
+    case Triple::OpenBSD:
+      return ELF::ELFOSABI_OPENBSD;
+    default:
+      return ELF::ELFOSABI_NONE;
     }
   }
 
   virtual unsigned getRelocType(MCContext &Ctx, const MCValue &Target,
                                 const MCFixup &Fixup, bool IsPCRel) const = 0;
 
-  virtual bool needsRelocateWithSymbol(const MCValue &Val, const MCSymbol &Sym,
-                                       unsigned Type) const;
+  LLVM_MC_ABI virtual bool needsRelocateWithSymbol(const MCValue &Val,
+                                                   const MCSymbol &Sym,
+                                                   unsigned Type) const;
 
-  virtual void sortRelocs(const MCAssembler &Asm,
-                          std::vector<ELFRelocationEntry> &Relocs);
+  LLVM_MC_ABI virtual void sortRelocs(const MCAssembler &Asm,
+                                      std::vector<ELFRelocationEntry> &Relocs);
 
   /// \name Accessors
   /// @{
@@ -162,32 +166,35 @@ public:
   };
   SmallVector<Symver, 0> Symvers;
 
-  ELFObjectWriter(std::unique_ptr<MCELFObjectTargetWriter> MOTW,
-                  raw_pwrite_stream &OS, bool IsLittleEndian);
-  ELFObjectWriter(std::unique_ptr<MCELFObjectTargetWriter> MOTW,
-                  raw_pwrite_stream &OS, raw_pwrite_stream &DwoOS,
-                  bool IsLittleEndian);
+  LLVM_MC_ABI ELFObjectWriter(std::unique_ptr<MCELFObjectTargetWriter> MOTW,
+                              raw_pwrite_stream &OS, bool IsLittleEndian);
+  LLVM_MC_ABI ELFObjectWriter(std::unique_ptr<MCELFObjectTargetWriter> MOTW,
+                              raw_pwrite_stream &OS, raw_pwrite_stream &DwoOS,
+                              bool IsLittleEndian);
 
-  void reset() override;
-  void executePostLayoutBinding(MCAssembler &Asm) override;
-  void recordRelocation(MCAssembler &Asm, const MCFragment *Fragment,
-                        const MCFixup &Fixup, MCValue Target,
-                        uint64_t &FixedValue) override;
-  bool isSymbolRefDifferenceFullyResolvedImpl(const MCAssembler &Asm,
-                                              const MCSymbol &SymA,
-                                              const MCFragment &FB, bool InSet,
-                                              bool IsPCRel) const override;
-  uint64_t writeObject(MCAssembler &Asm) override;
+  LLVM_MC_ABI void reset() override;
+  LLVM_MC_ABI void executePostLayoutBinding(MCAssembler &Asm) override;
+  LLVM_MC_ABI void recordRelocation(MCAssembler &Asm,
+                                    const MCFragment *Fragment,
+                                    const MCFixup &Fixup, MCValue Target,
+                                    uint64_t &FixedValue) override;
+  LLVM_MC_ABI bool isSymbolRefDifferenceFullyResolvedImpl(
+      const MCAssembler &Asm, const MCSymbol &SymA, const MCFragment &FB,
+      bool InSet, bool IsPCRel) const override;
+  LLVM_MC_ABI uint64_t writeObject(MCAssembler &Asm) override;
 
-  bool hasRelocationAddend() const;
-  bool usesRela(const MCTargetOptions *TO, const MCSectionELF &Sec) const;
+  LLVM_MC_ABI bool hasRelocationAddend() const;
+  LLVM_MC_ABI bool usesRela(const MCTargetOptions *TO,
+                            const MCSectionELF &Sec) const;
 
-  bool shouldRelocateWithSymbol(const MCAssembler &Asm, const MCValue &Val,
-                                const MCSymbolELF *Sym, uint64_t C,
-                                unsigned Type) const;
+  LLVM_MC_ABI bool shouldRelocateWithSymbol(const MCAssembler &Asm,
+                                            const MCValue &Val,
+                                            const MCSymbolELF *Sym, uint64_t C,
+                                            unsigned Type) const;
 
-  bool checkRelocation(MCContext &Ctx, SMLoc Loc, const MCSectionELF *From,
-                       const MCSectionELF *To);
+  LLVM_MC_ABI bool checkRelocation(MCContext &Ctx, SMLoc Loc,
+                                   const MCSectionELF *From,
+                                   const MCSectionELF *To);
 
   unsigned getELFHeaderEFlags() const { return ELFHeaderEFlags; }
   void setELFHeaderEFlags(unsigned Flags) { ELFHeaderEFlags = Flags; }

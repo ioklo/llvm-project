@@ -16,6 +16,7 @@
 #define LLVM_MC_MCASMINFO_H
 
 #include "llvm/ADT/StringRef.h"
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCDirectives.h"
 #include "llvm/MC/MCTargetOptions.h"
 #include <vector>
@@ -442,8 +443,8 @@ protected:
   bool UseMotorolaIntegers = false;
 
 public:
-  explicit MCAsmInfo();
-  virtual ~MCAsmInfo();
+  LLVM_MC_ABI explicit MCAsmInfo();
+  LLVM_MC_ABI virtual ~MCAsmInfo();
 
   /// Get the code pointer size in bytes.
   unsigned getCodePointerSize() const { return CodePointerSize; }
@@ -483,20 +484,20 @@ public:
     return nullptr;
   }
 
-  virtual const MCExpr *getExprForPersonalitySymbol(const MCSymbol *Sym,
-                                                    unsigned Encoding,
-                                                    MCStreamer &Streamer) const;
+  LLVM_MC_ABI virtual const MCExpr *
+  getExprForPersonalitySymbol(const MCSymbol *Sym, unsigned Encoding,
+                              MCStreamer &Streamer) const;
 
-  virtual const MCExpr *getExprForFDESymbol(const MCSymbol *Sym,
-                                            unsigned Encoding,
-                                            MCStreamer &Streamer) const;
+  LLVM_MC_ABI virtual const MCExpr *
+  getExprForFDESymbol(const MCSymbol *Sym, unsigned Encoding,
+                      MCStreamer &Streamer) const;
 
   /// Return true if C is an acceptable character inside a symbol name.
-  virtual bool isAcceptableChar(char C) const;
+  LLVM_MC_ABI virtual bool isAcceptableChar(char C) const;
 
   /// Return true if the identifier \p Name does not need quotes to be
   /// syntactically correct.
-  virtual bool isValidUnquotedName(StringRef Name) const;
+  LLVM_MC_ABI virtual bool isValidUnquotedName(StringRef Name) const;
 
   /// Return true if the .section directive should be omitted when
   /// emitting \p SectionName.  For example:
@@ -505,7 +506,8 @@ public:
   ///
   /// returns false => .section .text,#alloc,#execinstr
   /// returns true  => .text
-  virtual bool shouldOmitSectionDirective(StringRef SectionName) const;
+  LLVM_MC_ABI virtual bool
+  shouldOmitSectionDirective(StringRef SectionName) const;
 
   bool usesSunStyleELFSectionSwitchSyntax() const {
     return SunStyleELFSectionSwitchSyntax;
@@ -529,7 +531,8 @@ public:
 
   /// Returns the maximum possible encoded instruction size in bytes. If \p STI
   /// is null, this should be the maximum size for any subtarget.
-  virtual unsigned getMaxInstLength(const MCSubtargetInfo *STI = nullptr) const {
+  virtual unsigned
+  getMaxInstLength(const MCSubtargetInfo *STI = nullptr) const {
     return MaxInstLength;
   }
 
@@ -625,7 +628,9 @@ public:
 
   MCSymbolAttr getHiddenVisibilityAttr() const { return HiddenVisibilityAttr; }
 
-  MCSymbolAttr getExportedVisibilityAttr() const { return ExportedVisibilityAttr; }
+  MCSymbolAttr getExportedVisibilityAttr() const {
+    return ExportedVisibilityAttr;
+  }
 
   MCSymbolAttr getHiddenDeclarationVisibilityAttr() const {
     return HiddenDeclarationVisibilityAttr;
@@ -642,9 +647,7 @@ public:
   ExceptionHandling getExceptionHandlingType() const { return ExceptionsType; }
   WinEH::EncodingType getWinEHEncodingType() const { return WinEHEncodingType; }
 
-  void setExceptionsType(ExceptionHandling EH) {
-    ExceptionsType = EH;
-  }
+  void setExceptionsType(ExceptionHandling EH) { ExceptionsType = EH; }
 
   bool usesCFIWithoutEH() const {
     return ExceptionsType == ExceptionHandling::None && UsesCFIWithoutEH;
@@ -684,7 +687,7 @@ public:
     return EnableDwarfFileDirectoryDefault;
   }
 
-  void addInitialFrameState(const MCCFIInstruction &Inst);
+  LLVM_MC_ABI void addInitialFrameState(const MCCFIInstruction &Inst);
 
   const std::vector<MCCFIInstruction> &getInitialFrameState() const {
     return InitialFrameState;
@@ -723,7 +726,6 @@ public:
   virtual void setPreserveAsmComments(bool Value) {
     PreserveAsmComments = Value;
   }
-
 
   bool shouldUseLogicalShr() const { return UseLogicalShr; }
 

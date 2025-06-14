@@ -15,6 +15,7 @@
 
 #include "llvm/ADT/StringMapEntry.h"
 #include "llvm/ADT/StringRef.h"
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCExpr.h"
 #include "llvm/MC/MCFragment.h"
 #include "llvm/MC/MCSymbolTableEntry.h"
@@ -63,7 +64,7 @@ protected:
   };
 
   // Special sentinel value for the absolute pseudo fragment.
-  static MCFragment *AbsolutePseudoFragment;
+  LLVM_MC_ABI static MCFragment *AbsolutePseudoFragment;
 
   /// If a symbol has a Fragment, the section is implied, so we only need
   /// one pointer.
@@ -174,16 +175,17 @@ protected:
 
   // Provide custom new/delete as we will only allocate space for a name
   // if we need one.
-  void *operator new(size_t s, const MCSymbolTableEntry *Name, MCContext &Ctx);
+  LLVM_MC_ABI void *operator new(size_t s, const MCSymbolTableEntry *Name,
+                                 MCContext &Ctx);
 
 private:
   void operator delete(void *);
   /// Placement delete - required by std, but never called.
-  void operator delete(void*, unsigned) {
+  void operator delete(void *, unsigned) {
     llvm_unreachable("Constructor throws?");
   }
   /// Placement delete - required by std, but never called.
-  void operator delete(void*, unsigned, bool) {
+  void operator delete(void *, unsigned, bool) {
     llvm_unreachable("Constructor throws?");
   }
 
@@ -194,7 +196,7 @@ private:
     return (*(Name - 1)).NameEntry;
   }
   const MCSymbolTableEntry *&getNameEntryPtr() const {
-    return const_cast<MCSymbol*>(this)->getNameEntryPtr();
+    return const_cast<MCSymbol *>(this)->getNameEntryPtr();
   }
 
 public:
@@ -251,9 +253,7 @@ public:
 
   /// isInSection - Check if this symbol is defined in some section (i.e., it
   /// is defined but not absolute).
-  bool isInSection() const {
-    return isDefined() && !isAbsolute();
-  }
+  bool isInSection() const { return isDefined() && !isAbsolute(); }
 
   /// isUndefined - Check if this symbol undefined (i.e., implicitly defined).
   bool isUndefined(bool SetUsed = true) const {
@@ -261,9 +261,7 @@ public:
   }
 
   /// isAbsolute - Check if this is an absolute symbol.
-  bool isAbsolute() const {
-    return getFragment() == AbsolutePseudoFragment;
-  }
+  bool isAbsolute() const { return getFragment() == AbsolutePseudoFragment; }
 
   /// Get the section associated with a defined, non-absolute symbol.
   MCSection &getSection() const {
@@ -297,9 +295,7 @@ public:
   /// @{
 
   /// isVariable - Check if this is a variable symbol.
-  bool isVariable() const {
-    return SymbolContents == SymContentsVariable;
-  }
+  bool isVariable() const { return SymbolContents == SymContentsVariable; }
 
   /// getVariableValue - Get the value for variable symbols.
   const MCExpr *getVariableValue(bool SetUsed = true) const {
@@ -308,19 +304,15 @@ public:
     return Value;
   }
 
-  void setVariableValue(const MCExpr *Value);
+  LLVM_MC_ABI void setVariableValue(const MCExpr *Value);
 
   /// @}
 
   /// Get the (implementation defined) index.
-  uint32_t getIndex() const {
-    return Index;
-  }
+  uint32_t getIndex() const { return Index; }
 
   /// Set the (implementation defined) index.
-  void setIndex(uint32_t Value) const {
-    Index = Value;
-  }
+  void setIndex(uint32_t Value) const { Index = Value; }
 
   bool isUnset() const { return SymbolContents == SymContentsUnset; }
 
@@ -374,7 +366,7 @@ public:
   /// \return True if symbol was already declared as a different type
   bool declareCommon(uint64_t Size, Align Alignment, bool Target = false) {
     assert(isCommon() || getOffset() == 0);
-    if(isCommon()) {
+    if (isCommon()) {
       if (CommonSize != Size || getCommonAlignment() != Alignment ||
           isTargetCommon() != Target)
         return true;
@@ -414,7 +406,7 @@ public:
   void print(raw_ostream &OS, const MCAsmInfo *MAI) const;
 
   /// dump - Print the value to stderr.
-  void dump() const;
+  LLVM_MC_ABI void dump() const;
 
 protected:
   /// Get the (implementation defined) symbol flags.

@@ -15,17 +15,19 @@
 #define LLVM_MC_MCASMINFODARWIN_H
 
 #include "llvm/MC/MCAsmInfo.h"
+#include "llvm/MC/MCConfig.h"
 
 namespace llvm {
 
 class MCAsmInfoDarwin : public MCAsmInfo {
 public:
-  explicit MCAsmInfoDarwin();
+  LLVM_MC_ABI explicit MCAsmInfoDarwin();
 
   /// True if the section is atomized using the symbols in it.
-  /// This is false if the section is atomized based on its contents (MachO' __TEXT,__cstring for
-  /// example).
-  static bool isSectionAtomizableBySymbols(const MCSection &Section);
+  /// This is false if the section is atomized based on its contents (MachO'
+  /// __TEXT,__cstring for example).
+  LLVM_MC_ABI static bool
+  isSectionAtomizableBySymbols(const MCSection &Section);
 };
 
 } // end namespace llvm

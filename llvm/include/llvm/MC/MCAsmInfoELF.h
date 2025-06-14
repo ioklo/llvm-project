@@ -10,15 +10,17 @@
 #define LLVM_MC_MCASMINFOELF_H
 
 #include "llvm/MC/MCAsmInfo.h"
+#include "llvm/MC/MCConfig.h"
 
 namespace llvm {
 
 class MCAsmInfoELF : public MCAsmInfo {
-  virtual void anchor();
-  MCSection *getNonexecutableStackSection(MCContext &Ctx) const final;
+  LLVM_MC_ABI virtual void anchor();
+  LLVM_MC_ABI MCSection *
+  getNonexecutableStackSection(MCContext &Ctx) const final;
 
 protected:
-  MCAsmInfoELF();
+  LLVM_MC_ABI MCAsmInfoELF();
 };
 
 } // end namespace llvm

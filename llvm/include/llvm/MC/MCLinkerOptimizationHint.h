@@ -19,6 +19,7 @@
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/ADT/StringSwitch.h"
+#include "llvm/MC/MCConfig.h"
 #include <cassert>
 #include <cstdint>
 
@@ -41,31 +42,27 @@ enum MCLOHType {
   MCLOH_AdrpLdrGot = 0x8u     ///< Adrp _v@GOTPAGE -> Ldr _v@GOTPAGEOFF.
 };
 
-static inline StringRef MCLOHDirectiveName() {
-  return StringRef(".loh");
-}
+static inline StringRef MCLOHDirectiveName() { return StringRef(".loh"); }
 
 static inline bool isValidMCLOHType(unsigned Kind) {
   return Kind >= MCLOH_AdrpAdrp && Kind <= MCLOH_AdrpLdrGot;
 }
 
 static inline int MCLOHNameToId(StringRef Name) {
-#define MCLOHCaseNameToId(Name)     .Case(#Name, MCLOH_ ## Name)
-  return StringSwitch<int>(Name)
-    MCLOHCaseNameToId(AdrpAdrp)
-    MCLOHCaseNameToId(AdrpLdr)
-    MCLOHCaseNameToId(AdrpAddLdr)
-    MCLOHCaseNameToId(AdrpLdrGotLdr)
-    MCLOHCaseNameToId(AdrpAddStr)
-    MCLOHCaseNameToId(AdrpLdrGotStr)
-    MCLOHCaseNameToId(AdrpAdd)
-    MCLOHCaseNameToId(AdrpLdrGot)
-    .Default(-1);
+#define MCLOHCaseNameToId(Name) .Case(#Name, MCLOH_##Name)
+  return StringSwitch<int>(Name) MCLOHCaseNameToId(AdrpAdrp)
+      MCLOHCaseNameToId(AdrpLdr) MCLOHCaseNameToId(AdrpAddLdr)
+          MCLOHCaseNameToId(AdrpLdrGotLdr) MCLOHCaseNameToId(AdrpAddStr)
+              MCLOHCaseNameToId(AdrpLdrGotStr) MCLOHCaseNameToId(AdrpAdd)
+                  MCLOHCaseNameToId(AdrpLdrGot)
+                      .Default(-1);
 #undef MCLOHCaseNameToId
 }
 
 static inline StringRef MCLOHIdToName(MCLOHType Kind) {
-#define MCLOHCaseIdToName(Name)      case MCLOH_ ## Name: return StringRef(#Name);
+#define MCLOHCaseIdToName(Name)                                                \
+  case MCLOH_##Name:                                                           \
+    return StringRef(#Name);
   switch (Kind) {
     MCLOHCaseIdToName(AdrpAdrp);
     MCLOHCaseIdToName(AdrpLdr);
@@ -108,8 +105,8 @@ class MCLOHDirective {
   /// Emit this directive in \p OutStream using the information available
   /// in the given \p ObjWriter and \p Layout to get the address of the
   /// arguments within the object file.
-  void emit_impl(const MCAssembler &Asm, raw_ostream &OutStream,
-                 const MachObjectWriter &ObjWriter) const;
+  LLVM_MC_ABI void emit_impl(const MCAssembler &Asm, raw_ostream &OutStream,
+                             const MachObjectWriter &ObjWriter) const;
 
 public:
   using LOHArgs = SmallVectorImpl<MCSymbol *>;
@@ -125,12 +122,13 @@ public:
 
   /// Emit this directive as:
   /// <kind, numArgs, addr1, ..., addrN>
-  void emit(const MCAssembler &Asm, MachObjectWriter &ObjWriter) const;
+  LLVM_MC_ABI void emit(const MCAssembler &Asm,
+                        MachObjectWriter &ObjWriter) const;
 
   /// Get the size in bytes of this directive if emitted in \p ObjWriter with
   /// the given \p Layout.
-  uint64_t getEmitSize(const MCAssembler &Asm,
-                       const MachObjectWriter &ObjWriter) const;
+  LLVM_MC_ABI uint64_t getEmitSize(const MCAssembler &Asm,
+                                   const MachObjectWriter &ObjWriter) const;
 };
 
 class MCLOHContainer {
@@ -146,9 +144,7 @@ public:
   MCLOHContainer() = default;
 
   /// Const accessor to the directives.
-  const LOHDirectives &getDirectives() const {
-    return Directives;
-  }
+  const LOHDirectives &getDirectives() const { return Directives; }
 
   /// Add the directive of the given kind \p Kind with the given arguments
   /// \p Args to the container.

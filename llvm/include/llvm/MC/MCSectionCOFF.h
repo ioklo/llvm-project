@@ -15,6 +15,7 @@
 
 #include "llvm/ADT/StringRef.h"
 #include "llvm/BinaryFormat/COFF.h"
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCSection.h"
 #include "llvm/MC/SectionKind.h"
 #include <cassert>
@@ -64,19 +65,20 @@ private:
 public:
   /// Decides whether a '.section' directive should be printed before the
   /// section name
-  bool shouldOmitSectionDirective(StringRef Name, const MCAsmInfo &MAI) const;
+  LLVM_MC_ABI bool shouldOmitSectionDirective(StringRef Name,
+                                              const MCAsmInfo &MAI) const;
 
   unsigned getCharacteristics() const { return Characteristics; }
   MCSymbol *getCOMDATSymbol() const { return COMDATSymbol; }
   int getSelection() const { return Selection; }
 
-  void setSelection(int Selection) const;
+  LLVM_MC_ABI void setSelection(int Selection) const;
 
-  void printSwitchToSection(const MCAsmInfo &MAI, const Triple &T,
-                            raw_ostream &OS,
-                            uint32_t Subsection) const override;
-  bool useCodeAlign() const override;
-  StringRef getVirtualSectionKind() const override;
+  LLVM_MC_ABI void printSwitchToSection(const MCAsmInfo &MAI, const Triple &T,
+                                        raw_ostream &OS,
+                                        uint32_t Subsection) const override;
+  LLVM_MC_ABI bool useCodeAlign() const override;
+  LLVM_MC_ABI StringRef getVirtualSectionKind() const override;
 
   unsigned getOrAssignWinCFISectionID(unsigned *NextID) const {
     if (WinCFISectionID == ~0U)

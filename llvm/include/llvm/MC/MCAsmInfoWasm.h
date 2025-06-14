@@ -10,13 +10,14 @@
 #define LLVM_MC_MCASMINFOWASM_H
 
 #include "llvm/MC/MCAsmInfo.h"
+#include "llvm/MC/MCConfig.h"
 
 namespace llvm {
 class MCAsmInfoWasm : public MCAsmInfo {
-  virtual void anchor();
+  LLVM_MC_ABI virtual void anchor();
 
 protected:
-  MCAsmInfoWasm();
+  LLVM_MC_ABI MCAsmInfoWasm();
 };
 } // namespace llvm
 

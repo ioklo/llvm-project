@@ -12,6 +12,7 @@
 #include "llvm/ADT/CachedHashString.h"
 #include "llvm/ADT/DenseMap.h"
 #include "llvm/ADT/StringRef.h"
+#include "llvm/MC/MCConfig.h"
 #include "llvm/Support/Alignment.h"
 #include <cstddef>
 #include <cstdint>
@@ -43,30 +44,30 @@ private:
   Align Alignment;
   bool Finalized = false;
 
-  void finalizeStringTable(bool Optimize);
-  void initSize();
+  LLVM_MC_ABI void finalizeStringTable(bool Optimize);
+  LLVM_MC_ABI void initSize();
 
 public:
-  StringTableBuilder(Kind K, Align Alignment = Align(1));
-  ~StringTableBuilder();
+  LLVM_MC_ABI StringTableBuilder(Kind K, Align Alignment = Align(1));
+  LLVM_MC_ABI ~StringTableBuilder();
 
   /// Add a string to the builder. Returns the position of S in the
   /// table. The position will be changed if finalize is used.
   /// Can only be used before the table is finalized.
-  size_t add(CachedHashStringRef S);
+  LLVM_MC_ABI size_t add(CachedHashStringRef S);
   size_t add(StringRef S) { return add(CachedHashStringRef(S)); }
 
   /// Analyze the strings and build the final table. No more strings can
   /// be added after this point.
-  void finalize();
+  LLVM_MC_ABI void finalize();
 
   /// Finalize the string table without reording it. In this mode, offsets
   /// returned by add will still be valid.
-  void finalizeInOrder();
+  LLVM_MC_ABI void finalizeInOrder();
 
   /// Get the offest of a string in the string table. Can only be used
   /// after the table is finalized.
-  size_t getOffset(CachedHashStringRef S) const;
+  LLVM_MC_ABI size_t getOffset(CachedHashStringRef S) const;
   size_t getOffset(StringRef S) const {
     return getOffset(CachedHashStringRef(S));
   }
@@ -78,10 +79,10 @@ public:
   bool contains(CachedHashStringRef S) const { return StringIndexMap.count(S); }
 
   size_t getSize() const { return Size; }
-  void clear();
+  LLVM_MC_ABI void clear();
 
-  void write(raw_ostream &OS) const;
-  void write(uint8_t *Buf) const;
+  LLVM_MC_ABI void write(raw_ostream &OS) const;
+  LLVM_MC_ABI void write(uint8_t *Buf) const;
 
   bool isFinalized() const { return Finalized; }
 };

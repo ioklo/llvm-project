@@ -13,6 +13,7 @@
 #ifndef LLVM_MC_MCSECTIONWASM_H
 #define LLVM_MC_MCSECTIONWASM_H
 
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCSection.h"
 
 namespace llvm {
@@ -59,7 +60,8 @@ class MCSectionWasm final : public MCSection {
 public:
   /// Decides whether a '.section' directive should be printed before the
   /// section name
-  bool shouldOmitSectionDirective(StringRef Name, const MCAsmInfo &MAI) const;
+  LLVM_MC_ABI bool shouldOmitSectionDirective(StringRef Name,
+                                              const MCAsmInfo &MAI) const;
 
   const MCSymbolWasm *getGroup() const { return Group; }
   unsigned getSegmentFlags() const { return SegmentFlags; }

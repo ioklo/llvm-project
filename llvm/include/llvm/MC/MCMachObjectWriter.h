@@ -12,6 +12,7 @@
 #include "llvm/ADT/DenseMap.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/BinaryFormat/MachO.h"
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCDirectives.h"
 #include "llvm/MC/MCExpr.h"
 #include "llvm/MC/MCLinkerOptimizationHint.h"
@@ -32,21 +33,23 @@ class MachObjectWriter;
 class MCMachObjectTargetWriter : public MCObjectTargetWriter {
   const unsigned Is64Bit : 1;
   const uint32_t CPUType;
+
 protected:
   uint32_t CPUSubtype;
+
 public:
   unsigned LocalDifference_RIT = 0;
 
 protected:
-  MCMachObjectTargetWriter(bool Is64Bit_, uint32_t CPUType_,
-                           uint32_t CPUSubtype_);
+  LLVM_MC_ABI MCMachObjectTargetWriter(bool Is64Bit_, uint32_t CPUType_,
+                                       uint32_t CPUSubtype_);
 
   void setLocalDifferenceRelocationType(unsigned Type) {
     LocalDifference_RIT = Type;
   }
 
 public:
-  virtual ~MCMachObjectTargetWriter();
+  LLVM_MC_ABI virtual ~MCMachObjectTargetWriter();
 
   Triple::ObjectFormatType getFormat() const override { return Triple::MachO; }
   static bool classof(const MCObjectTargetWriter *W) {
@@ -114,7 +117,7 @@ private:
     uint8_t SectionIndex;
 
     // Support lexicographic sorting.
-    bool operator<(const MachSymbolData &RHS) const;
+    LLVM_MC_ABI bool operator<(const MachSymbolData &RHS) const;
   };
 
   struct IndirectSymbolData {
@@ -167,9 +170,9 @@ private:
   // The list of linker options for LC_LINKER_OPTION.
   std::vector<std::vector<std::string>> LinkerOptions;
 
-  MachSymbolData *findSymbolData(const MCSymbol &Sym);
+  LLVM_MC_ABI MachSymbolData *findSymbolData(const MCSymbol &Sym);
 
-  void writeWithPadding(StringRef Str, uint64_t Size);
+  LLVM_MC_ABI void writeWithPadding(StringRef Str, uint64_t Size);
 
 public:
   MachObjectWriter(std::unique_ptr<MCMachObjectTargetWriter> MOTW,
@@ -182,7 +185,7 @@ public:
 
   support::endian::Writer W;
 
-  const MCSymbol &findAliasedSymbol(const MCSymbol &Sym) const;
+  LLVM_MC_ABI const MCSymbol &findAliasedSymbol(const MCSymbol &Sym) const;
 
   /// \name Lifetime management Methods
   /// @{
@@ -194,7 +197,7 @@ public:
   /// \name Utility Methods
   /// @{
 
-  bool isFixupKindPCRel(const MCAssembler &Asm, unsigned Kind);
+  LLVM_MC_ABI bool isFixupKindPCRel(const MCAssembler &Asm, unsigned Kind);
 
   std::vector<IndirectSymbolData> &getIndirectSymbols() {
     return IndirectSymbols;
@@ -209,16 +212,18 @@ public:
   uint64_t getSectionAddress(const MCSection *Sec) const {
     return SectionAddress.lookup(Sec);
   }
-  uint64_t getSymbolAddress(const MCSymbol &S, const MCAssembler &Asm) const;
+  LLVM_MC_ABI uint64_t getSymbolAddress(const MCSymbol &S,
+                                        const MCAssembler &Asm) const;
 
-  uint64_t getFragmentAddress(const MCAssembler &Asm,
-                              const MCFragment *Fragment) const;
+  LLVM_MC_ABI uint64_t getFragmentAddress(const MCAssembler &Asm,
+                                          const MCFragment *Fragment) const;
 
-  uint64_t getPaddingSize(const MCAssembler &Asm, const MCSection *SD) const;
+  LLVM_MC_ABI uint64_t getPaddingSize(const MCAssembler &Asm,
+                                      const MCSection *SD) const;
 
-  const MCSymbol *getAtom(const MCSymbol &S) const;
+  LLVM_MC_ABI const MCSymbol *getAtom(const MCSymbol &S) const;
 
-  bool doesSymbolRequireExternRelocation(const MCSymbol &S);
+  LLVM_MC_ABI bool doesSymbolRequireExternRelocation(const MCSymbol &S);
 
   /// Mach-O deployment target version information.
   void setVersionMin(MCVersionMinType Type, unsigned Major, unsigned Minor,
@@ -269,39 +274,44 @@ public:
 
   /// @}
 
-  void writeHeader(MachO::HeaderFileType Type, unsigned NumLoadCommands,
-                   unsigned LoadCommandsSize, bool SubsectionsViaSymbols);
+  LLVM_MC_ABI void writeHeader(MachO::HeaderFileType Type,
+                               unsigned NumLoadCommands,
+                               unsigned LoadCommandsSize,
+                               bool SubsectionsViaSymbols);
 
   /// Write a segment load command.
   ///
   /// \param NumSections The number of sections in this segment.
   /// \param SectionDataSize The total size of the sections.
-  void writeSegmentLoadCommand(StringRef Name, unsigned NumSections,
-                               uint64_t VMAddr, uint64_t VMSize,
-                               uint64_t SectionDataStartOffset,
-                               uint64_t SectionDataSize, uint32_t MaxProt,
-                               uint32_t InitProt);
+  LLVM_MC_ABI void writeSegmentLoadCommand(StringRef Name, unsigned NumSections,
+                                           uint64_t VMAddr, uint64_t VMSize,
+                                           uint64_t SectionDataStartOffset,
+                                           uint64_t SectionDataSize,
+                                           uint32_t MaxProt, uint32_t InitProt);
 
-  void writeSection(const MCAssembler &Asm, const MCSection &Sec,
-                    uint64_t VMAddr, uint64_t FileOffset, unsigned Flags,
-                    uint64_t RelocationsStart, unsigned NumRelocations);
+  LLVM_MC_ABI void writeSection(const MCAssembler &Asm, const MCSection &Sec,
+                                uint64_t VMAddr, uint64_t FileOffset,
+                                unsigned Flags, uint64_t RelocationsStart,
+                                unsigned NumRelocations);
 
-  void writeSymtabLoadCommand(uint32_t SymbolOffset, uint32_t NumSymbols,
-                              uint32_t StringTableOffset,
-                              uint32_t StringTableSize);
+  LLVM_MC_ABI void writeSymtabLoadCommand(uint32_t SymbolOffset,
+                                          uint32_t NumSymbols,
+                                          uint32_t StringTableOffset,
+                                          uint32_t StringTableSize);
 
-  void writeDysymtabLoadCommand(
+  LLVM_MC_ABI void writeDysymtabLoadCommand(
       uint32_t FirstLocalSymbol, uint32_t NumLocalSymbols,
       uint32_t FirstExternalSymbol, uint32_t NumExternalSymbols,
       uint32_t FirstUndefinedSymbol, uint32_t NumUndefinedSymbols,
       uint32_t IndirectSymbolOffset, uint32_t NumIndirectSymbols);
 
-  void writeNlist(MachSymbolData &MSD, const MCAssembler &Asm);
+  LLVM_MC_ABI void writeNlist(MachSymbolData &MSD, const MCAssembler &Asm);
 
-  void writeLinkeditLoadCommand(uint32_t Type, uint32_t DataOffset,
-                                uint32_t DataSize);
+  LLVM_MC_ABI void writeLinkeditLoadCommand(uint32_t Type, uint32_t DataOffset,
+                                            uint32_t DataSize);
 
-  void writeLinkerOptionsLoadCommand(const std::vector<std::string> &Options);
+  LLVM_MC_ABI void
+  writeLinkerOptionsLoadCommand(const std::vector<std::string> &Options);
 
   // FIXME: We really need to improve the relocation validation. Basically, we
   // want to implement a separate computation which evaluates the relocation
@@ -328,30 +338,31 @@ public:
     Relocations[Sec].push_back(P);
   }
 
-  void recordRelocation(MCAssembler &Asm, const MCFragment *Fragment,
-                        const MCFixup &Fixup, MCValue Target,
-                        uint64_t &FixedValue) override;
+  LLVM_MC_ABI void recordRelocation(MCAssembler &Asm,
+                                    const MCFragment *Fragment,
+                                    const MCFixup &Fixup, MCValue Target,
+                                    uint64_t &FixedValue) override;
 
-  void bindIndirectSymbols(MCAssembler &Asm);
+  LLVM_MC_ABI void bindIndirectSymbols(MCAssembler &Asm);
 
   /// Compute the symbol table data.
-  void computeSymbolTable(MCAssembler &Asm,
-                          std::vector<MachSymbolData> &LocalSymbolData,
-                          std::vector<MachSymbolData> &ExternalSymbolData,
-                          std::vector<MachSymbolData> &UndefinedSymbolData);
+  LLVM_MC_ABI void
+  computeSymbolTable(MCAssembler &Asm,
+                     std::vector<MachSymbolData> &LocalSymbolData,
+                     std::vector<MachSymbolData> &ExternalSymbolData,
+                     std::vector<MachSymbolData> &UndefinedSymbolData);
 
-  void computeSectionAddresses(const MCAssembler &Asm);
+  LLVM_MC_ABI void computeSectionAddresses(const MCAssembler &Asm);
 
-  void executePostLayoutBinding(MCAssembler &Asm) override;
+  LLVM_MC_ABI void executePostLayoutBinding(MCAssembler &Asm) override;
 
-  bool isSymbolRefDifferenceFullyResolvedImpl(const MCAssembler &Asm,
-                                              const MCSymbol &SymA,
-                                              const MCFragment &FB, bool InSet,
-                                              bool IsPCRel) const override;
+  LLVM_MC_ABI bool isSymbolRefDifferenceFullyResolvedImpl(
+      const MCAssembler &Asm, const MCSymbol &SymA, const MCFragment &FB,
+      bool InSet, bool IsPCRel) const override;
 
-  void populateAddrSigSection(MCAssembler &Asm);
+  LLVM_MC_ABI void populateAddrSigSection(MCAssembler &Asm);
 
-  uint64_t writeObject(MCAssembler &Asm) override;
+  LLVM_MC_ABI uint64_t writeObject(MCAssembler &Asm) override;
 };
 } // end namespace llvm
 

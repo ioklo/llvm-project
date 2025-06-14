@@ -11,6 +11,7 @@
 
 #include "llvm/ADT/APInt.h"
 #include "llvm/ADT/StringRef.h"
+#include "llvm/MC/MCConfig.h"
 #include "llvm/Support/Debug.h"
 #include "llvm/Support/SMLoc.h"
 #include <vector>
@@ -22,7 +23,8 @@ class AsmToken {
 public:
   enum TokenKind {
     // Markers
-    Eof, Error,
+    Eof,
+    Error,
 
     // String values.
     Identifier,
@@ -42,23 +44,68 @@ public:
     EndOfStatement,
     Colon,
     Space,
-    Plus, Minus, Tilde,
+    Plus,
+    Minus,
+    Tilde,
     Slash,     // '/'
     BackSlash, // '\'
-    LParen, RParen, LBrac, RBrac, LCurly, RCurly,
-    Question, Star, Dot, Comma, Dollar, Equal, EqualEqual,
+    LParen,
+    RParen,
+    LBrac,
+    RBrac,
+    LCurly,
+    RCurly,
+    Question,
+    Star,
+    Dot,
+    Comma,
+    Dollar,
+    Equal,
+    EqualEqual,
 
-    Pipe, PipePipe, Caret,
-    Amp, AmpAmp, Exclaim, ExclaimEqual, Percent, Hash,
-    Less, LessEqual, LessLess, LessGreater,
-    Greater, GreaterEqual, GreaterGreater, At, MinusGreater,
+    Pipe,
+    PipePipe,
+    Caret,
+    Amp,
+    AmpAmp,
+    Exclaim,
+    ExclaimEqual,
+    Percent,
+    Hash,
+    Less,
+    LessEqual,
+    LessLess,
+    LessGreater,
+    Greater,
+    GreaterEqual,
+    GreaterGreater,
+    At,
+    MinusGreater,
 
     // MIPS unary expression operators such as %neg.
-    PercentCall16, PercentCall_Hi, PercentCall_Lo, PercentDtprel_Hi,
-    PercentDtprel_Lo, PercentGot, PercentGot_Disp, PercentGot_Hi, PercentGot_Lo,
-    PercentGot_Ofst, PercentGot_Page, PercentGottprel, PercentGp_Rel, PercentHi,
-    PercentHigher, PercentHighest, PercentLo, PercentNeg, PercentPcrel_Hi,
-    PercentPcrel_Lo, PercentTlsgd, PercentTlsldm, PercentTprel_Hi,
+    PercentCall16,
+    PercentCall_Hi,
+    PercentCall_Lo,
+    PercentDtprel_Hi,
+    PercentDtprel_Lo,
+    PercentGot,
+    PercentGot_Disp,
+    PercentGot_Hi,
+    PercentGot_Lo,
+    PercentGot_Ofst,
+    PercentGot_Page,
+    PercentGottprel,
+    PercentGp_Rel,
+    PercentHi,
+    PercentHigher,
+    PercentHighest,
+    PercentLo,
+    PercentNeg,
+    PercentPcrel_Hi,
+    PercentPcrel_Lo,
+    PercentTlsgd,
+    PercentTlsldm,
+    PercentTprel_Hi,
     PercentTprel_Lo
   };
 
@@ -82,9 +129,9 @@ public:
   bool is(TokenKind K) const { return Kind == K; }
   bool isNot(TokenKind K) const { return Kind != K; }
 
-  SMLoc getLoc() const;
-  SMLoc getEndLoc() const;
-  SMRange getLocRange() const;
+  LLVM_MC_ABI SMLoc getLoc() const;
+  LLVM_MC_ABI SMLoc getEndLoc() const;
+  LLVM_MC_ABI SMRange getLocRange() const;
 
   /// Get the contents of a string token (without quotes).
   StringRef getStringContents() const {
@@ -123,7 +170,7 @@ public:
     return IntVal;
   }
 
-  void dump(raw_ostream &OS) const;
+  LLVM_MC_ABI void dump(raw_ostream &OS) const;
 };
 
 struct MCAsmMacroParameter {
@@ -134,7 +181,7 @@ struct MCAsmMacroParameter {
 
 #if !defined(NDEBUG) || defined(LLVM_ENABLE_DUMP)
   void dump() const { dump(dbgs()); }
-  LLVM_DUMP_METHOD void dump(raw_ostream &OS) const;
+  LLVM_MC_ABI LLVM_DUMP_METHOD void dump(raw_ostream &OS) const;
 #endif
 };
 
@@ -157,7 +204,7 @@ public:
 
 #if !defined(NDEBUG) || defined(LLVM_ENABLE_DUMP)
   void dump() const { dump(dbgs()); }
-  LLVM_DUMP_METHOD void dump(raw_ostream &OS) const;
+  LLVM_MC_ABI LLVM_DUMP_METHOD void dump(raw_ostream &OS) const;
 #endif
 };
 } // namespace llvm

@@ -9,6 +9,7 @@
 #ifndef LLVM_MC_MCXCOFFOBJECTWRITER_H
 #define LLVM_MC_MCXCOFFOBJECTWRITER_H
 
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCObjectWriter.h"
 
 namespace llvm {
@@ -17,10 +18,10 @@ class raw_pwrite_stream;
 
 class MCXCOFFObjectTargetWriter : public MCObjectTargetWriter {
 protected:
-  MCXCOFFObjectTargetWriter(bool Is64Bit);
+  LLVM_MC_ABI MCXCOFFObjectTargetWriter(bool Is64Bit);
 
 public:
-  ~MCXCOFFObjectTargetWriter() override;
+  LLVM_MC_ABI ~MCXCOFFObjectTargetWriter() override;
 
   Triple::ObjectFormatType getFormat() const override { return Triple::XCOFF; }
   static bool classof(const MCObjectTargetWriter *W) {
@@ -52,7 +53,7 @@ public:
   void setCPU(StringRef TargetCPU) { CPUType = TargetCPU; }
 };
 
-std::unique_ptr<MCObjectWriter>
+LLVM_MC_ABI std::unique_ptr<MCObjectWriter>
 createXCOFFObjectWriter(std::unique_ptr<MCXCOFFObjectTargetWriter> MOTW,
                         raw_pwrite_stream &OS);
 

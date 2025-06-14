@@ -16,6 +16,7 @@
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/ADT/STLExtras.h"
 #include "llvm/ADT/StringRef.h"
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCInstrItineraries.h"
 #include "llvm/MC/MCSchedule.h"
 #include "llvm/TargetParser/SubtargetFeature.h"
@@ -33,15 +34,13 @@ class MCInst;
 
 /// Used to provide key value pairs for feature and CPU bit flags.
 struct SubtargetFeatureKV {
-  const char *Key;                      ///< K-V key string
-  const char *Desc;                     ///< Help descriptor
-  unsigned Value;                       ///< K-V integer value
-  FeatureBitArray Implies;              ///< K-V bit mask
+  const char *Key;         ///< K-V key string
+  const char *Desc;        ///< Help descriptor
+  unsigned Value;          ///< K-V integer value
+  FeatureBitArray Implies; ///< K-V bit mask
 
   /// Compare routine for std::lower_bound
-  bool operator<(StringRef S) const {
-    return StringRef(Key) < S;
-  }
+  bool operator<(StringRef S) const { return StringRef(Key) < S; }
 
   /// Compare routine for std::is_sorted.
   bool operator<(const SubtargetFeatureKV &Other) const {
@@ -53,15 +52,13 @@ struct SubtargetFeatureKV {
 
 /// Used to provide key value pairs for feature and CPU bit flags.
 struct SubtargetSubTypeKV {
-  const char *Key;                      ///< K-V key string
-  FeatureBitArray Implies;              ///< K-V bit mask
-  FeatureBitArray TuneImplies;          ///< K-V bit mask
+  const char *Key;             ///< K-V key string
+  FeatureBitArray Implies;     ///< K-V bit mask
+  FeatureBitArray TuneImplies; ///< K-V bit mask
   const MCSchedModel *SchedModel;
 
   /// Compare routine for std::lower_bound
-  bool operator<(StringRef S) const {
-    return StringRef(Key) < S;
-  }
+  bool operator<(StringRef S) const { return StringRef(Key) < S; }
 
   /// Compare routine for std::is_sorted.
   bool operator<(const SubtargetSubTypeKV &Other) const {
@@ -75,11 +72,11 @@ struct SubtargetSubTypeKV {
 ///
 class MCSubtargetInfo {
   Triple TargetTriple;
-  std::string CPU; // CPU being targeted.
-  std::string TuneCPU; // CPU being tuned for.
+  std::string CPU;               // CPU being targeted.
+  std::string TuneCPU;           // CPU being tuned for.
   ArrayRef<StringRef> ProcNames; // Processor list, including aliases
-  ArrayRef<SubtargetFeatureKV> ProcFeatures;  // Processor feature list
-  ArrayRef<SubtargetSubTypeKV> ProcDesc;  // Processor descriptions
+  ArrayRef<SubtargetFeatureKV> ProcFeatures; // Processor feature list
+  ArrayRef<SubtargetSubTypeKV> ProcDesc;     // Processor descriptions
 
   // Scheduler machine model
   const MCWriteProcResEntry *WriteProcResTable;
@@ -87,21 +84,20 @@ class MCSubtargetInfo {
   const MCReadAdvanceEntry *ReadAdvanceTable;
   const MCSchedModel *CPUSchedModel;
 
-  const InstrStage *Stages;            // Instruction itinerary stages
-  const unsigned *OperandCycles;       // Itinerary operand cycles
+  const InstrStage *Stages;      // Instruction itinerary stages
+  const unsigned *OperandCycles; // Itinerary operand cycles
   const unsigned *ForwardingPaths;
-  FeatureBitset FeatureBits;           // Feature bits for current CPU + FS
-  std::string FeatureString;           // Feature string
+  FeatureBitset FeatureBits; // Feature bits for current CPU + FS
+  std::string FeatureString; // Feature string
 
 public:
   MCSubtargetInfo(const MCSubtargetInfo &) = default;
-  MCSubtargetInfo(const Triple &TT, StringRef CPU, StringRef TuneCPU,
-                  StringRef FS, ArrayRef<StringRef> PN,
-                  ArrayRef<SubtargetFeatureKV> PF,
-                  ArrayRef<SubtargetSubTypeKV> PD,
-                  const MCWriteProcResEntry *WPR, const MCWriteLatencyEntry *WL,
-                  const MCReadAdvanceEntry *RA, const InstrStage *IS,
-                  const unsigned *OC, const unsigned *FP);
+  LLVM_MC_ABI MCSubtargetInfo(
+      const Triple &TT, StringRef CPU, StringRef TuneCPU, StringRef FS,
+      ArrayRef<StringRef> PN, ArrayRef<SubtargetFeatureKV> PF,
+      ArrayRef<SubtargetSubTypeKV> PD, const MCWriteProcResEntry *WPR,
+      const MCWriteLatencyEntry *WL, const MCReadAdvanceEntry *RA,
+      const InstrStage *IS, const unsigned *OC, const unsigned *FP);
   MCSubtargetInfo() = delete;
   MCSubtargetInfo &operator=(const MCSubtargetInfo &) = delete;
   MCSubtargetInfo &operator=(MCSubtargetInfo &&) = delete;
@@ -111,67 +107,68 @@ public:
   StringRef getCPU() const { return CPU; }
   StringRef getTuneCPU() const { return TuneCPU; }
 
-  const FeatureBitset& getFeatureBits() const { return FeatureBits; }
+  const FeatureBitset &getFeatureBits() const { return FeatureBits; }
   void setFeatureBits(const FeatureBitset &FeatureBits_) {
     FeatureBits = FeatureBits_;
   }
 
   StringRef getFeatureString() const { return FeatureString; }
 
-  bool hasFeature(unsigned Feature) const {
-    return FeatureBits[Feature];
-  }
+  bool hasFeature(unsigned Feature) const { return FeatureBits[Feature]; }
 
 protected:
   /// Initialize the scheduling model and feature bits.
   ///
   /// FIXME: Find a way to stick this in the constructor, since it should only
   /// be called during initialization.
-  void InitMCProcessorInfo(StringRef CPU, StringRef TuneCPU, StringRef FS);
+  LLVM_MC_ABI void InitMCProcessorInfo(StringRef CPU, StringRef TuneCPU,
+                                       StringRef FS);
 
 public:
   /// Set the features to the default for the given CPU and TuneCPU, with ano
   /// appended feature string.
-  void setDefaultFeatures(StringRef CPU, StringRef TuneCPU, StringRef FS);
+  LLVM_MC_ABI void setDefaultFeatures(StringRef CPU, StringRef TuneCPU,
+                                      StringRef FS);
 
   /// Toggle a feature and return the re-computed feature bits.
   /// This version does not change the implied bits.
-  FeatureBitset ToggleFeature(uint64_t FB);
+  LLVM_MC_ABI FeatureBitset ToggleFeature(uint64_t FB);
 
   /// Toggle a feature and return the re-computed feature bits.
   /// This version does not change the implied bits.
-  FeatureBitset ToggleFeature(const FeatureBitset& FB);
+  LLVM_MC_ABI FeatureBitset ToggleFeature(const FeatureBitset &FB);
 
   /// Toggle a set of features and return the re-computed feature bits.
   /// This version will also change all implied bits.
-  FeatureBitset ToggleFeature(StringRef FS);
+  LLVM_MC_ABI FeatureBitset ToggleFeature(StringRef FS);
 
   /// Apply a feature flag and return the re-computed feature bits, including
   /// all feature bits implied by the flag.
-  FeatureBitset ApplyFeatureFlag(StringRef FS);
+  LLVM_MC_ABI FeatureBitset ApplyFeatureFlag(StringRef FS);
 
   /// Set/clear additional feature bits, including all other bits they imply.
-  FeatureBitset SetFeatureBitsTransitively(const FeatureBitset& FB);
-  FeatureBitset ClearFeatureBitsTransitively(const FeatureBitset &FB);
+  LLVM_MC_ABI FeatureBitset SetFeatureBitsTransitively(const FeatureBitset &FB);
+  LLVM_MC_ABI FeatureBitset
+  ClearFeatureBitsTransitively(const FeatureBitset &FB);
 
   /// Check whether the subtarget features are enabled/disabled as per
   /// the provided string, ignoring all other features.
-  bool checkFeatures(StringRef FS) const;
+  LLVM_MC_ABI bool checkFeatures(StringRef FS) const;
 
   /// Get the machine model of a CPU.
-  const MCSchedModel &getSchedModelForCPU(StringRef CPU) const;
+  LLVM_MC_ABI const MCSchedModel &getSchedModelForCPU(StringRef CPU) const;
 
   /// Get the machine model for this subtarget's CPU.
   const MCSchedModel &getSchedModel() const { return *CPUSchedModel; }
 
   /// Return an iterator at the first process resource consumed by the given
   /// scheduling class.
-  const MCWriteProcResEntry *getWriteProcResBegin(
-    const MCSchedClassDesc *SC) const {
+  const MCWriteProcResEntry *
+  getWriteProcResBegin(const MCSchedClassDesc *SC) const {
     return &WriteProcResTable[SC->WriteProcResIdx];
   }
-  const MCWriteProcResEntry *getWriteProcResEnd(
-    const MCSchedClassDesc *SC) const {
+  const MCWriteProcResEntry *
+  getWriteProcResEnd(const MCSchedClassDesc *SC) const {
     return getWriteProcResBegin(SC) + SC->NumWriteProcResEntries;
   }
 
@@ -189,7 +186,8 @@ public:
     // (~50). Consider compressing the WriteID into a dense ID of those that are
     // used by ReadAdvance and representing them as a bitset.
     for (const MCReadAdvanceEntry *I = &ReadAdvanceTable[SC->ReadAdvanceIdx],
-           *E = I + SC->NumReadAdvanceEntries; I != E; ++I) {
+                                  *E = I + SC->NumReadAdvanceEntries;
+         I != E; ++I) {
       if (I->UseIdx < UseIdx)
         continue;
       if (I->UseIdx > UseIdx)
@@ -213,10 +211,10 @@ public:
   }
 
   /// Get scheduling itinerary of a CPU.
-  InstrItineraryData getInstrItineraryForCPU(StringRef CPU) const;
+  LLVM_MC_ABI InstrItineraryData getInstrItineraryForCPU(StringRef CPU) const;
 
   /// Initialize an InstrItineraryData instance.
-  void initInstrItins(InstrItineraryData &InstrItins) const;
+  LLVM_MC_ABI void initInstrItins(InstrItineraryData &InstrItins) const;
 
   /// Resolve a variant scheduling class for the given MCInst and CPU.
   virtual unsigned resolveVariantSchedClass(unsigned SchedClass,
@@ -243,7 +241,8 @@ public:
   }
 
   /// Return the list of processor features currently enabled.
-  std::vector<SubtargetFeatureKV> getEnabledProcessorFeatures() const;
+  LLVM_MC_ABI std::vector<SubtargetFeatureKV>
+  getEnabledProcessorFeatures() const;
 
   /// HwMode IDs are stored and accessed in a bit set format, enabling
   /// users to efficiently retrieve specific IDs, such as the RegInfo
@@ -276,17 +275,20 @@ public:
   /// Level is zero-based, so a value of zero means the first level of
   /// cache.
   ///
-  virtual std::optional<unsigned> getCacheSize(unsigned Level) const;
+  LLVM_MC_ABI virtual std::optional<unsigned>
+  getCacheSize(unsigned Level) const;
 
   /// Return the cache associatvity for the given level of cache.
   /// Level is zero-based, so a value of zero means the first level of
   /// cache.
   ///
-  virtual std::optional<unsigned> getCacheAssociativity(unsigned Level) const;
+  LLVM_MC_ABI virtual std::optional<unsigned>
+  getCacheAssociativity(unsigned Level) const;
 
   /// Return the target cache line size in bytes at a given level.
   ///
-  virtual std::optional<unsigned> getCacheLineSize(unsigned Level) const;
+  LLVM_MC_ABI virtual std::optional<unsigned>
+  getCacheLineSize(unsigned Level) const;
 
   /// Return the target cache line size in bytes.  By default, return
   /// the line size for the bottom-most level of cache.  This provides
@@ -304,27 +306,26 @@ public:
 
   /// Return the preferred prefetch distance in terms of instructions.
   ///
-  virtual unsigned getPrefetchDistance() const;
+  LLVM_MC_ABI virtual unsigned getPrefetchDistance() const;
 
   /// Return the maximum prefetch distance in terms of loop
   /// iterations.
   ///
-  virtual unsigned getMaxPrefetchIterationsAhead() const;
+  LLVM_MC_ABI virtual unsigned getMaxPrefetchIterationsAhead() const;
 
   /// \return True if prefetching should also be done for writes.
   ///
-  virtual bool enableWritePrefetching() const;
+  LLVM_MC_ABI virtual bool enableWritePrefetching() const;
 
   /// Return the minimum stride necessary to trigger software
   /// prefetching.
   ///
-  virtual unsigned getMinPrefetchStride(unsigned NumMemAccesses,
-                                        unsigned NumStridedMemAccesses,
-                                        unsigned NumPrefetches,
-                                        bool HasCall) const;
+  LLVM_MC_ABI virtual unsigned
+  getMinPrefetchStride(unsigned NumMemAccesses, unsigned NumStridedMemAccesses,
+                       unsigned NumPrefetches, bool HasCall) const;
 
   /// \return if target want to issue a prefetch in address space \p AS.
-  virtual bool shouldPrefetchAddressSpace(unsigned AS) const;
+  LLVM_MC_ABI virtual bool shouldPrefetchAddressSpace(unsigned AS) const;
 };
 
 } // end namespace llvm

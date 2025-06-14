@@ -9,6 +9,7 @@
 #ifndef LLVM_MC_MCWINCOFFOBJECTWRITER_H
 #define LLVM_MC_MCWINCOFFOBJECTWRITER_H
 
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCObjectWriter.h"
 #include <memory>
 
@@ -21,12 +22,12 @@ class MCValue;
 class raw_pwrite_stream;
 
 class MCWinCOFFObjectTargetWriter : public MCObjectTargetWriter {
-  virtual void anchor();
+  LLVM_MC_ABI virtual void anchor();
 
   const unsigned Machine;
 
 protected:
-  MCWinCOFFObjectTargetWriter(unsigned Machine_);
+  LLVM_MC_ABI MCWinCOFFObjectTargetWriter(unsigned Machine_);
 
 public:
   virtual ~MCWinCOFFObjectTargetWriter() = default;
@@ -53,26 +54,28 @@ class WinCOFFObjectWriter final : public MCObjectWriter {
   bool IncrementalLinkerCompatible = false;
 
 public:
+  LLVM_MC_ABI
   WinCOFFObjectWriter(std::unique_ptr<MCWinCOFFObjectTargetWriter> MOTW,
                       raw_pwrite_stream &OS);
+  LLVM_MC_ABI
   WinCOFFObjectWriter(std::unique_ptr<MCWinCOFFObjectTargetWriter> MOTW,
                       raw_pwrite_stream &OS, raw_pwrite_stream &DwoOS);
 
   // MCObjectWriter interface implementation.
-  void reset() override;
+  LLVM_MC_ABI void reset() override;
   void setIncrementalLinkerCompatible(bool Value) {
     IncrementalLinkerCompatible = Value;
   }
-  void executePostLayoutBinding(MCAssembler &Asm) override;
-  bool isSymbolRefDifferenceFullyResolvedImpl(const MCAssembler &Asm,
-                                              const MCSymbol &SymA,
-                                              const MCFragment &FB, bool InSet,
-                                              bool IsPCRel) const override;
-  void recordRelocation(MCAssembler &Asm, const MCFragment *Fragment,
-                        const MCFixup &Fixup, MCValue Target,
-                        uint64_t &FixedValue) override;
-  uint64_t writeObject(MCAssembler &Asm) override;
-  int getSectionNumber(const MCSection &Section) const;
+  LLVM_MC_ABI void executePostLayoutBinding(MCAssembler &Asm) override;
+  LLVM_MC_ABI bool isSymbolRefDifferenceFullyResolvedImpl(
+      const MCAssembler &Asm, const MCSymbol &SymA, const MCFragment &FB,
+      bool InSet, bool IsPCRel) const override;
+  LLVM_MC_ABI void recordRelocation(MCAssembler &Asm,
+                                    const MCFragment *Fragment,
+                                    const MCFixup &Fixup, MCValue Target,
+                                    uint64_t &FixedValue) override;
+  LLVM_MC_ABI uint64_t writeObject(MCAssembler &Asm) override;
+  LLVM_MC_ABI int getSectionNumber(const MCSection &Section) const;
 };
 
 /// Construct a new Win COFF writer instance.
@@ -80,11 +83,11 @@ public:
 /// \param MOTW - The target specific WinCOFF writer subclass.
 /// \param OS - The stream to write to.
 /// \returns The constructed object writer.
-std::unique_ptr<MCObjectWriter>
+LLVM_MC_ABI std::unique_ptr<MCObjectWriter>
 createWinCOFFObjectWriter(std::unique_ptr<MCWinCOFFObjectTargetWriter> MOTW,
                           raw_pwrite_stream &OS);
 
-std::unique_ptr<MCObjectWriter>
+LLVM_MC_ABI std::unique_ptr<MCObjectWriter>
 createWinCOFFDwoObjectWriter(std::unique_ptr<MCWinCOFFObjectTargetWriter> MOTW,
                              raw_pwrite_stream &OS, raw_pwrite_stream &DwoOS);
 } // end namespace llvm

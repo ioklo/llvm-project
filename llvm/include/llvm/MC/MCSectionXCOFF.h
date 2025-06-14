@@ -14,6 +14,7 @@
 #define LLVM_MC_MCSECTIONXCOFF_H
 
 #include "llvm/BinaryFormat/XCOFF.h"
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCSection.h"
 #include "llvm/MC/MCSymbolXCOFF.h"
 
@@ -90,10 +91,10 @@ class MCSectionXCOFF final : public MCSection {
     setAlignment(Align(DefaultTextAlignVal));
   }
 
-  void printCsectDirective(raw_ostream &OS) const;
+  LLVM_MC_ABI void printCsectDirective(raw_ostream &OS) const;
 
 public:
-  ~MCSectionXCOFF();
+  LLVM_MC_ABI ~MCSectionXCOFF();
 
   static bool classof(const MCSection *S) {
     return S->getVariant() == SV_XCOFF;
@@ -115,10 +116,10 @@ public:
   }
   MCSymbolXCOFF *getQualNameSymbol() const { return QualName; }
 
-  void printSwitchToSection(const MCAsmInfo &MAI, const Triple &T,
-                            raw_ostream &OS,
-                            uint32_t Subsection) const override;
-  bool useCodeAlign() const override;
+  LLVM_MC_ABI void printSwitchToSection(const MCAsmInfo &MAI, const Triple &T,
+                                        raw_ostream &OS,
+                                        uint32_t Subsection) const override;
+  LLVM_MC_ABI bool useCodeAlign() const override;
   StringRef getSymbolTableName() const { return SymbolTableName; }
   void setSymbolTableName(StringRef STN) { SymbolTableName = STN; }
   bool isMultiSymbolsAllowed() const { return MultiSymbolsAllowed; }

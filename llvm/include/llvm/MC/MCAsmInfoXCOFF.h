@@ -10,19 +10,20 @@
 #define LLVM_MC_MCASMINFOXCOFF_H
 
 #include "llvm/MC/MCAsmInfo.h"
+#include "llvm/MC/MCConfig.h"
 
 namespace llvm {
 
 class MCAsmInfoXCOFF : public MCAsmInfo {
-  virtual void anchor();
+  LLVM_MC_ABI virtual void anchor();
 
 protected:
-  MCAsmInfoXCOFF();
+  LLVM_MC_ABI MCAsmInfoXCOFF();
 
 public:
   // Return true only when C is an acceptable character inside a
   // MCSymbolXCOFF.
-  bool isAcceptableChar(char C) const override;
+  LLVM_MC_ABI bool isAcceptableChar(char C) const override;
 };
 
 } // end namespace llvm

@@ -11,6 +11,7 @@
 
 #include "MCAsmBackend.h"
 #include "MCCodeEmitter.h"
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCDirectives.h"
 #include "llvm/MC/MCObjectStreamer.h"
 #include "llvm/MC/MCObjectWriter.h"
@@ -29,7 +30,7 @@ public:
                          std::move(Emitter)),
         SeenIdent(false) {}
 
-  ~MCWasmStreamer() override;
+  LLVM_MC_ABI ~MCWasmStreamer() override;
 
   /// state management
   void reset() override {
@@ -40,38 +41,46 @@ public:
   /// \name MCStreamer Interface
   /// @{
 
-  void changeSection(MCSection *Section, uint32_t Subsection) override;
-  void emitLabel(MCSymbol *Symbol, SMLoc Loc = SMLoc()) override;
-  void emitLabelAtPos(MCSymbol *Symbol, SMLoc Loc, MCDataFragment &F,
-                      uint64_t Offset) override;
-  void emitAssemblerFlag(MCAssemblerFlag Flag) override;
-  void emitThumbFunc(MCSymbol *Func) override;
-  void emitWeakReference(MCSymbol *Alias, const MCSymbol *Symbol) override;
-  bool emitSymbolAttribute(MCSymbol *Symbol, MCSymbolAttr Attribute) override;
-  void emitSymbolDesc(MCSymbol *Symbol, unsigned DescValue) override;
-  void emitCommonSymbol(MCSymbol *Symbol, uint64_t Size,
-                        Align ByteAlignment) override;
+  LLVM_MC_ABI void changeSection(MCSection *Section,
+                                 uint32_t Subsection) override;
+  LLVM_MC_ABI void emitLabel(MCSymbol *Symbol, SMLoc Loc = SMLoc()) override;
+  LLVM_MC_ABI void emitLabelAtPos(MCSymbol *Symbol, SMLoc Loc,
+                                  MCDataFragment &F, uint64_t Offset) override;
+  LLVM_MC_ABI void emitAssemblerFlag(MCAssemblerFlag Flag) override;
+  LLVM_MC_ABI void emitThumbFunc(MCSymbol *Func) override;
+  LLVM_MC_ABI void emitWeakReference(MCSymbol *Alias,
+                                     const MCSymbol *Symbol) override;
+  LLVM_MC_ABI bool emitSymbolAttribute(MCSymbol *Symbol,
+                                       MCSymbolAttr Attribute) override;
+  LLVM_MC_ABI void emitSymbolDesc(MCSymbol *Symbol,
+                                  unsigned DescValue) override;
+  LLVM_MC_ABI void emitCommonSymbol(MCSymbol *Symbol, uint64_t Size,
+                                    Align ByteAlignment) override;
 
-  void emitELFSize(MCSymbol *Symbol, const MCExpr *Value) override;
+  LLVM_MC_ABI void emitELFSize(MCSymbol *Symbol, const MCExpr *Value) override;
 
-  void emitLocalCommonSymbol(MCSymbol *Symbol, uint64_t Size,
-                             Align ByteAlignment) override;
+  LLVM_MC_ABI void emitLocalCommonSymbol(MCSymbol *Symbol, uint64_t Size,
+                                         Align ByteAlignment) override;
 
-  void emitZerofill(MCSection *Section, MCSymbol *Symbol = nullptr,
-                    uint64_t Size = 0, Align ByteAlignment = Align(1),
-                    SMLoc Loc = SMLoc()) override;
-  void emitTBSSSymbol(MCSection *Section, MCSymbol *Symbol, uint64_t Size,
-                      Align ByteAlignment = Align(1)) override;
+  LLVM_MC_ABI void emitZerofill(MCSection *Section, MCSymbol *Symbol = nullptr,
+                                uint64_t Size = 0,
+                                Align ByteAlignment = Align(1),
+                                SMLoc Loc = SMLoc()) override;
+  LLVM_MC_ABI void emitTBSSSymbol(MCSection *Section, MCSymbol *Symbol,
+                                  uint64_t Size,
+                                  Align ByteAlignment = Align(1)) override;
 
-  void emitIdent(StringRef IdentString) override;
+  LLVM_MC_ABI void emitIdent(StringRef IdentString) override;
 
-  void finishImpl() override;
+  LLVM_MC_ABI void finishImpl() override;
 
 private:
-  void emitInstToFragment(const MCInst &Inst, const MCSubtargetInfo &) override;
-  void emitInstToData(const MCInst &Inst, const MCSubtargetInfo &) override;
+  LLVM_MC_ABI void emitInstToFragment(const MCInst &Inst,
+                                      const MCSubtargetInfo &) override;
+  LLVM_MC_ABI void emitInstToData(const MCInst &Inst,
+                                  const MCSubtargetInfo &) override;
 
-  void fixSymbolsInTLSFixups(const MCExpr *expr);
+  LLVM_MC_ABI void fixSymbolsInTLSFixups(const MCExpr *expr);
 
   bool SeenIdent;
 };

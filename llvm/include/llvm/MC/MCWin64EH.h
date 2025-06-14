@@ -14,6 +14,7 @@
 #ifndef LLVM_MC_MCWIN64EH_H
 #define LLVM_MC_MCWIN64EH_H
 
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCWinEH.h"
 #include "llvm/Support/Win64EH.h"
 
@@ -52,25 +53,25 @@ struct Instruction {
 
 class UnwindEmitter : public WinEH::UnwindEmitter {
 public:
-  void Emit(MCStreamer &Streamer) const override;
-  void EmitUnwindInfo(MCStreamer &Streamer, WinEH::FrameInfo *FI,
-                      bool HandlerData) const override;
+  LLVM_MC_ABI void Emit(MCStreamer &Streamer) const override;
+  LLVM_MC_ABI void EmitUnwindInfo(MCStreamer &Streamer, WinEH::FrameInfo *FI,
+                                  bool HandlerData) const override;
 };
 
 class ARMUnwindEmitter : public WinEH::UnwindEmitter {
 public:
-  void Emit(MCStreamer &Streamer) const override;
-  void EmitUnwindInfo(MCStreamer &Streamer, WinEH::FrameInfo *FI,
-                      bool HandlerData) const override;
+  LLVM_MC_ABI void Emit(MCStreamer &Streamer) const override;
+  LLVM_MC_ABI void EmitUnwindInfo(MCStreamer &Streamer, WinEH::FrameInfo *FI,
+                                  bool HandlerData) const override;
 };
 
 class ARM64UnwindEmitter : public WinEH::UnwindEmitter {
 public:
-  void Emit(MCStreamer &Streamer) const override;
-  void EmitUnwindInfo(MCStreamer &Streamer, WinEH::FrameInfo *FI,
-                      bool HandlerData) const override;
+  LLVM_MC_ABI void Emit(MCStreamer &Streamer) const override;
+  LLVM_MC_ABI void EmitUnwindInfo(MCStreamer &Streamer, WinEH::FrameInfo *FI,
+                                  bool HandlerData) const override;
 };
-}
+} // namespace Win64EH
 } // end namespace llvm
 
 #endif

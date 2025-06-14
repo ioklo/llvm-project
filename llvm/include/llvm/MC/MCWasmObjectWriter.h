@@ -9,6 +9,7 @@
 #ifndef LLVM_MC_MCWASMOBJECTWRITER_H
 #define LLVM_MC_MCWASMOBJECTWRITER_H
 
+#include "llvm/MC/MCConfig.h"
 #include "llvm/MC/MCObjectWriter.h"
 #include <memory>
 
@@ -24,10 +25,11 @@ class MCWasmObjectTargetWriter : public MCObjectTargetWriter {
   const unsigned IsEmscripten : 1;
 
 protected:
-  explicit MCWasmObjectTargetWriter(bool Is64Bit_, bool IsEmscripten);
+  LLVM_MC_ABI explicit MCWasmObjectTargetWriter(bool Is64Bit_,
+                                                bool IsEmscripten);
 
 public:
-  virtual ~MCWasmObjectTargetWriter();
+  LLVM_MC_ABI virtual ~MCWasmObjectTargetWriter();
 
   Triple::ObjectFormatType getFormat() const override { return Triple::Wasm; }
   static bool classof(const MCObjectTargetWriter *W) {
@@ -50,11 +52,11 @@ public:
 /// \param MOTW - The target specific Wasm writer subclass.
 /// \param OS - The stream to write to.
 /// \returns The constructed object writer.
-std::unique_ptr<MCObjectWriter>
+LLVM_MC_ABI std::unique_ptr<MCObjectWriter>
 createWasmObjectWriter(std::unique_ptr<MCWasmObjectTargetWriter> MOTW,
                        raw_pwrite_stream &OS);
 
-std::unique_ptr<MCObjectWriter>
+LLVM_MC_ABI std::unique_ptr<MCObjectWriter>
 createWasmDwoObjectWriter(std::unique_ptr<MCWasmObjectTargetWriter> MOTW,
                           raw_pwrite_stream &OS, raw_pwrite_stream &DwoOS);
 
