@@ -314,7 +314,7 @@ public:
   LLVM_CORE_ABI static Constant *getInfinity(Type *Ty, bool Negative = false);
 
   /// Return true if Ty is big enough to represent V.
-  static bool isValueValidForType(Type *Ty, const APFloat &V);
+  LLVM_CORE_ABI static bool isValueValidForType(Type *Ty, const APFloat &V);
   inline const APFloat &getValueAPF() const { return Val; }
   inline const APFloat &getValue() const { return Val; }
 
