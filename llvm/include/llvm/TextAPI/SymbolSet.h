@@ -18,6 +18,7 @@
 #include "llvm/TextAPI/Architecture.h"
 #include "llvm/TextAPI/ArchitectureSet.h"
 #include "llvm/TextAPI/Symbol.h"
+#include "llvm/TextAPI/TextAPIConfig.h"
 #include <stddef.h>
 
 namespace llvm {
@@ -91,8 +92,8 @@ private:
 
 public:
   SymbolSet() = default;
-  Symbol *addGlobal(EncodeKind Kind, StringRef Name, SymbolFlags Flags,
-                    const Target &Targ);
+  LLVM_TEXTAPI_ABI Symbol *addGlobal(EncodeKind Kind, StringRef Name,
+                                     SymbolFlags Flags, const Target &Targ);
   size_t size() const { return Symbols.size(); }
 
   template <typename RangeT, typename ElT = std::remove_reference_t<
@@ -107,7 +108,7 @@ public:
     return Global;
   }
 
-  const Symbol *
+  LLVM_TEXTAPI_ABI const Symbol *
   findSymbol(EncodeKind Kind, StringRef Name,
              ObjCIFSymbolKind ObjCIF = ObjCIFSymbolKind::None) const;
 

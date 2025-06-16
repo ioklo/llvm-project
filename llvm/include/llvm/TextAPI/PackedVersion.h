@@ -14,6 +14,7 @@
 #define LLVM_TEXTAPI_PACKEDVERSION_H
 
 #include "llvm/Support/VersionTuple.h"
+#include "llvm/TextAPI/TextAPIConfig.h"
 #include <cstdint>
 #include <string>
 #include <utility>
@@ -53,8 +54,8 @@ public:
   /// Retrieve the subminor version number, if provided.
   unsigned getSubminor() const { return Version & 0xff; }
 
-  bool parse32(StringRef Str);
-  std::pair<bool, bool> parse64(StringRef Str);
+  LLVM_TEXTAPI_ABI bool parse32(StringRef Str);
+  LLVM_TEXTAPI_ABI std::pair<bool, bool> parse64(StringRef Str);
 
   bool operator<(const PackedVersion &O) const { return Version < O.Version; }
 
@@ -64,9 +65,9 @@ public:
 
   uint32_t rawValue() const { return Version; }
 
-  operator std::string() const;
+  LLVM_TEXTAPI_ABI operator std::string() const;
 
-  void print(raw_ostream &OS) const;
+  LLVM_TEXTAPI_ABI void print(raw_ostream &OS) const;
 };
 
 inline raw_ostream &operator<<(raw_ostream &OS, const PackedVersion &Version) {

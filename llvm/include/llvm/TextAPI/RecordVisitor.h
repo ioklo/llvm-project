@@ -15,6 +15,7 @@
 
 #include "llvm/TextAPI/Record.h"
 #include "llvm/TextAPI/SymbolSet.h"
+#include "llvm/TextAPI/TextAPIConfig.h"
 
 namespace llvm {
 namespace MachO {
@@ -22,11 +23,11 @@ namespace MachO {
 /// Base class for any usage of traversing over collected Records.
 class RecordVisitor {
 public:
-  virtual ~RecordVisitor();
+  LLVM_TEXTAPI_ABI virtual ~RecordVisitor();
 
   virtual void visitGlobal(const GlobalRecord &) = 0;
-  virtual void visitObjCInterface(const ObjCInterfaceRecord &);
-  virtual void visitObjCCategory(const ObjCCategoryRecord &);
+  LLVM_TEXTAPI_ABI virtual void visitObjCInterface(const ObjCInterfaceRecord &);
+  LLVM_TEXTAPI_ABI virtual void visitObjCCategory(const ObjCCategoryRecord &);
 };
 
 /// Specialized RecordVisitor for collecting exported symbols
@@ -37,9 +38,10 @@ public:
   SymbolConverter(SymbolSet *Symbols, const Target &T,
                   const bool RecordUndefs = false)
       : Symbols(Symbols), Targ(T), RecordUndefs(RecordUndefs) {}
-  void visitGlobal(const GlobalRecord &) override;
-  void visitObjCInterface(const ObjCInterfaceRecord &) override;
-  void visitObjCCategory(const ObjCCategoryRecord &) override;
+  LLVM_TEXTAPI_ABI void visitGlobal(const GlobalRecord &) override;
+  LLVM_TEXTAPI_ABI void
+  visitObjCInterface(const ObjCInterfaceRecord &) override;
+  LLVM_TEXTAPI_ABI void visitObjCCategory(const ObjCCategoryRecord &) override;
 
 private:
   void addIVars(const ArrayRef<ObjCIVarRecord *>, StringRef ContainerName);

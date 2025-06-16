@@ -892,14 +892,14 @@ private:
 /// Parses the provided JSON source, or returns a ParseError.
 /// The returned Value is self-contained and owns its strings (they do not refer
 /// to the original source).
-llvm::Expected<Value> parse(llvm::StringRef JSON);
+LLVM_SUPPORT_ABI llvm::Expected<Value> parse(llvm::StringRef JSON);
 
 class ParseError : public llvm::ErrorInfo<ParseError> {
   const char *Msg;
   unsigned Line, Column, Offset;
 
 public:
-  static char ID;
+  LLVM_SUPPORT_ABI static char ID;
   ParseError(const char *Msg, unsigned Line, unsigned Column, unsigned Offset)
       : Msg(Msg), Line(Line), Column(Column), Offset(Offset) {}
   void log(llvm::raw_ostream &OS) const override {
@@ -1098,7 +1098,7 @@ inline llvm::raw_ostream &operator<<(llvm::raw_ostream &OS, const Value &V) {
 /// The default style is basic/compact formatting, like operator<<.
 /// A format string like formatv("{0:2}", Value) pretty-prints with indent 2.
 template <> struct format_provider<llvm::json::Value> {
-  static void format(const llvm::json::Value &, raw_ostream &, StringRef);
+  LLVM_SUPPORT_ABI static void format(const llvm::json::Value &, raw_ostream &, StringRef);
 };
 } // namespace llvm
 

@@ -18,6 +18,7 @@
 #include "llvm/ADT/StringRef.h"
 #include "llvm/Support/Casting.h"
 #include "llvm/TextAPI/Symbol.h"
+#include "llvm/TextAPI/TextAPIConfig.h"
 #include <string>
 
 namespace llvm {
@@ -164,9 +165,10 @@ public:
   ObjCContainerRecord(StringRef Name, RecordLinkage Linkage)
       : Record({Name, Linkage, SymbolFlags::Data}) {}
 
-  ObjCIVarRecord *addObjCIVar(StringRef IVar, RecordLinkage Linkage);
-  ObjCIVarRecord *findObjCIVar(StringRef IVar) const;
-  std::vector<ObjCIVarRecord *> getObjCIVars() const;
+  LLVM_TEXTAPI_ABI ObjCIVarRecord *addObjCIVar(StringRef IVar,
+                                               RecordLinkage Linkage);
+  LLVM_TEXTAPI_ABI ObjCIVarRecord *findObjCIVar(StringRef IVar) const;
+  LLVM_TEXTAPI_ABI std::vector<ObjCIVarRecord *> getObjCIVars() const;
   RecordLinkage getLinkage() const { return Linkage; }
 
 private:
@@ -207,11 +209,13 @@ public:
     return getLinkageForSymbol(CurrType) >= RecordLinkage::Rexported;
   }
 
-  RecordLinkage getLinkageForSymbol(ObjCIFSymbolKind CurrType) const;
-  void updateLinkageForSymbols(ObjCIFSymbolKind SymType, RecordLinkage Link);
+  LLVM_TEXTAPI_ABI RecordLinkage
+  getLinkageForSymbol(ObjCIFSymbolKind CurrType) const;
+  LLVM_TEXTAPI_ABI void updateLinkageForSymbols(ObjCIFSymbolKind SymType,
+                                                RecordLinkage Link);
 
-  bool addObjCCategory(ObjCCategoryRecord *Record);
-  std::vector<ObjCCategoryRecord *> getObjCCategories() const;
+  LLVM_TEXTAPI_ABI bool addObjCCategory(ObjCCategoryRecord *Record);
+  LLVM_TEXTAPI_ABI std::vector<ObjCCategoryRecord *> getObjCCategories() const;
 
 private:
   /// Linkage level for each symbol represented in ObjCInterfaceRecord.

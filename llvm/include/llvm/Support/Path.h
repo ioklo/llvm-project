@@ -76,7 +76,7 @@ class const_iterator
                                   const StringRef> {
   StringRef Path;          ///< The entire path.
   StringRef Component;     ///< The current component. Not necessarily in Path.
-  size_t    Position = 0;  ///< The iterators current position within Path.
+  size_t Position = 0;     ///< The iterators current position within Path.
   Style S = Style::native; ///< The path style to use.
 
   // An end iterator has Position = Path.size() + 1.
@@ -85,7 +85,7 @@ class const_iterator
 
 public:
   reference operator*() const { return Component; }
-  const_iterator &operator++();    // preincrement
+  LLVM_SUPPORT_ABI const_iterator &operator++(); // preincrement
   LLVM_SUPPORT_ABI bool operator==(const const_iterator &RHS) const;
 
   /// Difference in bytes between this and RHS.
@@ -102,7 +102,7 @@ class reverse_iterator
                                   const StringRef> {
   StringRef Path;          ///< The entire path.
   StringRef Component;     ///< The current component. Not necessarily in Path.
-  size_t    Position = 0;  ///< The iterators current position within Path.
+  size_t Position = 0;     ///< The iterators current position within Path.
   Style S = Style::native; ///< The path style to use.
 
   friend LLVM_SUPPORT_ABI reverse_iterator rbegin(StringRef path, Style style);
@@ -320,7 +320,7 @@ StringRef root_name(StringRef path LLVM_LIFETIME_BOUND,
 /// @result The root directory of \a path if it has one, otherwise
 ///               "".
 LLVM_SUPPORT_ABI StringRef root_directory(StringRef path LLVM_LIFETIME_BOUND,
-                         Style style = Style::native);
+                                          Style style = Style::native);
 
 /// Get root path.
 ///
@@ -329,7 +329,7 @@ LLVM_SUPPORT_ABI StringRef root_directory(StringRef path LLVM_LIFETIME_BOUND,
 /// @param path Input path.
 /// @result The root path of \a path if it has one, otherwise "".
 LLVM_SUPPORT_ABI StringRef root_path(StringRef path LLVM_LIFETIME_BOUND,
-                    Style style = Style::native);
+                                     Style style = Style::native);
 
 /// Get relative path.
 ///

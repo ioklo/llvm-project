@@ -15,6 +15,7 @@
 #define LLVM_TEXTAPI_TEXTAPIERROR_H
 
 #include "llvm/Support/Error.h"
+#include "llvm/TextAPI/TextAPIConfig.h"
 
 namespace llvm::MachO {
 enum class TextAPIErrorCode {
@@ -27,7 +28,7 @@ enum class TextAPIErrorCode {
 
 class TextAPIError : public llvm::ErrorInfo<TextAPIError> {
 public:
-  static char ID;
+  LLVM_TEXTAPI_ABI static char ID;
   TextAPIErrorCode EC;
   std::string Msg;
 
