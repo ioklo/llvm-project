@@ -56,7 +56,7 @@ using file_t = void *;
 using file_t = int;
 #endif
 
-extern const file_t kInvalidFile;
+LLVM_SUPPORT_ABI extern const file_t kInvalidFile;
 
 /// An enumeration for the file system's view of the type.
 enum class file_type {

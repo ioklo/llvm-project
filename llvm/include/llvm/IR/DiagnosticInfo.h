@@ -117,7 +117,7 @@ private:
   /// Severity gives the severity of the diagnostic.
   const DiagnosticSeverity Severity;
 
-  virtual void anchor();
+  LLVM_CORE_ABI virtual void anchor();
 
 public:
   DiagnosticInfo(/* DiagnosticKind */ int Kind, DiagnosticSeverity Severity)

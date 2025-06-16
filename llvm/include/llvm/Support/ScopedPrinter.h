@@ -449,7 +449,7 @@ private:
     return LHS.Name < RHS.Name;
   }
 
-  virtual void printBinaryImpl(StringRef Label, StringRef Str,
+  LLVM_SUPPORT_ABI virtual void printBinaryImpl(StringRef Label, StringRef Str,
                                ArrayRef<uint8_t> Value, bool Block,
                                uint32_t StartOffset = 0);
 

@@ -22,6 +22,7 @@
 #include "llvm/Config/llvm-config.h"
 #include "llvm/MC/MCSymbolWasm.h"
 #include "llvm/Object/Binary.h"
+#include "llvm/Object/ObjectConfig.h"
 #include "llvm/Object/ObjectFile.h"
 #include "llvm/Support/Error.h"
 #include "llvm/Support/MemoryBuffer.h"
@@ -98,10 +99,10 @@ public:
     return Info.Flags & wasm::WASM_SYMBOL_VISIBILITY_MASK;
   }
 
-  void print(raw_ostream &Out) const;
+  LLVM_OBJECT_ABI void print(raw_ostream &Out) const;
 
 #if !defined(NDEBUG) || defined(LLVM_ENABLE_DUMP)
-  LLVM_DUMP_METHOD void dump() const;
+  LLVM_OBJECT_ABI LLVM_DUMP_METHOD void dump() const;
 #endif
 };
 
@@ -109,8 +110,8 @@ struct WasmSection {
   WasmSection() = default;
 
   uint32_t Type = 0;
-  uint32_t Offset = 0;       // Offset within the file
-  StringRef Name;            // Section name (User-defined sections only)
+  uint32_t Offset = 0;          // Offset within the file
+  StringRef Name;               // Section name (User-defined sections only)
   uint32_t Comdat = UINT32_MAX; // From the "comdat info" section
   ArrayRef<uint8_t> Content;
   std::vector<wasm::WasmRelocation> Relocations;
@@ -126,13 +127,17 @@ struct WasmSegment {
 class WasmObjectFile : public ObjectFile {
 
 public:
-  WasmObjectFile(MemoryBufferRef Object, Error &Err);
+  LLVM_OBJECT_ABI WasmObjectFile(MemoryBufferRef Object, Error &Err);
 
-  const wasm::WasmObjectHeader &getHeader() const;
-  const WasmSymbol &getWasmSymbol(const DataRefImpl &Symb) const;
-  const WasmSymbol &getWasmSymbol(const SymbolRef &Symbol) const;
-  const WasmSection &getWasmSection(const SectionRef &Section) const;
-  const wasm::WasmRelocation &getWasmRelocation(const RelocationRef &Ref) const;
+  LLVM_OBJECT_ABI const wasm::WasmObjectHeader &getHeader() const;
+  LLVM_OBJECT_ABI const WasmSymbol &
+  getWasmSymbol(const DataRefImpl &Symb) const;
+  LLVM_OBJECT_ABI const WasmSymbol &
+  getWasmSymbol(const SymbolRef &Symbol) const;
+  LLVM_OBJECT_ABI const WasmSection &
+  getWasmSection(const SectionRef &Section) const;
+  LLVM_OBJECT_ABI const wasm::WasmRelocation &
+  getWasmRelocation(const RelocationRef &Ref) const;
 
   static bool classof(const Binary *v) { return v->isWasm(); }
 
@@ -160,60 +165,71 @@ public:
   uint32_t getNumImportedFunctions() const { return NumImportedFunctions; }
   uint32_t getNumImportedTags() const { return NumImportedTags; }
   uint32_t getNumSections() const { return Sections.size(); }
-  void moveSymbolNext(DataRefImpl &Symb) const override;
+  LLVM_OBJECT_ABI void moveSymbolNext(DataRefImpl &Symb) const override;
 
-  Expected<uint32_t> getSymbolFlags(DataRefImpl Symb) const override;
+  LLVM_OBJECT_ABI Expected<uint32_t>
+  getSymbolFlags(DataRefImpl Symb) const override;
 
-  basic_symbol_iterator symbol_begin() const override;
+  LLVM_OBJECT_ABI basic_symbol_iterator symbol_begin() const override;
 
-  basic_symbol_iterator symbol_end() const override;
-  Expected<StringRef> getSymbolName(DataRefImpl Symb) const override;
+  LLVM_OBJECT_ABI basic_symbol_iterator symbol_end() const override;
+  LLVM_OBJECT_ABI Expected<StringRef>
+  getSymbolName(DataRefImpl Symb) const override;
 
   bool is64Bit() const override { return false; }
 
-  Expected<uint64_t> getSymbolAddress(DataRefImpl Symb) const override;
-  uint64_t getWasmSymbolValue(const WasmSymbol &Sym) const;
-  uint64_t getSymbolValueImpl(DataRefImpl Symb) const override;
-  uint32_t getSymbolAlignment(DataRefImpl Symb) const override;
-  uint64_t getCommonSymbolSizeImpl(DataRefImpl Symb) const override;
-  Expected<SymbolRef::Type> getSymbolType(DataRefImpl Symb) const override;
-  Expected<section_iterator> getSymbolSection(DataRefImpl Symb) const override;
-  uint32_t getSymbolSectionId(SymbolRef Sym) const;
-  uint32_t getSymbolSize(SymbolRef Sym) const;
+  LLVM_OBJECT_ABI Expected<uint64_t>
+  getSymbolAddress(DataRefImpl Symb) const override;
+  LLVM_OBJECT_ABI uint64_t getWasmSymbolValue(const WasmSymbol &Sym) const;
+  LLVM_OBJECT_ABI uint64_t getSymbolValueImpl(DataRefImpl Symb) const override;
+  LLVM_OBJECT_ABI uint32_t getSymbolAlignment(DataRefImpl Symb) const override;
+  LLVM_OBJECT_ABI uint64_t
+  getCommonSymbolSizeImpl(DataRefImpl Symb) const override;
+  LLVM_OBJECT_ABI Expected<SymbolRef::Type>
+  getSymbolType(DataRefImpl Symb) const override;
+  LLVM_OBJECT_ABI Expected<section_iterator>
+  getSymbolSection(DataRefImpl Symb) const override;
+  LLVM_OBJECT_ABI uint32_t getSymbolSectionId(SymbolRef Sym) const;
+  LLVM_OBJECT_ABI uint32_t getSymbolSize(SymbolRef Sym) const;
 
   // Overrides from SectionRef.
-  void moveSectionNext(DataRefImpl &Sec) const override;
-  Expected<StringRef> getSectionName(DataRefImpl Sec) const override;
-  uint64_t getSectionAddress(DataRefImpl Sec) const override;
-  uint64_t getSectionIndex(DataRefImpl Sec) const override;
-  uint64_t getSectionSize(DataRefImpl Sec) const override;
-  Expected<ArrayRef<uint8_t>>
-  getSectionContents(DataRefImpl Sec) const override;
-  uint64_t getSectionAlignment(DataRefImpl Sec) const override;
-  bool isSectionCompressed(DataRefImpl Sec) const override;
-  bool isSectionText(DataRefImpl Sec) const override;
-  bool isSectionData(DataRefImpl Sec) const override;
-  bool isSectionBSS(DataRefImpl Sec) const override;
-  bool isSectionVirtual(DataRefImpl Sec) const override;
-  relocation_iterator section_rel_begin(DataRefImpl Sec) const override;
-  relocation_iterator section_rel_end(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI void moveSectionNext(DataRefImpl &Sec) const override;
+  LLVM_OBJECT_ABI Expected<StringRef>
+  getSectionName(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI uint64_t getSectionAddress(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI uint64_t getSectionIndex(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI uint64_t getSectionSize(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI Expected<ArrayRef<uint8_t>>
+      LLVM_OBJECT_ABI getSectionContents(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI uint64_t getSectionAlignment(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI bool isSectionCompressed(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI bool isSectionText(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI bool isSectionData(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI bool isSectionBSS(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI bool isSectionVirtual(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI relocation_iterator
+  section_rel_begin(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI relocation_iterator
+  section_rel_end(DataRefImpl Sec) const override;
 
   // Overrides from RelocationRef.
-  void moveRelocationNext(DataRefImpl &Rel) const override;
-  uint64_t getRelocationOffset(DataRefImpl Rel) const override;
-  symbol_iterator getRelocationSymbol(DataRefImpl Rel) const override;
-  uint64_t getRelocationType(DataRefImpl Rel) const override;
-  void getRelocationTypeName(DataRefImpl Rel,
-                             SmallVectorImpl<char> &Result) const override;
+  LLVM_OBJECT_ABI void moveRelocationNext(DataRefImpl &Rel) const override;
+  LLVM_OBJECT_ABI uint64_t getRelocationOffset(DataRefImpl Rel) const override;
+  LLVM_OBJECT_ABI symbol_iterator
+  getRelocationSymbol(DataRefImpl Rel) const override;
+  LLVM_OBJECT_ABI uint64_t getRelocationType(DataRefImpl Rel) const override;
+  LLVM_OBJECT_ABI void
+  getRelocationTypeName(DataRefImpl Rel,
+                        SmallVectorImpl<char> &Result) const override;
 
-  section_iterator section_begin() const override;
-  section_iterator section_end() const override;
-  uint8_t getBytesInAddress() const override;
-  StringRef getFileFormatName() const override;
-  Triple::ArchType getArch() const override;
-  Expected<SubtargetFeatures> getFeatures() const override;
-  bool isRelocatableObject() const override;
-  bool isSharedObject() const;
+  LLVM_OBJECT_ABI section_iterator section_begin() const override;
+  LLVM_OBJECT_ABI section_iterator section_end() const override;
+  LLVM_OBJECT_ABI uint8_t getBytesInAddress() const override;
+  LLVM_OBJECT_ABI StringRef getFileFormatName() const override;
+  LLVM_OBJECT_ABI Triple::ArchType getArch() const override;
+  LLVM_OBJECT_ABI Expected<SubtargetFeatures> getFeatures() const override;
+  LLVM_OBJECT_ABI bool isRelocatableObject() const override;
+  LLVM_OBJECT_ABI bool isSharedObject() const;
   bool hasUnmodeledTypes() const { return HasUnmodeledTypes; }
 
   struct ReadContext {
@@ -353,9 +369,11 @@ public:
   };
 
   // Sections that may or may not be present, but cannot be predecessors
-  static int DisallowedPredecessors[WASM_NUM_SEC_ORDERS][WASM_NUM_SEC_ORDERS];
+  LLVM_OBJECT_ABI static int DisallowedPredecessors[WASM_NUM_SEC_ORDERS]
+                                                   [WASM_NUM_SEC_ORDERS];
 
-  bool isValidSectionOrder(unsigned ID, StringRef CustomSectionName = "");
+  LLVM_OBJECT_ABI bool isValidSectionOrder(unsigned ID,
+                                           StringRef CustomSectionName = "");
 
 private:
   bool Seen[WASM_NUM_SEC_ORDERS] = {}; // Sections that have been seen already

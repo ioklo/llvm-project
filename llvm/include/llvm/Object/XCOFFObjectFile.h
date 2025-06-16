@@ -17,6 +17,7 @@
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/ADT/iterator_range.h"
 #include "llvm/BinaryFormat/XCOFF.h"
+#include "llvm/Object/ObjectConfig.h"
 #include "llvm/Object/ObjectFile.h"
 #include "llvm/Support/Compiler.h"
 #include "llvm/Support/Endian.h"
@@ -514,11 +515,11 @@ public:
   XCOFF::RelocationType Type;
 
 public:
-  bool isRelocationSigned() const;
-  bool isFixupIndicated() const;
+  LLVM_OBJECT_ABI bool isRelocationSigned() const;
+  LLVM_OBJECT_ABI bool isFixupIndicated() const;
 
   // Returns the number of bits being relocated.
-  uint8_t getRelocatedLength() const;
+  LLVM_OBJECT_ABI uint8_t getRelocatedLength() const;
 };
 
 extern template struct XCOFFRelocation<llvm::support::ubig32_t>;
@@ -583,125 +584,140 @@ public:
       std::numeric_limits<uint64_t>::max();
 
   // Interface inherited from base classes.
-  void moveSymbolNext(DataRefImpl &Symb) const override;
-  Expected<uint32_t> getSymbolFlags(DataRefImpl Symb) const override;
-  basic_symbol_iterator symbol_begin() const override;
-  basic_symbol_iterator symbol_end() const override;
+  LLVM_OBJECT_ABI void moveSymbolNext(DataRefImpl &Symb) const override;
+  LLVM_OBJECT_ABI Expected<uint32_t>
+  getSymbolFlags(DataRefImpl Symb) const override;
+  LLVM_OBJECT_ABI basic_symbol_iterator symbol_begin() const override;
+  LLVM_OBJECT_ABI basic_symbol_iterator symbol_end() const override;
 
   using xcoff_symbol_iterator_range = iterator_range<xcoff_symbol_iterator>;
-  xcoff_symbol_iterator_range symbols() const;
+  LLVM_OBJECT_ABI xcoff_symbol_iterator_range symbols() const;
 
-  bool is64Bit() const override;
-  Expected<StringRef> getSymbolName(DataRefImpl Symb) const override;
-  Expected<uint64_t> getSymbolAddress(DataRefImpl Symb) const override;
-  uint64_t getSymbolValueImpl(DataRefImpl Symb) const override;
-  uint32_t getSymbolAlignment(DataRefImpl Symb) const override;
-  uint64_t getCommonSymbolSizeImpl(DataRefImpl Symb) const override;
-  Expected<SymbolRef::Type> getSymbolType(DataRefImpl Symb) const override;
-  Expected<section_iterator> getSymbolSection(DataRefImpl Symb) const override;
+  LLVM_OBJECT_ABI bool is64Bit() const override;
+  LLVM_OBJECT_ABI Expected<StringRef>
+  getSymbolName(DataRefImpl Symb) const override;
+  LLVM_OBJECT_ABI Expected<uint64_t>
+  getSymbolAddress(DataRefImpl Symb) const override;
+  LLVM_OBJECT_ABI uint64_t getSymbolValueImpl(DataRefImpl Symb) const override;
+  LLVM_OBJECT_ABI uint32_t getSymbolAlignment(DataRefImpl Symb) const override;
+  LLVM_OBJECT_ABI uint64_t
+  getCommonSymbolSizeImpl(DataRefImpl Symb) const override;
+  LLVM_OBJECT_ABI Expected<SymbolRef::Type>
+  getSymbolType(DataRefImpl Symb) const override;
+  LLVM_OBJECT_ABI Expected<section_iterator>
+  getSymbolSection(DataRefImpl Symb) const override;
 
-  void moveSectionNext(DataRefImpl &Sec) const override;
-  Expected<StringRef> getSectionName(DataRefImpl Sec) const override;
-  uint64_t getSectionAddress(DataRefImpl Sec) const override;
-  uint64_t getSectionIndex(DataRefImpl Sec) const override;
-  uint64_t getSectionSize(DataRefImpl Sec) const override;
-  Expected<ArrayRef<uint8_t>>
+  LLVM_OBJECT_ABI void moveSectionNext(DataRefImpl &Sec) const override;
+  LLVM_OBJECT_ABI Expected<StringRef>
+  getSectionName(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI uint64_t getSectionAddress(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI uint64_t getSectionIndex(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI uint64_t getSectionSize(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI Expected<ArrayRef<uint8_t>>
   getSectionContents(DataRefImpl Sec) const override;
-  uint64_t getSectionAlignment(DataRefImpl Sec) const override;
-  bool isSectionCompressed(DataRefImpl Sec) const override;
-  bool isSectionText(DataRefImpl Sec) const override;
-  bool isSectionData(DataRefImpl Sec) const override;
-  bool isSectionBSS(DataRefImpl Sec) const override;
-  bool isDebugSection(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI uint64_t getSectionAlignment(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI bool isSectionCompressed(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI bool isSectionText(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI bool isSectionData(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI bool isSectionBSS(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI bool isDebugSection(DataRefImpl Sec) const override;
 
-  bool isSectionVirtual(DataRefImpl Sec) const override;
-  relocation_iterator section_rel_begin(DataRefImpl Sec) const override;
-  relocation_iterator section_rel_end(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI bool isSectionVirtual(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI relocation_iterator
+  section_rel_begin(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI relocation_iterator
+  section_rel_end(DataRefImpl Sec) const override;
 
-  void moveRelocationNext(DataRefImpl &Rel) const override;
+  LLVM_OBJECT_ABI void moveRelocationNext(DataRefImpl &Rel) const override;
 
   /// \returns the relocation offset with the base address of the containing
   /// section as zero, or InvalidRelocOffset on errors (such as a relocation
   /// that does not refer to an address in any section).
-  uint64_t getRelocationOffset(DataRefImpl Rel) const override;
-  symbol_iterator getRelocationSymbol(DataRefImpl Rel) const override;
-  uint64_t getRelocationType(DataRefImpl Rel) const override;
-  void getRelocationTypeName(DataRefImpl Rel,
-                             SmallVectorImpl<char> &Result) const override;
+  LLVM_OBJECT_ABI uint64_t getRelocationOffset(DataRefImpl Rel) const override;
+  LLVM_OBJECT_ABI symbol_iterator
+  getRelocationSymbol(DataRefImpl Rel) const override;
+  LLVM_OBJECT_ABI uint64_t getRelocationType(DataRefImpl Rel) const override;
+  LLVM_OBJECT_ABI void
+  getRelocationTypeName(DataRefImpl Rel,
+                        SmallVectorImpl<char> &Result) const override;
 
-  section_iterator section_begin() const override;
-  section_iterator section_end() const override;
-  uint8_t getBytesInAddress() const override;
-  StringRef getFileFormatName() const override;
-  Triple::ArchType getArch() const override;
-  Expected<SubtargetFeatures> getFeatures() const override;
-  Expected<uint64_t> getStartAddress() const override;
-  StringRef mapDebugSectionName(StringRef Name) const override;
-  bool isRelocatableObject() const override;
+  LLVM_OBJECT_ABI section_iterator section_begin() const override;
+  LLVM_OBJECT_ABI section_iterator section_end() const override;
+  LLVM_OBJECT_ABI uint8_t getBytesInAddress() const override;
+  LLVM_OBJECT_ABI StringRef getFileFormatName() const override;
+  LLVM_OBJECT_ABI Triple::ArchType getArch() const override;
+  LLVM_OBJECT_ABI Expected<SubtargetFeatures> getFeatures() const override;
+  LLVM_OBJECT_ABI Expected<uint64_t> getStartAddress() const override;
+  LLVM_OBJECT_ABI StringRef mapDebugSectionName(StringRef Name) const override;
+  LLVM_OBJECT_ABI bool isRelocatableObject() const override;
 
   // Below here is the non-inherited interface.
 
-  Expected<StringRef> getRawData(const char *Start, uint64_t Size,
-                                 StringRef Name) const;
+  LLVM_OBJECT_ABI Expected<StringRef>
+  getRawData(const char *Start, uint64_t Size, StringRef Name) const;
 
-  const XCOFFAuxiliaryHeader32 *auxiliaryHeader32() const;
-  const XCOFFAuxiliaryHeader64 *auxiliaryHeader64() const;
+  LLVM_OBJECT_ABI const XCOFFAuxiliaryHeader32 *auxiliaryHeader32() const;
+  LLVM_OBJECT_ABI const XCOFFAuxiliaryHeader64 *auxiliaryHeader64() const;
 
   const void *getPointerToSymbolTable() const { return SymbolTblPtr; }
 
-  Expected<StringRef> getSymbolSectionName(XCOFFSymbolRef Ref) const;
-  unsigned getSymbolSectionID(SymbolRef Sym) const;
-  XCOFFSymbolRef toSymbolRef(DataRefImpl Ref) const;
+  LLVM_OBJECT_ABI Expected<StringRef>
+  getSymbolSectionName(XCOFFSymbolRef Ref) const;
+  LLVM_OBJECT_ABI unsigned getSymbolSectionID(SymbolRef Sym) const;
+  LLVM_OBJECT_ABI XCOFFSymbolRef toSymbolRef(DataRefImpl Ref) const;
 
   // File header related interfaces.
-  const XCOFFFileHeader32 *fileHeader32() const;
-  const XCOFFFileHeader64 *fileHeader64() const;
-  uint16_t getMagic() const;
-  uint16_t getNumberOfSections() const;
-  int32_t getTimeStamp() const;
+  LLVM_OBJECT_ABI const XCOFFFileHeader32 *fileHeader32() const;
+  LLVM_OBJECT_ABI const XCOFFFileHeader64 *fileHeader64() const;
+  LLVM_OBJECT_ABI uint16_t getMagic() const;
+  LLVM_OBJECT_ABI uint16_t getNumberOfSections() const;
+  LLVM_OBJECT_ABI int32_t getTimeStamp() const;
 
   // Symbol table offset and entry count are handled differently between
   // XCOFF32 and XCOFF64.
-  uint32_t getSymbolTableOffset32() const;
-  uint64_t getSymbolTableOffset64() const;
+  LLVM_OBJECT_ABI uint32_t getSymbolTableOffset32() const;
+  LLVM_OBJECT_ABI uint64_t getSymbolTableOffset64() const;
 
   // Note that this value is signed and might return a negative value. Negative
   // values are reserved for future use.
-  int32_t getRawNumberOfSymbolTableEntries32() const;
+  LLVM_OBJECT_ABI int32_t getRawNumberOfSymbolTableEntries32() const;
 
   // The sanitized value appropriate to use as an index into the symbol table.
-  uint32_t getLogicalNumberOfSymbolTableEntries32() const;
+  LLVM_OBJECT_ABI uint32_t getLogicalNumberOfSymbolTableEntries32() const;
 
-  uint32_t getNumberOfSymbolTableEntries64() const;
+  LLVM_OBJECT_ABI uint32_t getNumberOfSymbolTableEntries64() const;
 
   // Return getLogicalNumberOfSymbolTableEntries32 or
   // getNumberOfSymbolTableEntries64 depending on the object mode.
-  uint32_t getNumberOfSymbolTableEntries() const;
+  LLVM_OBJECT_ABI uint32_t getNumberOfSymbolTableEntries() const;
 
-  uint32_t getSymbolIndex(uintptr_t SymEntPtr) const;
-  uint64_t getSymbolSize(DataRefImpl Symb) const;
+  LLVM_OBJECT_ABI uint32_t getSymbolIndex(uintptr_t SymEntPtr) const;
+  LLVM_OBJECT_ABI uint64_t getSymbolSize(DataRefImpl Symb) const;
   uintptr_t getSymbolByIndex(uint32_t Idx) const {
     return reinterpret_cast<uintptr_t>(SymbolTblPtr) +
            XCOFF::SymbolTableEntrySize * Idx;
   }
-  uintptr_t getSymbolEntryAddressByIndex(uint32_t SymbolTableIndex) const;
-  Expected<StringRef> getSymbolNameByIndex(uint32_t SymbolTableIndex) const;
+  LLVM_OBJECT_ABI uintptr_t
+  getSymbolEntryAddressByIndex(uint32_t SymbolTableIndex) const;
+  LLVM_OBJECT_ABI Expected<StringRef>
+  getSymbolNameByIndex(uint32_t SymbolTableIndex) const;
 
-  Expected<StringRef> getCFileName(const XCOFFFileAuxEnt *CFileEntPtr) const;
-  uint16_t getOptionalHeaderSize() const;
-  uint16_t getFlags() const;
+  LLVM_OBJECT_ABI Expected<StringRef>
+  getCFileName(const XCOFFFileAuxEnt *CFileEntPtr) const;
+  LLVM_OBJECT_ABI uint16_t getOptionalHeaderSize() const;
+  LLVM_OBJECT_ABI uint16_t getFlags() const;
 
   // Section header table related interfaces.
-  ArrayRef<XCOFFSectionHeader32> sections32() const;
-  ArrayRef<XCOFFSectionHeader64> sections64() const;
+  LLVM_OBJECT_ABI ArrayRef<XCOFFSectionHeader32> sections32() const;
+  LLVM_OBJECT_ABI ArrayRef<XCOFFSectionHeader64> sections64() const;
 
-  int32_t getSectionFlags(DataRefImpl Sec) const;
-  Expected<DataRefImpl> getSectionByNum(int16_t Num) const;
+  LLVM_OBJECT_ABI int32_t getSectionFlags(DataRefImpl Sec) const;
+  LLVM_OBJECT_ABI Expected<DataRefImpl> getSectionByNum(int16_t Num) const;
 
-  Expected<uintptr_t>
+  LLVM_OBJECT_ABI Expected<uintptr_t>
   getSectionFileOffsetToRawData(XCOFF::SectionTypeFlags SectType) const;
 
-  void checkSymbolEntryPointer(uintptr_t SymbolEntPtr) const;
+  LLVM_OBJECT_ABI void checkSymbolEntryPointer(uintptr_t SymbolEntPtr) const;
 
   // Relocation-related interfaces.
   template <typename T>
@@ -712,26 +728,28 @@ public:
   Expected<ArrayRef<Reloc>> relocations(const Shdr &Sec) const;
 
   // Loader section related interfaces.
-  Expected<StringRef> getImportFileTable() const;
+  LLVM_OBJECT_ABI Expected<StringRef> getImportFileTable() const;
 
   // Exception-related interface.
   template <typename ExceptEnt>
   Expected<ArrayRef<ExceptEnt>> getExceptionEntries() const;
 
   // This function returns string table entry.
-  Expected<StringRef> getStringTableEntry(uint32_t Offset) const;
+  LLVM_OBJECT_ABI Expected<StringRef>
+  getStringTableEntry(uint32_t Offset) const;
 
   // This function returns the string table.
-  StringRef getStringTable() const;
+  LLVM_OBJECT_ABI StringRef getStringTable() const;
 
-  const XCOFF::SymbolAuxType *getSymbolAuxType(uintptr_t AuxEntryAddress) const;
+  LLVM_OBJECT_ABI const XCOFF::SymbolAuxType *
+  getSymbolAuxType(uintptr_t AuxEntryAddress) const;
 
-  static uintptr_t getAdvancedSymbolEntryAddress(uintptr_t CurrentAddress,
-                                                 uint32_t Distance);
+  LLVM_OBJECT_ABI static uintptr_t
+  getAdvancedSymbolEntryAddress(uintptr_t CurrentAddress, uint32_t Distance);
 
   static bool classof(const Binary *B) { return B->isXCOFF(); }
 
-  std::optional<StringRef> tryGetCPUName() const override;
+  LLVM_OBJECT_ABI std::optional<StringRef> tryGetCPUName() const override;
 }; // XCOFFObjectFile
 
 typedef struct {
@@ -848,14 +866,12 @@ public:
 
 #undef GETVALUE
 
-  uintptr_t getEntryAddress() const {
-    return getRawDataRefImpl().p;
-  }
+  uintptr_t getEntryAddress() const { return getRawDataRefImpl().p; }
 
-  Expected<StringRef> getName() const;
-  Expected<bool> isFunction() const;
-  bool isCsectSymbol() const;
-  Expected<XCOFFCsectAuxRef> getXCOFFCsectAuxRef() const;
+  LLVM_OBJECT_ABI Expected<StringRef> getName() const;
+  LLVM_OBJECT_ABI Expected<bool> isFunction() const;
+  LLVM_OBJECT_ABI bool isCsectSymbol() const;
+  LLVM_OBJECT_ABI Expected<XCOFFCsectAuxRef> getXCOFFCsectAuxRef() const;
 
 private:
   const XCOFFObjectFile *getObject() const {
@@ -865,8 +881,7 @@ private:
 
 class xcoff_symbol_iterator : public symbol_iterator {
 public:
-  xcoff_symbol_iterator(const basic_symbol_iterator &B)
-      : symbol_iterator(B) {}
+  xcoff_symbol_iterator(const basic_symbol_iterator &B) : symbol_iterator(B) {}
 
   xcoff_symbol_iterator(const XCOFFSymbolRef *Symbol)
       : symbol_iterator(*Symbol) {}
@@ -930,39 +945,39 @@ public:
   ///    If the XCOFF Traceback Table is not parsed successfully or there are
   ///    extra bytes that are not recognized, \a Size will be updated to be the
   ///    size up to the end of the last successfully parsed field of the table.
-  static Expected<XCOFFTracebackTable>
+  LLVM_OBJECT_ABI static Expected<XCOFFTracebackTable>
   create(const uint8_t *Ptr, uint64_t &Size, bool Is64Bits = false);
-  uint8_t getVersion() const;
-  uint8_t getLanguageID() const;
+  LLVM_OBJECT_ABI uint8_t getVersion() const;
+  LLVM_OBJECT_ABI uint8_t getLanguageID() const;
 
-  bool isGlobalLinkage() const;
-  bool isOutOfLineEpilogOrPrologue() const;
-  bool hasTraceBackTableOffset() const;
-  bool isInternalProcedure() const;
-  bool hasControlledStorage() const;
-  bool isTOCless() const;
-  bool isFloatingPointPresent() const;
-  bool isFloatingPointOperationLogOrAbortEnabled() const;
+  LLVM_OBJECT_ABI bool isGlobalLinkage() const;
+  LLVM_OBJECT_ABI bool isOutOfLineEpilogOrPrologue() const;
+  LLVM_OBJECT_ABI bool hasTraceBackTableOffset() const;
+  LLVM_OBJECT_ABI bool isInternalProcedure() const;
+  LLVM_OBJECT_ABI bool hasControlledStorage() const;
+  LLVM_OBJECT_ABI bool isTOCless() const;
+  LLVM_OBJECT_ABI bool isFloatingPointPresent() const;
+  LLVM_OBJECT_ABI bool isFloatingPointOperationLogOrAbortEnabled() const;
 
-  bool isInterruptHandler() const;
-  bool isFuncNamePresent() const;
-  bool isAllocaUsed() const;
-  uint8_t getOnConditionDirective() const;
-  bool isCRSaved() const;
-  bool isLRSaved() const;
+  LLVM_OBJECT_ABI bool isInterruptHandler() const;
+  LLVM_OBJECT_ABI bool isFuncNamePresent() const;
+  LLVM_OBJECT_ABI bool isAllocaUsed() const;
+  LLVM_OBJECT_ABI uint8_t getOnConditionDirective() const;
+  LLVM_OBJECT_ABI bool isCRSaved() const;
+  LLVM_OBJECT_ABI bool isLRSaved() const;
 
-  bool isBackChainStored() const;
-  bool isFixup() const;
-  uint8_t getNumOfFPRsSaved() const;
+  LLVM_OBJECT_ABI bool isBackChainStored() const;
+  LLVM_OBJECT_ABI bool isFixup() const;
+  LLVM_OBJECT_ABI uint8_t getNumOfFPRsSaved() const;
 
-  bool hasVectorInfo() const;
-  bool hasExtensionTable() const;
-  uint8_t getNumOfGPRsSaved() const;
+  LLVM_OBJECT_ABI bool hasVectorInfo() const;
+  LLVM_OBJECT_ABI bool hasExtensionTable() const;
+  LLVM_OBJECT_ABI uint8_t getNumOfGPRsSaved() const;
 
-  uint8_t getNumberOfFixedParms() const;
+  LLVM_OBJECT_ABI uint8_t getNumberOfFixedParms() const;
 
-  uint8_t getNumberOfFPParms() const;
-  bool hasParmsOnStack() const;
+  LLVM_OBJECT_ABI uint8_t getNumberOfFPParms() const;
+  LLVM_OBJECT_ABI bool hasParmsOnStack() const;
 
   const std::optional<SmallString<32>> &getParmsType() const {
     return ParmsType;
@@ -991,7 +1006,7 @@ public:
   const std::optional<uint64_t> &getEhInfoDisp() const { return EhInfoDisp; }
 };
 
-bool doesXCOFFTracebackTableBegin(ArrayRef<uint8_t> Bytes);
+LLVM_OBJECT_ABI bool doesXCOFFTracebackTableBegin(ArrayRef<uint8_t> Bytes);
 } // namespace object
 } // namespace llvm
 

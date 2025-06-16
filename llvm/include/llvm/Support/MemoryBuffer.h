@@ -62,7 +62,7 @@ protected:
 public:
   MemoryBuffer(const MemoryBuffer &) = delete;
   MemoryBuffer &operator=(const MemoryBuffer &) = delete;
-  virtual ~MemoryBuffer();
+  LLVM_SUPPORT_ABI virtual ~MemoryBuffer();
 
   const char *getBufferStart() const { return BufferStart; }
   const char *getBufferEnd() const   { return BufferEnd; }

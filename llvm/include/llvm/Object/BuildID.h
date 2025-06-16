@@ -17,6 +17,7 @@
 
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/ADT/SmallVector.h"
+#include "llvm/Object/ObjectConfig.h"
 
 namespace llvm {
 namespace object {
@@ -30,10 +31,10 @@ typedef ArrayRef<uint8_t> BuildIDRef;
 class ObjectFile;
 
 /// Parses a build ID from a hex string.
-BuildID parseBuildID(StringRef Str);
+LLVM_OBJECT_ABI BuildID parseBuildID(StringRef Str);
 
 /// Returns the build ID, if any, contained in the given object file.
-BuildIDRef getBuildID(const ObjectFile *Obj);
+LLVM_OBJECT_ABI BuildIDRef getBuildID(const ObjectFile *Obj);
 
 /// BuildIDFetcher searches local cache directories for debug info.
 class BuildIDFetcher {

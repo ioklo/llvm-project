@@ -32,6 +32,7 @@
 #include "llvm/BinaryFormat/COFF.h"
 #include "llvm/Object/Binary.h"
 #include "llvm/Object/Error.h"
+#include "llvm/Object/ObjectConfig.h"
 #include "llvm/Support/BinaryByteStream.h"
 #include "llvm/Support/BinaryStreamReader.h"
 #include "llvm/Support/ConvertUTF.h"
@@ -97,7 +98,7 @@ public:
 
 class ResourceEntryRef {
 public:
-  Error moveNext(bool &End);
+  LLVM_OBJECT_ABI Error moveNext(bool &End);
   bool checkTypeString() const { return IsStringType; }
   ArrayRef<UTF16> getTypeString() const { return Type; }
   uint16_t getTypeID() const { return TypeID; }
@@ -115,11 +116,12 @@ public:
 private:
   friend class WindowsResource;
 
-  ResourceEntryRef(BinaryStreamRef Ref, const WindowsResource *Owner);
-  Error loadNext();
+  LLVM_OBJECT_ABI ResourceEntryRef(BinaryStreamRef Ref,
+                                   const WindowsResource *Owner);
+  LLVM_OBJECT_ABI Error loadNext();
 
-  static Expected<ResourceEntryRef> create(BinaryStreamRef Ref,
-                                           const WindowsResource *Owner);
+  LLVM_OBJECT_ABI static Expected<ResourceEntryRef>
+  create(BinaryStreamRef Ref, const WindowsResource *Owner);
 
   BinaryStreamReader Reader;
   const WindowsResource *Owner;
@@ -135,11 +137,11 @@ private:
 
 class WindowsResource : public Binary {
 public:
-  Expected<ResourceEntryRef> getHeadEntry();
+  LLVM_OBJECT_ABI Expected<ResourceEntryRef> getHeadEntry();
 
   static bool classof(const Binary *V) { return V->isWinRes(); }
 
-  static Expected<std::unique_ptr<WindowsResource>>
+  LLVM_OBJECT_ABI static Expected<std::unique_ptr<WindowsResource>>
   createWindowsResource(MemoryBufferRef Source);
 
 private:
@@ -153,12 +155,13 @@ private:
 class WindowsResourceParser {
 public:
   class TreeNode;
-  WindowsResourceParser(bool MinGW = false);
-  Error parse(WindowsResource *WR, std::vector<std::string> &Duplicates);
-  Error parse(ResourceSectionRef &RSR, StringRef Filename,
-              std::vector<std::string> &Duplicates);
-  void cleanUpManifests(std::vector<std::string> &Duplicates);
-  void printTree(raw_ostream &OS) const;
+  LLVM_OBJECT_ABI WindowsResourceParser(bool MinGW = false);
+  LLVM_OBJECT_ABI Error parse(WindowsResource *WR,
+                              std::vector<std::string> &Duplicates);
+  LLVM_OBJECT_ABI Error parse(ResourceSectionRef &RSR, StringRef Filename,
+                              std::vector<std::string> &Duplicates);
+  LLVM_OBJECT_ABI void cleanUpManifests(std::vector<std::string> &Duplicates);
+  LLVM_OBJECT_ABI void printTree(raw_ostream &OS) const;
   const TreeNode &getTree() const { return Root; }
   ArrayRef<std::vector<uint8_t>> getData() const { return Data; }
   ArrayRef<std::vector<UTF16>> getStringTable() const { return StringTable; }
@@ -168,8 +171,8 @@ public:
     template <typename T>
     using Children = std::map<T, std::unique_ptr<TreeNode>>;
 
-    void print(ScopedPrinter &Writer, StringRef Name) const;
-    uint32_t getTreeSize() const;
+    LLVM_OBJECT_ABI void print(ScopedPrinter &Writer, StringRef Name) const;
+    LLVM_OBJECT_ABI uint32_t getTreeSize() const;
     uint32_t getStringIndex() const { return StringIndex; }
     uint32_t getDataIndex() const { return DataIndex; }
     uint16_t getMajorVersion() const { return MajorVersion; }
@@ -257,12 +260,12 @@ private:
   bool MinGW;
 };
 
-Expected<std::unique_ptr<MemoryBuffer>>
+LLVM_OBJECT_ABI Expected<std::unique_ptr<MemoryBuffer>>
 writeWindowsResourceCOFF(llvm::COFF::MachineTypes MachineType,
                          const WindowsResourceParser &Parser,
                          uint32_t TimeDateStamp);
 
-void printResourceTypeName(uint16_t TypeID, raw_ostream &OS);
+LLVM_OBJECT_ABI void printResourceTypeName(uint16_t TypeID, raw_ostream &OS);
 } // namespace object
 } // namespace llvm
 

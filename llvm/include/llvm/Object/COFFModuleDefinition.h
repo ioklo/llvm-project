@@ -20,6 +20,7 @@
 
 #include "llvm/BinaryFormat/COFF.h"
 #include "llvm/Object/COFFImportFile.h"
+#include "llvm/Object/ObjectConfig.h"
 
 namespace llvm {
 namespace object {
@@ -39,7 +40,7 @@ struct COFFModuleDefinition {
   uint32_t MinorOSVersion = 0;
 };
 
-Expected<COFFModuleDefinition>
+LLVM_OBJECT_ABI Expected<COFFModuleDefinition>
 parseCOFFModuleDefinition(MemoryBufferRef MB, COFF::MachineTypes Machine,
                           bool MingwDef = false, bool AddUnderscores = true);
 

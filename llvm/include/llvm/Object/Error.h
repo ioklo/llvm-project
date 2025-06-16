@@ -13,6 +13,7 @@
 #ifndef LLVM_OBJECT_ERROR_H
 #define LLVM_OBJECT_ERROR_H
 
+#include "llvm/Object/ObjectConfig.h"
 #include "llvm/Support/Error.h"
 #include <system_error>
 
@@ -22,7 +23,7 @@ class Twine;
 
 namespace object {
 
-const std::error_category &object_category();
+LLVM_OBJECT_ABI const std::error_category &object_category();
 
 enum class object_error {
   // Error code 0 is absent. Use std::error_code() instead.
@@ -51,8 +52,9 @@ inline std::error_code make_error_code(object_error e) {
 /// std::error_code, but this will be removed in the future.
 class BinaryError : public ErrorInfo<BinaryError, ECError> {
   void anchor() override;
+
 public:
-  static char ID;
+  LLVM_OBJECT_ABI static char ID;
   BinaryError() {
     // Default to parse_failed, can be overridden with setErrorCode.
     setErrorCode(make_error_code(object_error::parse_failed));
@@ -65,21 +67,22 @@ public:
 /// this class can be used to describe the error via a string message.
 class GenericBinaryError : public ErrorInfo<GenericBinaryError, BinaryError> {
 public:
-  static char ID;
-  GenericBinaryError(const Twine &Msg);
-  GenericBinaryError(const Twine &Msg, object_error ECOverride);
+  LLVM_OBJECT_ABI static char ID;
+  LLVM_OBJECT_ABI GenericBinaryError(const Twine &Msg);
+  LLVM_OBJECT_ABI GenericBinaryError(const Twine &Msg, object_error ECOverride);
   const std::string &getMessage() const { return Msg; }
-  void log(raw_ostream &OS) const override;
+  LLVM_OBJECT_ABI void log(raw_ostream &OS) const override;
+
 private:
   std::string Msg;
 };
 
 /// isNotObjectErrorInvalidFileType() is used when looping through the children
 /// of an archive after calling getAsBinary() on the child and it returns an
-/// llvm::Error.  In the cases we want to loop through the children and ignore the
-/// non-objects in the archive this is used to test the error to see if an
+/// llvm::Error.  In the cases we want to loop through the children and ignore
+/// the non-objects in the archive this is used to test the error to see if an
 /// error() function needs to called on the llvm::Error.
-Error isNotObjectErrorInvalidFileType(llvm::Error Err);
+LLVM_OBJECT_ABI Error isNotObjectErrorInvalidFileType(llvm::Error Err);
 
 inline Error createError(const Twine &Err) {
   return make_error<StringError>(Err, object_error::parse_failed);
@@ -92,6 +95,6 @@ inline Error createError(const Twine &Err) {
 namespace std {
 template <>
 struct is_error_code_enum<llvm::object::object_error> : std::true_type {};
-}
+} // namespace std
 
 #endif

@@ -17,6 +17,7 @@
 #include "llvm/ADT/fallible_iterator.h"
 #include "llvm/ADT/iterator_range.h"
 #include "llvm/Object/Binary.h"
+#include "llvm/Object/ObjectConfig.h"
 #include "llvm/Support/Chrono.h"
 #include "llvm/Support/Error.h"
 #include "llvm/Support/FileSystem.h"
@@ -38,7 +39,7 @@ class Archive;
 
 class AbstractArchiveMemberHeader {
 protected:
-  AbstractArchiveMemberHeader(const Archive *Parent) : Parent(Parent){};
+  AbstractArchiveMemberHeader(const Archive *Parent) : Parent(Parent) {};
 
 public:
   friend class Archive;
@@ -61,10 +62,11 @@ public:
   virtual Expected<const char *> getNextChildLoc() const = 0;
   virtual Expected<bool> isThin() const = 0;
 
-  Expected<sys::fs::perms> getAccessMode() const;
-  Expected<sys::TimePoint<std::chrono::seconds>> getLastModified() const;
-  Expected<unsigned> getUID() const;
-  Expected<unsigned> getGID() const;
+  LLVM_OBJECT_ABI Expected<sys::fs::perms> getAccessMode() const;
+  LLVM_OBJECT_ABI Expected<sys::TimePoint<std::chrono::seconds>>
+  getLastModified() const;
+  LLVM_OBJECT_ABI Expected<unsigned> getUID() const;
+  LLVM_OBJECT_ABI Expected<unsigned> getGID() const;
 
   /// Returns the size in bytes of the format-defined member header of the
   /// concrete archive type.
@@ -77,7 +79,7 @@ template <typename T>
 class CommonArchiveMemberHeader : public AbstractArchiveMemberHeader {
 public:
   CommonArchiveMemberHeader(const Archive *Parent, const T *RawHeaderPtr)
-      : AbstractArchiveMemberHeader(Parent), ArMemHdr(RawHeaderPtr){};
+      : AbstractArchiveMemberHeader(Parent), ArMemHdr(RawHeaderPtr) {};
   StringRef getRawAccessMode() const override;
   StringRef getRawLastModified() const override;
   StringRef getRawUID() const override;
@@ -101,19 +103,20 @@ struct UnixArMemHdrType {
 
 class ArchiveMemberHeader : public CommonArchiveMemberHeader<UnixArMemHdrType> {
 public:
-  ArchiveMemberHeader(const Archive *Parent, const char *RawHeaderPtr,
-                      uint64_t Size, Error *Err);
+  LLVM_OBJECT_ABI ArchiveMemberHeader(const Archive *Parent,
+                                      const char *RawHeaderPtr, uint64_t Size,
+                                      Error *Err);
 
   std::unique_ptr<AbstractArchiveMemberHeader> clone() const override {
     return std::make_unique<ArchiveMemberHeader>(*this);
   }
 
-  Expected<StringRef> getRawName() const override;
+  LLVM_OBJECT_ABI Expected<StringRef> getRawName() const override;
 
-  Expected<StringRef> getName(uint64_t Size) const override;
-  Expected<uint64_t> getSize() const override;
-  Expected<const char *> getNextChildLoc() const override;
-  Expected<bool> isThin() const override;
+  LLVM_OBJECT_ABI Expected<StringRef> getName(uint64_t Size) const override;
+  LLVM_OBJECT_ABI Expected<uint64_t> getSize() const override;
+  LLVM_OBJECT_ABI Expected<const char *> getNextChildLoc() const override;
+  LLVM_OBJECT_ABI Expected<bool> isThin() const override;
 };
 
 // File Member Header
@@ -137,20 +140,21 @@ class BigArchiveMemberHeader
     : public CommonArchiveMemberHeader<BigArMemHdrType> {
 
 public:
-  BigArchiveMemberHeader(Archive const *Parent, const char *RawHeaderPtr,
-                         uint64_t Size, Error *Err);
+  LLVM_OBJECT_ABI BigArchiveMemberHeader(Archive const *Parent,
+                                         const char *RawHeaderPtr,
+                                         uint64_t Size, Error *Err);
   std::unique_ptr<AbstractArchiveMemberHeader> clone() const override {
     return std::make_unique<BigArchiveMemberHeader>(*this);
   }
 
-  Expected<StringRef> getRawName() const override;
-  Expected<uint64_t> getRawNameSize() const;
+  LLVM_OBJECT_ABI Expected<StringRef> getRawName() const override;
+  LLVM_OBJECT_ABI Expected<uint64_t> getRawNameSize() const;
 
-  Expected<StringRef> getName(uint64_t Size) const override;
-  Expected<uint64_t> getSize() const override;
-  Expected<const char *> getNextChildLoc() const override;
-  Expected<uint64_t> getNextOffset() const;
-  Expected<bool> isThin() const override { return false; }
+  LLVM_OBJECT_ABI Expected<StringRef> getName(uint64_t Size) const override;
+  LLVM_OBJECT_ABI Expected<uint64_t> getSize() const override;
+  LLVM_OBJECT_ABI Expected<const char *> getNextChildLoc() const override;
+  LLVM_OBJECT_ABI Expected<uint64_t> getNextOffset() const;
+  LLVM_OBJECT_ABI Expected<bool> isThin() const override { return false; }
 };
 
 class Archive : public Binary {
@@ -168,11 +172,12 @@ public:
     /// Offset from Data to the start of the file.
     uint16_t StartOfFile;
 
-    Expected<bool> isThinMember() const;
+    LLVM_OBJECT_ABI Expected<bool> isThinMember() const;
 
   public:
-    Child(const Archive *Parent, const char *Start, Error *Err);
-    Child(const Archive *Parent, StringRef Data, uint16_t StartOfFile);
+    LLVM_OBJECT_ABI Child(const Archive *Parent, const char *Start, Error *Err);
+    LLVM_OBJECT_ABI Child(const Archive *Parent, StringRef Data,
+                          uint16_t StartOfFile);
 
     Child(const Child &C)
         : Parent(C.Parent), Data(C.Data), StartOfFile(C.StartOfFile) {
@@ -218,11 +223,13 @@ public:
     }
 
     const Archive *getParent() const { return Parent; }
-    Expected<Child> getNext() const;
+    LLVM_OBJECT_ABI Expected<Child> getNext() const;
 
-    Expected<StringRef> getName() const;
-    Expected<std::string> getFullName() const;
-    Expected<StringRef> getRawName() const { return Header->getRawName(); }
+    LLVM_OBJECT_ABI Expected<StringRef> getName() const;
+    LLVM_OBJECT_ABI Expected<std::string> getFullName() const;
+    LLVM_OBJECT_ABI Expected<StringRef> getRawName() const {
+      return Header->getRawName();
+    }
 
     Expected<sys::TimePoint<std::chrono::seconds>> getLastModified() const {
       return Header->getLastModified();
@@ -240,17 +247,17 @@ public:
     }
 
     /// \return the size of the archive member without the header or padding.
-    Expected<uint64_t> getSize() const;
+    LLVM_OBJECT_ABI Expected<uint64_t> getSize() const;
     /// \return the size in the archive header for this member.
-    Expected<uint64_t> getRawSize() const;
+    LLVM_OBJECT_ABI Expected<uint64_t> getRawSize() const;
 
-    Expected<StringRef> getBuffer() const;
-    uint64_t getChildOffset() const;
+    LLVM_OBJECT_ABI Expected<StringRef> getBuffer() const;
+    LLVM_OBJECT_ABI uint64_t getChildOffset() const;
     uint64_t getDataOffset() const { return getChildOffset() + StartOfFile; }
 
-    Expected<MemoryBufferRef> getMemoryBufferRef() const;
+    LLVM_OBJECT_ABI Expected<MemoryBufferRef> getMemoryBufferRef() const;
 
-    Expected<std::unique_ptr<Binary>>
+    LLVM_OBJECT_ABI Expected<std::unique_ptr<Binary>>
     getAsBinary(LLVMContext *Context = nullptr) const;
   };
 
@@ -299,10 +306,10 @@ public:
       return (Parent == other.Parent) && (SymbolIndex == other.SymbolIndex);
     }
 
-    StringRef getName() const;
-    Expected<Child> getMember() const;
-    Symbol getNext() const;
-    bool isECSymbol() const;
+    LLVM_OBJECT_ABI StringRef getName() const;
+    LLVM_OBJECT_ABI Expected<Child> getMember() const;
+    LLVM_OBJECT_ABI Symbol getNext() const;
+    LLVM_OBJECT_ABI bool isECSymbol() const;
   };
 
   class symbol_iterator {
@@ -328,8 +335,9 @@ public:
     }
   };
 
-  Archive(MemoryBufferRef Source, Error &Err);
-  static Expected<std::unique_ptr<Archive>> create(MemoryBufferRef Source);
+  LLVM_OBJECT_ABI Archive(MemoryBufferRef Source, Error &Err);
+  LLVM_OBJECT_ABI static Expected<std::unique_ptr<Archive>>
+  create(MemoryBufferRef Source);
 
   /// Size field is 10 decimal digits long
   static const uint64_t MaxMemberSize = 9999999999;
@@ -338,48 +346,50 @@ public:
 
   Kind kind() const { return (Kind)Format; }
   bool isThin() const { return IsThin; }
-  static object::Archive::Kind getDefaultKind();
-  static object::Archive::Kind getDefaultKindForTriple(const Triple &T);
+  LLVM_OBJECT_ABI static object::Archive::Kind getDefaultKind();
+  LLVM_OBJECT_ABI static object::Archive::Kind
+  getDefaultKindForTriple(const Triple &T);
 
-  child_iterator child_begin(Error &Err, bool SkipInternal = true) const;
-  child_iterator child_end() const;
+  LLVM_OBJECT_ABI child_iterator child_begin(Error &Err,
+                                             bool SkipInternal = true) const;
+  LLVM_OBJECT_ABI child_iterator child_end() const;
   iterator_range<child_iterator> children(Error &Err,
                                           bool SkipInternal = true) const {
     return make_range(child_begin(Err, SkipInternal), child_end());
   }
 
-  symbol_iterator symbol_begin() const;
-  symbol_iterator symbol_end() const;
+  LLVM_OBJECT_ABI symbol_iterator symbol_begin() const;
+  LLVM_OBJECT_ABI symbol_iterator symbol_end() const;
   iterator_range<symbol_iterator> symbols() const {
     return make_range(symbol_begin(), symbol_end());
   }
 
-  Expected<iterator_range<symbol_iterator>> ec_symbols() const;
+  LLVM_OBJECT_ABI Expected<iterator_range<symbol_iterator>> ec_symbols() const;
 
   static bool classof(Binary const *v) { return v->isArchive(); }
 
   // check if a symbol is in the archive
-  Expected<std::optional<Child>> findSym(StringRef name) const;
+  LLVM_OBJECT_ABI Expected<std::optional<Child>> findSym(StringRef name) const;
 
-  virtual bool isEmpty() const;
-  bool hasSymbolTable() const;
+  LLVM_OBJECT_ABI virtual bool isEmpty() const;
+  LLVM_OBJECT_ABI bool hasSymbolTable() const;
   StringRef getSymbolTable() const { return SymbolTable; }
   StringRef getStringTable() const { return StringTable; }
-  uint32_t getNumberOfSymbols() const;
-  uint32_t getNumberOfECSymbols() const;
+  LLVM_OBJECT_ABI uint32_t getNumberOfSymbols() const;
+  LLVM_OBJECT_ABI uint32_t getNumberOfECSymbols() const;
   virtual uint64_t getFirstChildOffset() const { return getArchiveMagicLen(); }
 
   std::vector<std::unique_ptr<MemoryBuffer>> takeThinBuffers() {
     return std::move(ThinBuffers);
   }
 
-  std::unique_ptr<AbstractArchiveMemberHeader>
+  LLVM_OBJECT_ABI std::unique_ptr<AbstractArchiveMemberHeader>
   createArchiveMemberHeader(const char *RawHeaderPtr, uint64_t Size,
                             Error *Err) const;
 
 protected:
-  uint64_t getArchiveMagicLen() const;
-  void setFirstRegular(const Child &C);
+  LLVM_OBJECT_ABI uint64_t getArchiveMagicLen() const;
+  LLVM_OBJECT_ABI void setFirstRegular(const Child &C);
 
   StringRef SymbolTable;
   StringRef ECSymbolTable;
@@ -416,7 +426,7 @@ public:
   bool Has64BitGlobalSymtab = false;
 
 public:
-  BigArchive(MemoryBufferRef Source, Error &Err);
+  LLVM_OBJECT_ABI BigArchive(MemoryBufferRef Source, Error &Err);
   uint64_t getFirstChildOffset() const override { return FirstChildOffset; }
   uint64_t getLastChildOffset() const { return LastChildOffset; }
   bool isEmpty() const override { return getFirstChildOffset() == 0; }

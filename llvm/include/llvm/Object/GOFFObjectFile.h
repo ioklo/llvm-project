@@ -17,6 +17,7 @@
 #include "llvm/ADT/DenseMap.h"
 #include "llvm/ADT/IndexedMap.h"
 #include "llvm/BinaryFormat/GOFF.h"
+#include "llvm/Object/ObjectConfig.h"
 #include "llvm/Object/ObjectFile.h"
 #include "llvm/Support/ConvertEBCDIC.h"
 #include "llvm/Support/Debug.h"
@@ -44,12 +45,12 @@ class GOFFObjectFile : public ObjectFile {
   mutable DenseMap<uint32_t, SmallVector<uint8_t>> SectionDataCache;
 
 public:
-  Expected<StringRef> getSymbolName(SymbolRef Symbol) const;
+  LLVM_OBJECT_ABI Expected<StringRef> getSymbolName(SymbolRef Symbol) const;
 
-  GOFFObjectFile(MemoryBufferRef Object, Error &Err);
+  LLVM_OBJECT_ABI GOFFObjectFile(MemoryBufferRef Object, Error &Err);
   static inline bool classof(const Binary *V) { return V->isGOFF(); }
-  section_iterator section_begin() const override;
-  section_iterator section_end() const override;
+  LLVM_OBJECT_ABI section_iterator section_begin() const override;
+  LLVM_OBJECT_ABI section_iterator section_end() const override;
 
   uint8_t getBytesInAddress() const override { return 8; }
 
@@ -57,7 +58,9 @@ public:
 
   Triple::ArchType getArch() const override { return Triple::systemz; }
 
-  Expected<SubtargetFeatures> getFeatures() const override { return SubtargetFeatures(); }
+  Expected<SubtargetFeatures> getFeatures() const override {
+    return SubtargetFeatures();
+  }
 
   bool isRelocatableObject() const override { return true; }
 
@@ -65,13 +68,11 @@ public:
   basic_symbol_iterator symbol_begin() const override;
   basic_symbol_iterator symbol_end() const override;
 
-  bool is64Bit() const override {
-    return true;
-  }
+  bool is64Bit() const override { return true; }
 
-  bool isSectionNoLoad(DataRefImpl Sec) const;
-  bool isSectionReadOnlyData(DataRefImpl Sec) const;
-  bool isSectionZeroInit(DataRefImpl Sec) const;
+  LLVM_OBJECT_ABI bool isSectionNoLoad(DataRefImpl Sec) const;
+  LLVM_OBJECT_ABI bool isSectionReadOnlyData(DataRefImpl Sec) const;
+  LLVM_OBJECT_ABI bool isSectionZeroInit(DataRefImpl Sec) const;
 
 private:
   // SymbolRef.

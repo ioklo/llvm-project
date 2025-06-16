@@ -18,6 +18,7 @@
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/BinaryFormat/DXContainer.h"
+#include "llvm/Object/ObjectConfig.h"
 #include "llvm/Support/Error.h"
 #include "llvm/Support/MemoryBufferRef.h"
 #include "llvm/TargetParser/Triple.h"
@@ -145,7 +146,7 @@ public:
   PSVRuntimeInfo(StringRef D) : Data(D), Size(0) {}
 
   // Parsing depends on the shader kind
-  Error parse(uint16_t ShaderKind);
+  LLVM_OBJECT_ABI Error parse(uint16_t ShaderKind);
 
   uint32_t getSize() const { return Size; }
   uint32_t getResourceCount() const { return Resources.size(); }
@@ -189,9 +190,9 @@ public:
     return SemanticIndexTable;
   }
 
-  uint8_t getSigInputCount() const;
-  uint8_t getSigOutputCount() const;
-  uint8_t getSigPatchOrPrimCount() const;
+  LLVM_OBJECT_ABI uint8_t getSigInputCount() const;
+  LLVM_OBJECT_ABI uint8_t getSigOutputCount() const;
+  LLVM_OBJECT_ABI uint8_t getSigPatchOrPrimCount() const;
 
   SigElementArray getSigInputElements() const { return SigInputElements; }
   SigElementArray getSigOutputElements() const { return SigOutputElements; }
@@ -268,7 +269,7 @@ public:
 
   bool isEmpty() const { return Parameters.isEmpty(); }
 
-  Error initialize(StringRef Part);
+  LLVM_OBJECT_ABI Error initialize(StringRef Part);
 };
 
 } // namespace DirectX
@@ -278,7 +279,7 @@ public:
   using DXILData = std::pair<dxbc::ProgramHeader, const char *>;
 
 private:
-  DXContainer(MemoryBufferRef O);
+  LLVM_OBJECT_ABI DXContainer(MemoryBufferRef O);
 
   MemoryBufferRef Data;
   dxbc::Header Header;
@@ -291,13 +292,14 @@ private:
   DirectX::Signature OutputSignature;
   DirectX::Signature PatchConstantSignature;
 
-  Error parseHeader();
-  Error parsePartOffsets();
-  Error parseDXILHeader(StringRef Part);
-  Error parseShaderFeatureFlags(StringRef Part);
-  Error parseHash(StringRef Part);
-  Error parsePSVInfo(StringRef Part);
-  Error parseSignature(StringRef Part, DirectX::Signature &Array);
+  LLVM_OBJECT_ABI Error parseHeader();
+  LLVM_OBJECT_ABI Error parsePartOffsets();
+  LLVM_OBJECT_ABI Error parseDXILHeader(StringRef Part);
+  LLVM_OBJECT_ABI Error parseShaderFeatureFlags(StringRef Part);
+  LLVM_OBJECT_ABI Error parseHash(StringRef Part);
+  LLVM_OBJECT_ABI Error parsePSVInfo(StringRef Part);
+  LLVM_OBJECT_ABI Error parseSignature(StringRef Part,
+                                       DirectX::Signature &Array);
   friend class PartIterator;
 
 public:
@@ -334,7 +336,7 @@ public:
 
     // Implementation for updating the iterator state based on a specified
     // offest.
-    void updateIteratorImpl(const uint32_t Offset);
+    LLVM_OBJECT_ABI void updateIteratorImpl(const uint32_t Offset);
 
   public:
     PartIterator &operator++() {
@@ -370,7 +372,7 @@ public:
   PartIterator end() const { return PartIterator(*this, PartOffsets.end()); }
 
   StringRef getData() const { return Data.getBuffer(); }
-  static Expected<DXContainer> create(MemoryBufferRef Object);
+  LLVM_OBJECT_ABI static Expected<DXContainer> create(MemoryBufferRef Object);
 
   const dxbc::Header &getHeader() const { return Header; }
 

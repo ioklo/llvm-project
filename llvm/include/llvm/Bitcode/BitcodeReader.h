@@ -141,24 +141,24 @@ struct ParserCallbacks {
     /// bodies. If ShouldLazyLoadMetadata is true, lazily load metadata as well.
     /// If IsImporting is true, this module is being parsed for ThinLTO
     /// importing into another module.
-    Expected<std::unique_ptr<Module>>
+    LLVM_BITREADER_ABI Expected<std::unique_ptr<Module>>
     getLazyModule(LLVMContext &Context, bool ShouldLazyLoadMetadata,
                   bool IsImporting, ParserCallbacks Callbacks = {});
 
     /// Read the entire bitcode module and return it.
-    Expected<std::unique_ptr<Module>>
+    LLVM_BITREADER_ABI Expected<std::unique_ptr<Module>>
     parseModule(LLVMContext &Context, ParserCallbacks Callbacks = {});
 
     /// Returns information about the module to be used for LTO: whether to
     /// compile with ThinLTO, and whether it has a summary.
-    Expected<BitcodeLTOInfo> getLTOInfo();
+    LLVM_BITREADER_ABI Expected<BitcodeLTOInfo> getLTOInfo();
 
     /// Parse the specified bitcode buffer, returning the module summary index.
-    Expected<std::unique_ptr<ModuleSummaryIndex>> getSummary();
+    LLVM_BITREADER_ABI Expected<std::unique_ptr<ModuleSummaryIndex>> getSummary();
 
     /// Parse the specified bitcode buffer and merge its module summary index
     /// into CombinedIndex.
-    Error
+    LLVM_BITREADER_ABI Error
     readSummary(ModuleSummaryIndex &CombinedIndex, StringRef ModulePath,
                 std::function<bool(GlobalValue::GUID)> IsPrevailing = nullptr);
   };

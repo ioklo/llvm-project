@@ -17,6 +17,7 @@
 #include "llvm/BinaryFormat/MachO.h"
 #include "llvm/Object/Binary.h"
 #include "llvm/Object/MachO.h"
+#include "llvm/Object/ObjectConfig.h"
 #include "llvm/TargetParser/Triple.h"
 
 namespace llvm {
@@ -32,6 +33,7 @@ class MachOUniversalBinary : public Binary {
 
   uint32_t Magic;
   uint32_t NumberOfObjects;
+
 public:
   static constexpr uint32_t MaxSectionAlignment = 15; /* 2**15 or 0x8000 */
 
@@ -44,7 +46,8 @@ public:
     MachO::fat_arch_64 Header64;
 
   public:
-    ObjectForArch(const MachOUniversalBinary *Parent, uint32_t Index);
+    LLVM_OBJECT_ABI ObjectForArch(const MachOUniversalBinary *Parent,
+                                  uint32_t Index);
 
     void clear() {
       Parent = nullptr;
@@ -102,15 +105,17 @@ public:
       return ArchFlag ? ArchFlag : std::string();
     }
 
-    Expected<std::unique_ptr<MachOObjectFile>> getAsObjectFile() const;
-    Expected<std::unique_ptr<IRObjectFile>>
+    LLVM_OBJECT_ABI Expected<std::unique_ptr<MachOObjectFile>>
+    getAsObjectFile() const;
+    LLVM_OBJECT_ABI Expected<std::unique_ptr<IRObjectFile>>
     getAsIRObject(LLVMContext &Ctx) const;
 
-    Expected<std::unique_ptr<Archive>> getAsArchive() const;
+    LLVM_OBJECT_ABI Expected<std::unique_ptr<Archive>> getAsArchive() const;
   };
 
   class object_iterator {
     ObjectForArch Obj;
+
   public:
     object_iterator(const ObjectForArch &Obj) : Obj(Obj) {}
     const ObjectForArch *operator->() const { return &Obj; }
@@ -123,22 +128,18 @@ public:
       return !(*this == Other);
     }
 
-    object_iterator& operator++() {  // Preincrement
+    object_iterator &operator++() { // Preincrement
       Obj = Obj.getNext();
       return *this;
     }
   };
 
-  MachOUniversalBinary(MemoryBufferRef Souce, Error &Err);
-  static Expected<std::unique_ptr<MachOUniversalBinary>>
+  LLVM_OBJECT_ABI MachOUniversalBinary(MemoryBufferRef Souce, Error &Err);
+  LLVM_OBJECT_ABI static Expected<std::unique_ptr<MachOUniversalBinary>>
   create(MemoryBufferRef Source);
 
-  object_iterator begin_objects() const {
-    return ObjectForArch(this, 0);
-  }
-  object_iterator end_objects() const {
-    return ObjectForArch(nullptr, 0);
-  }
+  object_iterator begin_objects() const { return ObjectForArch(this, 0); }
+  object_iterator end_objects() const { return ObjectForArch(nullptr, 0); }
 
   iterator_range<object_iterator> objects() const {
     return make_range(begin_objects(), end_objects());
@@ -148,24 +149,22 @@ public:
   uint32_t getNumberOfObjects() const { return NumberOfObjects; }
 
   // Cast methods.
-  static bool classof(Binary const *V) {
-    return V->isMachOUniversalBinary();
-  }
+  static bool classof(Binary const *V) { return V->isMachOUniversalBinary(); }
 
-  Expected<ObjectForArch>
+  LLVM_OBJECT_ABI Expected<ObjectForArch>
   getObjectForArch(StringRef ArchName) const;
 
-  Expected<std::unique_ptr<MachOObjectFile>>
+  LLVM_OBJECT_ABI Expected<std::unique_ptr<MachOObjectFile>>
   getMachOObjectForArch(StringRef ArchName) const;
 
-  Expected<std::unique_ptr<IRObjectFile>>
+  LLVM_OBJECT_ABI Expected<std::unique_ptr<IRObjectFile>>
   getIRObjectForArch(StringRef ArchName, LLVMContext &Ctx) const;
 
-  Expected<std::unique_ptr<Archive>>
+  LLVM_OBJECT_ABI Expected<std::unique_ptr<Archive>>
   getArchiveForArch(StringRef ArchName) const;
 };
 
-}
-}
+} // namespace object
+} // namespace llvm
 
 #endif

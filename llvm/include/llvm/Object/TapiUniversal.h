@@ -15,6 +15,7 @@
 
 #include "llvm/ADT/StringRef.h"
 #include "llvm/Object/Binary.h"
+#include "llvm/Object/ObjectConfig.h"
 #include "llvm/Support/Error.h"
 #include "llvm/Support/MemoryBufferRef.h"
 #include "llvm/TextAPI/Architecture.h"
@@ -65,7 +66,7 @@ public:
       return Parent->ParsedFile->getInstallName() == getInstallName();
     }
 
-    Expected<std::unique_ptr<TapiFile>> getAsObjectFile() const;
+    LLVM_OBJECT_ABI Expected<std::unique_ptr<TapiFile>> getAsObjectFile() const;
   };
 
   class object_iterator {
@@ -89,10 +90,10 @@ public:
     }
   };
 
-  TapiUniversal(MemoryBufferRef Source, Error &Err);
-  static Expected<std::unique_ptr<TapiUniversal>>
+  LLVM_OBJECT_ABI TapiUniversal(MemoryBufferRef Source, Error &Err);
+  LLVM_OBJECT_ABI static Expected<std::unique_ptr<TapiUniversal>>
   create(MemoryBufferRef Source);
-  ~TapiUniversal() override;
+  LLVM_OBJECT_ABI ~TapiUniversal() override;
 
   object_iterator begin_objects() const { return ObjectForArch(this, 0); }
   object_iterator end_objects() const {

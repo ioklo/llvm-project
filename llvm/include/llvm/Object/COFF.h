@@ -18,6 +18,7 @@
 #include "llvm/Object/Binary.h"
 #include "llvm/Object/CVDebugRecord.h"
 #include "llvm/Object/Error.h"
+#include "llvm/Object/ObjectConfig.h"
 #include "llvm/Object/ObjectFile.h"
 #include "llvm/Support/BinaryByteStream.h"
 #include "llvm/Support/ConvertUTF.h"
@@ -55,7 +56,7 @@ using arm64x_reloc_iterator = content_iterator<Arm64XRelocRef>;
 
 /// The DOS compatible header at the front of all PE/COFF executables.
 struct dos_header {
-  char                 Magic[2];
+  char Magic[2];
   support::ulittle16_t UsedBytesInTheLastPage;
   support::ulittle16_t FileSizeInPages;
   support::ulittle16_t NumberOfRelocationItems;
@@ -94,7 +95,7 @@ struct coff_bigobj_file_header {
   support::ulittle16_t Version;
   support::ulittle16_t Machine;
   support::ulittle32_t TimeDateStamp;
-  uint8_t              UUID[16];
+  uint8_t UUID[16];
   support::ulittle32_t unused1;
   support::ulittle32_t unused2;
   support::ulittle32_t unused3;
@@ -189,8 +190,7 @@ struct debug_directory {
   support::ulittle32_t PointerToRawData;
 };
 
-template <typename IntTy>
-struct import_lookup_table_entry {
+template <typename IntTy> struct import_lookup_table_entry {
   IntTy Data;
 
   bool isOrdinal() const { return Data < 0; }
@@ -250,8 +250,7 @@ struct StringTableOffset {
   support::ulittle32_t Offset;
 };
 
-template <typename SectionNumberType>
-struct coff_symbol {
+template <typename SectionNumberType> struct coff_symbol {
   union {
     char ShortName[COFF::NameSize];
     StringTableOffset Offset;
@@ -374,9 +373,7 @@ public:
     return getAux<coff_aux_weak_external>();
   }
 
-  bool isAbsolute() const {
-    return getSectionNumber() == -1;
-  }
+  bool isAbsolute() const { return getSectionNumber() == -1; }
 
   bool isExternal() const {
     return getStorageClass() == COFF::IMAGE_SYM_CLASS_EXTERNAL;
@@ -410,9 +407,7 @@ public:
     return getStorageClass() == COFF::IMAGE_SYM_CLASS_FUNCTION;
   }
 
-  bool isAnyUndefined() const {
-    return isUndefined() || isWeakExternal();
-  }
+  bool isAnyUndefined() const { return isUndefined() || isWeakExternal(); }
 
   bool isFileRecord() const {
     return getStorageClass() == COFF::IMAGE_SYM_CLASS_FILE;
@@ -522,8 +517,8 @@ struct coff_aux_section_definition {
   support::ulittle16_t NumberOfLinenumbers;
   support::ulittle32_t CheckSum;
   support::ulittle16_t NumberLowPart;
-  uint8_t              Selection;
-  uint8_t              Unused;
+  uint8_t Selection;
+  uint8_t Unused;
   support::ulittle16_t NumberHighPart;
   int32_t getNumber(bool IsBigObj) const {
     uint32_t Number = static_cast<uint32_t>(NumberLowPart);
@@ -537,10 +532,10 @@ static_assert(sizeof(coff_aux_section_definition) == 18,
               "auxiliary entry must be 18 bytes");
 
 struct coff_aux_clr_token {
-  uint8_t              AuxType;
-  uint8_t              Reserved;
+  uint8_t AuxType;
+  uint8_t Reserved;
   support::ulittle32_t SymbolTableIndex;
-  char                 MBZ[12];
+  char MBZ[12];
 };
 
 static_assert(sizeof(coff_aux_clr_token) == 18,
@@ -573,8 +568,7 @@ struct coff_import_directory_table_entry {
   }
 };
 
-template <typename IntTy>
-struct coff_tls_directory {
+template <typename IntTy> struct coff_tls_directory {
   IntTy StartAddressOfRawData;
   IntTy EndAddressOfRawData;
   IntTy AddressOfIndex;
@@ -928,7 +922,7 @@ private:
   Error initDynamicRelocPtr(uint32_t SectionIndex, uint32_t SectionOffset);
 
 public:
-  static Expected<std::unique_ptr<COFFObjectFile>>
+  LLVM_OBJECT_ABI static Expected<std::unique_ptr<COFFObjectFile>>
   create(MemoryBufferRef Object);
 
   uintptr_t getSymbolTable() const {
@@ -1039,73 +1033,88 @@ public:
   StringRef getRelocationTypeName(uint16_t Type) const;
 
 protected:
-  void moveSymbolNext(DataRefImpl &Symb) const override;
-  Expected<StringRef> getSymbolName(DataRefImpl Symb) const override;
-  Expected<uint64_t> getSymbolAddress(DataRefImpl Symb) const override;
-  uint32_t getSymbolAlignment(DataRefImpl Symb) const override;
-  uint64_t getSymbolValueImpl(DataRefImpl Symb) const override;
-  uint64_t getCommonSymbolSizeImpl(DataRefImpl Symb) const override;
-  Expected<uint32_t> getSymbolFlags(DataRefImpl Symb) const override;
-  Expected<SymbolRef::Type> getSymbolType(DataRefImpl Symb) const override;
-  Expected<section_iterator> getSymbolSection(DataRefImpl Symb) const override;
-  void moveSectionNext(DataRefImpl &Sec) const override;
-  Expected<StringRef> getSectionName(DataRefImpl Sec) const override;
-  uint64_t getSectionAddress(DataRefImpl Sec) const override;
-  uint64_t getSectionIndex(DataRefImpl Sec) const override;
-  uint64_t getSectionSize(DataRefImpl Sec) const override;
-  Expected<ArrayRef<uint8_t>>
+  LLVM_OBJECT_ABI void moveSymbolNext(DataRefImpl &Symb) const override;
+  LLVM_OBJECT_ABI Expected<StringRef>
+  getSymbolName(DataRefImpl Symb) const override;
+  LLVM_OBJECT_ABI Expected<uint64_t>
+  getSymbolAddress(DataRefImpl Symb) const override;
+  LLVM_OBJECT_ABI uint32_t getSymbolAlignment(DataRefImpl Symb) const override;
+  LLVM_OBJECT_ABI uint64_t getSymbolValueImpl(DataRefImpl Symb) const override;
+  LLVM_OBJECT_ABI uint64_t
+  getCommonSymbolSizeImpl(DataRefImpl Symb) const override;
+  LLVM_OBJECT_ABI Expected<uint32_t>
+  getSymbolFlags(DataRefImpl Symb) const override;
+  LLVM_OBJECT_ABI Expected<SymbolRef::Type>
+  getSymbolType(DataRefImpl Symb) const override;
+  LLVM_OBJECT_ABI Expected<section_iterator>
+  getSymbolSection(DataRefImpl Symb) const override;
+  LLVM_OBJECT_ABI void moveSectionNext(DataRefImpl &Sec) const override;
+  LLVM_OBJECT_ABI Expected<StringRef>
+  getSectionName(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI uint64_t getSectionAddress(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI uint64_t getSectionIndex(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI uint64_t getSectionSize(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI Expected<ArrayRef<uint8_t>>
   getSectionContents(DataRefImpl Sec) const override;
-  uint64_t getSectionAlignment(DataRefImpl Sec) const override;
-  bool isSectionCompressed(DataRefImpl Sec) const override;
-  bool isSectionText(DataRefImpl Sec) const override;
-  bool isSectionData(DataRefImpl Sec) const override;
-  bool isSectionBSS(DataRefImpl Sec) const override;
-  bool isSectionVirtual(DataRefImpl Sec) const override;
-  bool isDebugSection(DataRefImpl Sec) const override;
-  relocation_iterator section_rel_begin(DataRefImpl Sec) const override;
-  relocation_iterator section_rel_end(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI uint64_t getSectionAlignment(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI bool isSectionCompressed(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI bool isSectionText(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI bool isSectionData(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI bool isSectionBSS(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI bool isSectionVirtual(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI bool isDebugSection(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI relocation_iterator
+  section_rel_begin(DataRefImpl Sec) const override;
+  LLVM_OBJECT_ABI relocation_iterator
+  section_rel_end(DataRefImpl Sec) const override;
 
-  void moveRelocationNext(DataRefImpl &Rel) const override;
-  uint64_t getRelocationOffset(DataRefImpl Rel) const override;
-  symbol_iterator getRelocationSymbol(DataRefImpl Rel) const override;
-  uint64_t getRelocationType(DataRefImpl Rel) const override;
-  void getRelocationTypeName(DataRefImpl Rel,
-                             SmallVectorImpl<char> &Result) const override;
+  LLVM_OBJECT_ABI void moveRelocationNext(DataRefImpl &Rel) const override;
+  LLVM_OBJECT_ABI uint64_t getRelocationOffset(DataRefImpl Rel) const override;
+  LLVM_OBJECT_ABI symbol_iterator
+  getRelocationSymbol(DataRefImpl Rel) const override;
+  LLVM_OBJECT_ABI uint64_t getRelocationType(DataRefImpl Rel) const override;
+  LLVM_OBJECT_ABI void
+  getRelocationTypeName(DataRefImpl Rel,
+                        SmallVectorImpl<char> &Result) const override;
 
 public:
-  basic_symbol_iterator symbol_begin() const override;
-  basic_symbol_iterator symbol_end() const override;
-  section_iterator section_begin() const override;
-  section_iterator section_end() const override;
+  LLVM_OBJECT_ABI basic_symbol_iterator symbol_begin() const override;
+  LLVM_OBJECT_ABI basic_symbol_iterator symbol_end() const override;
+  LLVM_OBJECT_ABI section_iterator section_begin() const override;
+  LLVM_OBJECT_ABI section_iterator section_end() const override;
 
   bool is64Bit() const override { return false; }
 
-  const coff_section *getCOFFSection(const SectionRef &Section) const;
-  COFFSymbolRef getCOFFSymbol(const DataRefImpl &Ref) const;
-  COFFSymbolRef getCOFFSymbol(const SymbolRef &Symbol) const;
-  const coff_relocation *getCOFFRelocation(const RelocationRef &Reloc) const;
-  unsigned getSectionID(SectionRef Sec) const;
-  unsigned getSymbolSectionID(SymbolRef Sym) const;
+  LLVM_OBJECT_ABI const coff_section *
+  getCOFFSection(const SectionRef &Section) const;
+  LLVM_OBJECT_ABI COFFSymbolRef getCOFFSymbol(const DataRefImpl &Ref) const;
+  LLVM_OBJECT_ABI COFFSymbolRef getCOFFSymbol(const SymbolRef &Symbol) const;
+  LLVM_OBJECT_ABI const coff_relocation *
+  getCOFFRelocation(const RelocationRef &Reloc) const;
+  LLVM_OBJECT_ABI unsigned getSectionID(SectionRef Sec) const;
+  LLVM_OBJECT_ABI unsigned getSymbolSectionID(SymbolRef Sym) const;
 
-  uint8_t getBytesInAddress() const override;
-  StringRef getFileFormatName() const override;
-  Triple::ArchType getArch() const override;
-  Expected<uint64_t> getStartAddress() const override;
+  LLVM_OBJECT_ABI uint8_t getBytesInAddress() const override;
+  LLVM_OBJECT_ABI StringRef getFileFormatName() const override;
+  LLVM_OBJECT_ABI Triple::ArchType getArch() const override;
+  LLVM_OBJECT_ABI Expected<uint64_t> getStartAddress() const override;
   Expected<SubtargetFeatures> getFeatures() const override {
     return SubtargetFeatures();
   }
-  std::unique_ptr<MemoryBuffer> getHybridObjectView() const;
+  LLVM_OBJECT_ABI std::unique_ptr<MemoryBuffer> getHybridObjectView() const;
 
-  import_directory_iterator import_directory_begin() const;
-  import_directory_iterator import_directory_end() const;
-  delay_import_directory_iterator delay_import_directory_begin() const;
-  delay_import_directory_iterator delay_import_directory_end() const;
-  export_directory_iterator export_directory_begin() const;
-  export_directory_iterator export_directory_end() const;
-  base_reloc_iterator base_reloc_begin() const;
-  base_reloc_iterator base_reloc_end() const;
-  dynamic_reloc_iterator dynamic_reloc_begin() const;
-  dynamic_reloc_iterator dynamic_reloc_end() const;
+  LLVM_OBJECT_ABI import_directory_iterator import_directory_begin() const;
+  LLVM_OBJECT_ABI import_directory_iterator import_directory_end() const;
+  LLVM_OBJECT_ABI delay_import_directory_iterator
+  delay_import_directory_begin() const;
+  LLVM_OBJECT_ABI delay_import_directory_iterator
+  delay_import_directory_end() const;
+  LLVM_OBJECT_ABI export_directory_iterator export_directory_begin() const;
+  LLVM_OBJECT_ABI export_directory_iterator export_directory_end() const;
+  LLVM_OBJECT_ABI base_reloc_iterator base_reloc_begin() const;
+  LLVM_OBJECT_ABI base_reloc_iterator base_reloc_end() const;
+  LLVM_OBJECT_ABI dynamic_reloc_iterator dynamic_reloc_begin() const;
+  LLVM_OBJECT_ABI dynamic_reloc_iterator dynamic_reloc_end() const;
   const debug_directory *debug_directory_begin() const {
     return DebugDirectoryBegin;
   }
@@ -1113,12 +1122,14 @@ public:
     return DebugDirectoryEnd;
   }
 
-  iterator_range<import_directory_iterator> import_directories() const;
-  iterator_range<delay_import_directory_iterator>
-      delay_import_directories() const;
-  iterator_range<export_directory_iterator> export_directories() const;
-  iterator_range<base_reloc_iterator> base_relocs() const;
-  iterator_range<dynamic_reloc_iterator> dynamic_relocs() const;
+  LLVM_OBJECT_ABI iterator_range<import_directory_iterator>
+  import_directories() const;
+  LLVM_OBJECT_ABI iterator_range<delay_import_directory_iterator>
+  delay_import_directories() const;
+  LLVM_OBJECT_ABI iterator_range<export_directory_iterator>
+  export_directories() const;
+  LLVM_OBJECT_ABI iterator_range<base_reloc_iterator> base_relocs() const;
+  LLVM_OBJECT_ABI iterator_range<dynamic_reloc_iterator> dynamic_relocs() const;
   iterator_range<const debug_directory *> debug_directories() const {
     return make_range(debug_directory_begin(), debug_directory_end());
   }
@@ -1143,8 +1154,9 @@ public:
   const pe32_header *getPE32Header() const { return PE32Header; }
   const pe32plus_header *getPE32PlusHeader() const { return PE32PlusHeader; }
 
-  const data_directory *getDataDirectory(uint32_t index) const;
-  Expected<const coff_section *> getSection(int32_t index) const;
+  LLVM_OBJECT_ABI const data_directory *getDataDirectory(uint32_t index) const;
+  LLVM_OBJECT_ABI Expected<const coff_section *>
+  getSection(int32_t index) const;
 
   Expected<COFFSymbolRef> getSymbol(uint32_t index) const {
     if (index >= getNumberOfSymbols())
@@ -1165,12 +1177,14 @@ public:
     return Error::success();
   }
 
-  Expected<StringRef> getSymbolName(COFFSymbolRef Symbol) const;
-  Expected<StringRef> getSymbolName(const coff_symbol_generic *Symbol) const;
+  LLVM_OBJECT_ABI Expected<StringRef> getSymbolName(COFFSymbolRef Symbol) const;
+  LLVM_OBJECT_ABI Expected<StringRef>
+  getSymbolName(const coff_symbol_generic *Symbol) const;
 
-  ArrayRef<uint8_t> getSymbolAuxData(COFFSymbolRef Symbol) const;
+  LLVM_OBJECT_ABI ArrayRef<uint8_t>
+  getSymbolAuxData(COFFSymbolRef Symbol) const;
 
-  uint32_t getSymbolIndex(COFFSymbolRef Symbol) const;
+  LLVM_OBJECT_ABI uint32_t getSymbolIndex(COFFSymbolRef Symbol) const;
 
   size_t getSymbolTableEntrySize() const {
     if (COFFHeader)
@@ -1180,44 +1194,46 @@ public:
     llvm_unreachable("null symbol table pointer!");
   }
 
-  ArrayRef<coff_relocation> getRelocations(const coff_section *Sec) const;
+  LLVM_OBJECT_ABI ArrayRef<coff_relocation>
+  getRelocations(const coff_section *Sec) const;
 
-  Expected<StringRef> getSectionName(const coff_section *Sec) const;
-  uint64_t getSectionSize(const coff_section *Sec) const;
-  Error getSectionContents(const coff_section *Sec,
-                           ArrayRef<uint8_t> &Res) const;
+  LLVM_OBJECT_ABI Expected<StringRef>
+  getSectionName(const coff_section *Sec) const;
+  LLVM_OBJECT_ABI uint64_t getSectionSize(const coff_section *Sec) const;
+  LLVM_OBJECT_ABI Error getSectionContents(const coff_section *Sec,
+                                           ArrayRef<uint8_t> &Res) const;
 
-  uint64_t getImageBase() const;
-  Error getVaPtr(uint64_t VA, uintptr_t &Res) const;
-  Error getRvaPtr(uint32_t Rva, uintptr_t &Res,
-                  const char *ErrorContext = nullptr) const;
+  LLVM_OBJECT_ABI uint64_t getImageBase() const;
+  LLVM_OBJECT_ABI Error getVaPtr(uint64_t VA, uintptr_t &Res) const;
+  LLVM_OBJECT_ABI Error getRvaPtr(uint32_t Rva, uintptr_t &Res,
+                                  const char *ErrorContext = nullptr) const;
 
   /// Given an RVA base and size, returns a valid array of bytes or an error
   /// code if the RVA and size is not contained completely within a valid
   /// section.
-  Error getRvaAndSizeAsBytes(uint32_t RVA, uint32_t Size,
-                             ArrayRef<uint8_t> &Contents,
-                             const char *ErrorContext = nullptr) const;
+  LLVM_OBJECT_ABI Error
+  getRvaAndSizeAsBytes(uint32_t RVA, uint32_t Size, ArrayRef<uint8_t> &Contents,
+                       const char *ErrorContext = nullptr) const;
 
-  Error getHintName(uint32_t Rva, uint16_t &Hint,
-                              StringRef &Name) const;
+  LLVM_OBJECT_ABI Error getHintName(uint32_t Rva, uint16_t &Hint,
+                                    StringRef &Name) const;
 
   /// Get PDB information out of a codeview debug directory entry.
-  Error getDebugPDBInfo(const debug_directory *DebugDir,
-                        const codeview::DebugInfo *&Info,
-                        StringRef &PDBFileName) const;
+  LLVM_OBJECT_ABI Error getDebugPDBInfo(const debug_directory *DebugDir,
+                                        const codeview::DebugInfo *&Info,
+                                        StringRef &PDBFileName) const;
 
   /// Get PDB information from an executable. If the information is not present,
   /// Info will be set to nullptr and PDBFileName will be empty. An error is
   /// returned only on corrupt object files. Convenience accessor that can be
   /// used if the debug directory is not already handy.
-  Error getDebugPDBInfo(const codeview::DebugInfo *&Info,
-                        StringRef &PDBFileName) const;
+  LLVM_OBJECT_ABI Error getDebugPDBInfo(const codeview::DebugInfo *&Info,
+                                        StringRef &PDBFileName) const;
 
-  bool isRelocatableObject() const override;
+  LLVM_OBJECT_ABI bool isRelocatableObject() const override;
   bool is64() const { return PE32PlusHeader; }
 
-  StringRef mapDebugSectionName(StringRef Name) const override;
+  LLVM_OBJECT_ABI StringRef mapDebugSectionName(StringRef Name) const override;
 
   static bool classof(const Binary *v) { return v->isCOFF(); }
 };
@@ -1230,22 +1246,24 @@ public:
                           uint32_t I, const COFFObjectFile *Owner)
       : ImportTable(Table), Index(I), OwningObject(Owner) {}
 
-  bool operator==(const ImportDirectoryEntryRef &Other) const;
-  void moveNext();
+  LLVM_OBJECT_ABI bool operator==(const ImportDirectoryEntryRef &Other) const;
+  LLVM_OBJECT_ABI void moveNext();
 
-  imported_symbol_iterator imported_symbol_begin() const;
-  imported_symbol_iterator imported_symbol_end() const;
-  iterator_range<imported_symbol_iterator> imported_symbols() const;
+  LLVM_OBJECT_ABI imported_symbol_iterator imported_symbol_begin() const;
+  LLVM_OBJECT_ABI imported_symbol_iterator imported_symbol_end() const;
+  LLVM_OBJECT_ABI iterator_range<imported_symbol_iterator>
+  imported_symbols() const;
 
-  imported_symbol_iterator lookup_table_begin() const;
-  imported_symbol_iterator lookup_table_end() const;
-  iterator_range<imported_symbol_iterator> lookup_table_symbols() const;
+  LLVM_OBJECT_ABI imported_symbol_iterator lookup_table_begin() const;
+  LLVM_OBJECT_ABI imported_symbol_iterator lookup_table_end() const;
+  LLVM_OBJECT_ABI iterator_range<imported_symbol_iterator>
+  lookup_table_symbols() const;
 
-  Error getName(StringRef &Result) const;
-  Error getImportLookupTableRVA(uint32_t &Result) const;
-  Error getImportAddressTableRVA(uint32_t &Result) const;
+  LLVM_OBJECT_ABI Error getName(StringRef &Result) const;
+  LLVM_OBJECT_ABI Error getImportLookupTableRVA(uint32_t &Result) const;
+  LLVM_OBJECT_ABI Error getImportAddressTableRVA(uint32_t &Result) const;
 
-  Error
+  LLVM_OBJECT_ABI Error
   getImportTableEntry(const coff_import_directory_table_entry *&Result) const;
 
 private:
@@ -1261,17 +1279,19 @@ public:
                                uint32_t I, const COFFObjectFile *Owner)
       : Table(T), Index(I), OwningObject(Owner) {}
 
-  bool operator==(const DelayImportDirectoryEntryRef &Other) const;
-  void moveNext();
+  LLVM_OBJECT_ABI bool
+  operator==(const DelayImportDirectoryEntryRef &Other) const;
+  LLVM_OBJECT_ABI void moveNext();
 
-  imported_symbol_iterator imported_symbol_begin() const;
-  imported_symbol_iterator imported_symbol_end() const;
-  iterator_range<imported_symbol_iterator> imported_symbols() const;
+  LLVM_OBJECT_ABI imported_symbol_iterator imported_symbol_begin() const;
+  LLVM_OBJECT_ABI imported_symbol_iterator imported_symbol_end() const;
+  LLVM_OBJECT_ABI iterator_range<imported_symbol_iterator>
+  imported_symbols() const;
 
-  Error getName(StringRef &Result) const;
-  Error getDelayImportTable(
-      const delay_import_directory_table_entry *&Result) const;
-  Error getImportAddress(int AddrIndex, uint64_t &Result) const;
+  LLVM_OBJECT_ABI Error getName(StringRef &Result) const;
+  LLVM_OBJECT_ABI Error
+  getDelayImportTable(const delay_import_directory_table_entry *&Result) const;
+  LLVM_OBJECT_ABI Error getImportAddress(int AddrIndex, uint64_t &Result) const;
 
 private:
   const delay_import_directory_table_entry *Table;
@@ -1287,17 +1307,17 @@ public:
                           const COFFObjectFile *Owner)
       : ExportTable(Table), Index(I), OwningObject(Owner) {}
 
-  bool operator==(const ExportDirectoryEntryRef &Other) const;
-  void moveNext();
+  LLVM_OBJECT_ABI bool operator==(const ExportDirectoryEntryRef &Other) const;
+  LLVM_OBJECT_ABI void moveNext();
 
-  Error getDllName(StringRef &Result) const;
-  Error getOrdinalBase(uint32_t &Result) const;
-  Error getOrdinal(uint32_t &Result) const;
-  Error getExportRVA(uint32_t &Result) const;
-  Error getSymbolName(StringRef &Result) const;
+  LLVM_OBJECT_ABI Error getDllName(StringRef &Result) const;
+  LLVM_OBJECT_ABI Error getOrdinalBase(uint32_t &Result) const;
+  LLVM_OBJECT_ABI Error getOrdinal(uint32_t &Result) const;
+  LLVM_OBJECT_ABI Error getExportRVA(uint32_t &Result) const;
+  LLVM_OBJECT_ABI Error getSymbolName(StringRef &Result) const;
 
-  Error isForwarder(bool &Result) const;
-  Error getForwardTo(StringRef &Result) const;
+  LLVM_OBJECT_ABI Error isForwarder(bool &Result) const;
+  LLVM_OBJECT_ABI Error getForwardTo(StringRef &Result) const;
 
 private:
   const export_directory_table_entry *ExportTable;
@@ -1315,13 +1335,13 @@ public:
                     const COFFObjectFile *Owner)
       : Entry32(nullptr), Entry64(Entry), Index(I), OwningObject(Owner) {}
 
-  bool operator==(const ImportedSymbolRef &Other) const;
-  void moveNext();
+  LLVM_OBJECT_ABI bool operator==(const ImportedSymbolRef &Other) const;
+  LLVM_OBJECT_ABI void moveNext();
 
-  Error getSymbolName(StringRef &Result) const;
-  Error isOrdinal(bool &Result) const;
-  Error getOrdinal(uint16_t &Result) const;
-  Error getHintNameRVA(uint32_t &Result) const;
+  LLVM_OBJECT_ABI Error getSymbolName(StringRef &Result) const;
+  LLVM_OBJECT_ABI Error isOrdinal(bool &Result) const;
+  LLVM_OBJECT_ABI Error getOrdinal(uint16_t &Result) const;
+  LLVM_OBJECT_ABI Error getHintNameRVA(uint32_t &Result) const;
 
 private:
   const import_lookup_table_entry32 *Entry32;
@@ -1337,11 +1357,11 @@ public:
                const COFFObjectFile *Owner)
       : Header(Header), Index(0) {}
 
-  bool operator==(const BaseRelocRef &Other) const;
-  void moveNext();
+  LLVM_OBJECT_ABI bool operator==(const BaseRelocRef &Other) const;
+  LLVM_OBJECT_ABI void moveNext();
 
-  Error getType(uint8_t &Type) const;
-  Error getRVA(uint32_t &Result) const;
+  LLVM_OBJECT_ABI Error getType(uint8_t &Type) const;
+  LLVM_OBJECT_ABI Error getRVA(uint32_t &Result) const;
 
 private:
   const coff_base_reloc_block_header *Header;
@@ -1354,14 +1374,14 @@ public:
   DynamicRelocRef(const void *Header, const COFFObjectFile *Owner)
       : Obj(Owner), Header(reinterpret_cast<const uint8_t *>(Header)) {}
 
-  bool operator==(const DynamicRelocRef &Other) const;
-  void moveNext();
-  uint32_t getType() const;
-  void getContents(ArrayRef<uint8_t> &Ref) const;
+  LLVM_OBJECT_ABI bool operator==(const DynamicRelocRef &Other) const;
+  LLVM_OBJECT_ABI void moveNext();
+  LLVM_OBJECT_ABI uint32_t getType() const;
+  LLVM_OBJECT_ABI void getContents(ArrayRef<uint8_t> &Ref) const;
 
-  arm64x_reloc_iterator arm64x_reloc_begin() const;
-  arm64x_reloc_iterator arm64x_reloc_end() const;
-  iterator_range<arm64x_reloc_iterator> arm64x_relocs() const;
+  LLVM_OBJECT_ABI arm64x_reloc_iterator arm64x_reloc_begin() const;
+  LLVM_OBJECT_ABI arm64x_reloc_iterator arm64x_reloc_end() const;
+  LLVM_OBJECT_ABI iterator_range<arm64x_reloc_iterator> arm64x_relocs() const;
 
 private:
   Error validate() const;
@@ -1378,15 +1398,15 @@ public:
   Arm64XRelocRef(const coff_base_reloc_block_header *Header, uint32_t Index = 0)
       : Header(Header), Index(Index) {}
 
-  bool operator==(const Arm64XRelocRef &Other) const;
-  void moveNext();
+  LLVM_OBJECT_ABI bool operator==(const Arm64XRelocRef &Other) const;
+  LLVM_OBJECT_ABI void moveNext();
 
   COFF::Arm64XFixupType getType() const {
     return COFF::Arm64XFixupType((getReloc() >> 12) & 3);
   }
   uint32_t getRVA() const { return Header->PageRVA + (getReloc() & 0xfff); }
-  uint8_t getSize() const;
-  uint64_t getValue() const;
+  LLVM_OBJECT_ABI uint8_t getSize() const;
+  LLVM_OBJECT_ABI uint64_t getValue() const;
 
 private:
   const support::ulittle16_t &getReloc(uint32_t Offset = 0) const {
@@ -1395,8 +1415,8 @@ private:
   }
 
   uint16_t getArg() const { return getReloc() >> 14; }
-  uint8_t getEntrySize() const;
-  Error validate(const COFFObjectFile *Obj) const;
+  LLVM_OBJECT_ABI uint8_t getEntrySize() const;
+  LLVM_OBJECT_ABI Error validate(const COFFObjectFile *Obj) const;
 
   const coff_base_reloc_block_header *Header;
   uint32_t Index;
@@ -1410,20 +1430,21 @@ public:
   explicit ResourceSectionRef(StringRef Ref)
       : BBS(Ref, llvm::endianness::little) {}
 
-  Error load(const COFFObjectFile *O);
-  Error load(const COFFObjectFile *O, const SectionRef &S);
+  LLVM_OBJECT_ABI Error load(const COFFObjectFile *O);
+  LLVM_OBJECT_ABI Error load(const COFFObjectFile *O, const SectionRef &S);
 
-  Expected<ArrayRef<UTF16>>
+  LLVM_OBJECT_ABI Expected<ArrayRef<UTF16>>
   getEntryNameString(const coff_resource_dir_entry &Entry);
-  Expected<const coff_resource_dir_table &>
+  LLVM_OBJECT_ABI Expected<const coff_resource_dir_table &>
   getEntrySubDir(const coff_resource_dir_entry &Entry);
-  Expected<const coff_resource_data_entry &>
+  LLVM_OBJECT_ABI Expected<const coff_resource_data_entry &>
   getEntryData(const coff_resource_dir_entry &Entry);
-  Expected<const coff_resource_dir_table &> getBaseTable();
-  Expected<const coff_resource_dir_entry &>
+  LLVM_OBJECT_ABI Expected<const coff_resource_dir_table &> getBaseTable();
+  LLVM_OBJECT_ABI Expected<const coff_resource_dir_entry &>
   getTableEntry(const coff_resource_dir_table &Table, uint32_t Index);
 
-  Expected<StringRef> getContents(const coff_resource_data_entry &Entry);
+  LLVM_OBJECT_ABI Expected<StringRef>
+  getContents(const coff_resource_data_entry &Entry);
 
 private:
   BinaryByteStream BBS;

@@ -19,6 +19,7 @@
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/IR/Mangler.h"
 #include "llvm/Object/COFF.h"
+#include "llvm/Object/ObjectConfig.h"
 #include "llvm/Object/ObjectFile.h"
 #include "llvm/Object/SymbolicFile.h"
 #include "llvm/Support/MemoryBufferRef.h"
@@ -45,7 +46,8 @@ public:
 
   void moveSymbolNext(DataRefImpl &Symb) const override { ++Symb.p; }
 
-  Error printSymbolName(raw_ostream &OS, DataRefImpl Symb) const override;
+  LLVM_OBJECT_ABI Error printSymbolName(raw_ostream &OS,
+                                        DataRefImpl Symb) const override;
 
   Expected<uint32_t> getSymbolFlags(DataRefImpl Symb) const override {
     return SymbolRef::SF_Global;
@@ -75,8 +77,8 @@ public:
 
   uint16_t getMachine() const { return getCOFFImportHeader()->Machine; }
 
-  StringRef getFileFormatName() const;
-  StringRef getExportName() const;
+  LLVM_OBJECT_ABI StringRef getFileFormatName() const;
+  LLVM_OBJECT_ABI StringRef getExportName() const;
 
 private:
   bool isData() const {
@@ -116,8 +118,8 @@ struct COFFShortExport {
 
   friend bool operator==(const COFFShortExport &L, const COFFShortExport &R) {
     return L.Name == R.Name && L.ExtName == R.ExtName &&
-            L.Ordinal == R.Ordinal && L.Noname == R.Noname &&
-            L.Data == R.Data && L.Private == R.Private;
+           L.Ordinal == R.Ordinal && L.Noname == R.Noname && L.Data == R.Data &&
+           L.Private == R.Private;
   }
 
   friend bool operator!=(const COFFShortExport &L, const COFFShortExport &R) {
@@ -135,10 +137,10 @@ struct COFFShortExport {
 /// linking both ARM64EC and pure ARM64 objects, and the linker will pick only
 /// the exports relevant to the target platform. For non-hybrid targets,
 /// the NativeExports parameter should not be used.
-Error writeImportLibrary(StringRef ImportName, StringRef Path,
-                         ArrayRef<COFFShortExport> Exports,
-                         COFF::MachineTypes Machine, bool MinGW,
-                         ArrayRef<COFFShortExport> NativeExports = {});
+LLVM_OBJECT_ABI Error writeImportLibrary(
+    StringRef ImportName, StringRef Path, ArrayRef<COFFShortExport> Exports,
+    COFF::MachineTypes Machine, bool MinGW,
+    ArrayRef<COFFShortExport> NativeExports = {});
 
 } // namespace object
 } // namespace llvm

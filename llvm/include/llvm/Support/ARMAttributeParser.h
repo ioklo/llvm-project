@@ -25,7 +25,7 @@ class ARMAttributeParser : public ELFAttributeParser {
   };
   static const DisplayHandler displayRoutines[];
 
-  Error handler(uint64_t tag, bool &handled) override;
+  LLVM_SUPPORT_ABI Error handler(uint64_t tag, bool &handled) override;
 
   Error stringAttribute(ARMBuildAttrs::AttrType tag);
 

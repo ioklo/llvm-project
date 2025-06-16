@@ -305,7 +305,7 @@ LLVM_SUPPORT_ABI std::string convert_to_slash(StringRef path,
 ///
 /// @param path Input path.
 /// @result The root name of \a path if it has one, otherwise "".
-StringRef root_name(StringRef path LLVM_LIFETIME_BOUND,
+LLVM_SUPPORT_ABI StringRef root_name(StringRef path LLVM_LIFETIME_BOUND,
                     Style style = Style::native);
 
 /// Get root directory.

@@ -412,11 +412,11 @@ private:
 
   /// Copy data into the buffer. Size must not be greater than the number of
   /// unused bytes in the buffer.
-  LLVM_SUPPORT_ABI void copy_to_buffer(const char *Ptr, size_t Size);
+  void copy_to_buffer(const char *Ptr, size_t Size);
 
   /// Compute whether colors should be used and do the necessary work such as
   /// flushing. The result is affected by calls to enable_color().
-  LLVM_SUPPORT_ABI bool prepare_colors();
+  bool prepare_colors();
 
   LLVM_SUPPORT_ABI virtual void anchor();
 };
@@ -483,9 +483,9 @@ class raw_fd_ostream : public raw_pwrite_stream {
   uint64_t pos = 0;
 
   /// See raw_ostream::write_impl.
-  LLVM_SUPPORT_ABI void write_impl(const char *Ptr, size_t Size) override;
+  void write_impl(const char *Ptr, size_t Size) override;
 
-  LLVM_SUPPORT_ABI void pwrite_impl(const char *Ptr, size_t Size,
+  void pwrite_impl(const char *Ptr, size_t Size,
                                     uint64_t Offset) override;
 
   /// Return the current position within the stream, not counting the bytes
@@ -493,7 +493,7 @@ class raw_fd_ostream : public raw_pwrite_stream {
   uint64_t current_pos() const override { return pos; }
 
   /// Determine an efficient buffer size.
-  LLVM_SUPPORT_ABI size_t preferred_buffer_size() const override;
+  size_t preferred_buffer_size() const override;
 
   LLVM_SUPPORT_ABI void anchor() override;
 

@@ -15,6 +15,7 @@
 
 #include "llvm/ADT/StringRef.h"
 #include "llvm/Object/Binary.h"
+#include "llvm/Object/ObjectConfig.h"
 #include "llvm/Object/ObjectFile.h"
 #include "llvm/Object/SymbolicFile.h"
 #include "llvm/Support/Error.h"
@@ -32,19 +33,22 @@ class TapiFile : public SymbolicFile {
 public:
   TapiFile(MemoryBufferRef Source, const MachO::InterfaceFile &Interface,
            MachO::Architecture Arch);
-  ~TapiFile() override;
+  LLVM_OBJECT_ABI ~TapiFile() override;
 
-  void moveSymbolNext(DataRefImpl &DRI) const override;
+  LLVM_OBJECT_ABI void moveSymbolNext(DataRefImpl &DRI) const override;
 
-  Error printSymbolName(raw_ostream &OS, DataRefImpl DRI) const override;
+  LLVM_OBJECT_ABI Error printSymbolName(raw_ostream &OS,
+                                        DataRefImpl DRI) const override;
 
-  Expected<uint32_t> getSymbolFlags(DataRefImpl DRI) const override;
+  LLVM_OBJECT_ABI Expected<uint32_t>
+  getSymbolFlags(DataRefImpl DRI) const override;
 
-  basic_symbol_iterator symbol_begin() const override;
+  LLVM_OBJECT_ABI basic_symbol_iterator symbol_begin() const override;
 
-  basic_symbol_iterator symbol_end() const override;
+  LLVM_OBJECT_ABI basic_symbol_iterator symbol_end() const override;
 
-  Expected<SymbolRef::Type> getSymbolType(DataRefImpl DRI) const;
+  LLVM_OBJECT_ABI Expected<SymbolRef::Type>
+  getSymbolType(DataRefImpl DRI) const;
 
   bool hasSegmentInfo() { return FileKind >= MachO::FileType::TBD_V5; }
 

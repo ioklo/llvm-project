@@ -21,6 +21,7 @@
 #include "llvm/BinaryFormat/ELF.h"
 #include "llvm/Object/ELFTypes.h"
 #include "llvm/Object/Error.h"
+#include "llvm/Object/ObjectConfig.h"
 #include "llvm/Support/Compiler.h"
 #include "llvm/Support/DataExtractor.h"
 #include "llvm/Support/Error.h"
@@ -71,9 +72,11 @@ struct VersionEntry {
   bool IsVerDef;
 };
 
-StringRef getELFRelocationTypeName(uint32_t Machine, uint32_t Type);
-uint32_t getELFRelativeRelocationType(uint32_t Machine);
-StringRef getELFSectionTypeName(uint32_t Machine, uint32_t Type);
+LLVM_OBJECT_ABI StringRef getELFRelocationTypeName(uint32_t Machine,
+                                                   uint32_t Type);
+LLVM_OBJECT_ABI uint32_t getELFRelativeRelocationType(uint32_t Machine);
+LLVM_OBJECT_ABI StringRef getELFSectionTypeName(uint32_t Machine,
+                                                uint32_t Type);
 
 // Subclasses of ELFFile may need this for template instantiation
 inline std::pair<unsigned char, unsigned char>
@@ -251,8 +254,7 @@ static Error decodeCrel(
   return Cur.takeError();
 }
 
-template <class ELFT>
-class ELFFile {
+template <class ELFT> class ELFFile {
 public:
   LLVM_ELF_IMPORT_TYPES_ELFT(ELFT)
 
@@ -448,9 +450,7 @@ public:
   }
 
   /// Get the end iterator for notes.
-  Elf_Note_Iterator notes_end() const {
-    return Elf_Note_Iterator();
-  }
+  Elf_Note_Iterator notes_end() const { return Elf_Note_Iterator(); }
 
   /// Get an iterator range over notes of a program header.
   ///

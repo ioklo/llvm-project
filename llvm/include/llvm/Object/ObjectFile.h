@@ -21,6 +21,7 @@
 #include "llvm/BinaryFormat/Swift.h"
 #include "llvm/Object/Binary.h"
 #include "llvm/Object/Error.h"
+#include "llvm/Object/ObjectConfig.h"
 #include "llvm/Object/SymbolicFile.h"
 #include "llvm/Support/Casting.h"
 #include "llvm/Support/Error.h"
@@ -161,7 +162,8 @@ inline bool operator==(const SectionedAddress &LHS,
          std::tie(RHS.SectionIndex, RHS.Address);
 }
 
-raw_ostream &operator<<(raw_ostream &OS, const SectionedAddress &Addr);
+LLVM_OBJECT_ABI raw_ostream &operator<<(raw_ostream &OS,
+                                        const SectionedAddress &Addr);
 
 /// This is a value type class that represents a single symbol in the list of
 /// symbols in the object file.
@@ -213,13 +215,13 @@ public:
                                         cast<ObjectFile>(B->getObject()))) {}
 
   const SymbolRef *operator->() const {
-    const BasicSymbolRef &P = basic_symbol_iterator::operator *();
-    return static_cast<const SymbolRef*>(&P);
+    const BasicSymbolRef &P = basic_symbol_iterator::operator*();
+    return static_cast<const SymbolRef *>(&P);
   }
 
   const SymbolRef &operator*() const {
-    const BasicSymbolRef &P = basic_symbol_iterator::operator *();
-    return static_cast<const SymbolRef&>(P);
+    const BasicSymbolRef &P = basic_symbol_iterator::operator*();
+    return static_cast<const SymbolRef &>(P);
   }
 };
 
@@ -230,7 +232,7 @@ class ObjectFile : public SymbolicFile {
   virtual void anchor();
 
 protected:
-  ObjectFile(unsigned int Type, MemoryBufferRef Source);
+  LLVM_OBJECT_ABI ObjectFile(unsigned int Type, MemoryBufferRef Source);
 
   const uint8_t *base() const {
     return reinterpret_cast<const uint8_t *>(Data.getBufferStart());
@@ -247,11 +249,11 @@ protected:
   friend class SymbolRef;
 
   virtual Expected<StringRef> getSymbolName(DataRefImpl Symb) const = 0;
-  Error printSymbolName(raw_ostream &OS,
-                                  DataRefImpl Symb) const override;
+  LLVM_OBJECT_ABI Error printSymbolName(raw_ostream &OS,
+                                        DataRefImpl Symb) const override;
   virtual Expected<uint64_t> getSymbolAddress(DataRefImpl Symb) const = 0;
   virtual uint64_t getSymbolValueImpl(DataRefImpl Symb) const = 0;
-  virtual uint32_t getSymbolAlignment(DataRefImpl Symb) const;
+  LLVM_OBJECT_ABI virtual uint32_t getSymbolAlignment(DataRefImpl Symb) const;
   virtual uint64_t getCommonSymbolSizeImpl(DataRefImpl Symb) const = 0;
   virtual Expected<SymbolRef::Type> getSymbolType(DataRefImpl Symb) const = 0;
   virtual Expected<section_iterator>
@@ -274,14 +276,15 @@ protected:
   virtual bool isSectionBSS(DataRefImpl Sec) const = 0;
   // A section is 'virtual' if its contents aren't present in the object image.
   virtual bool isSectionVirtual(DataRefImpl Sec) const = 0;
-  virtual bool isSectionBitcode(DataRefImpl Sec) const;
-  virtual bool isSectionStripped(DataRefImpl Sec) const;
-  virtual bool isBerkeleyText(DataRefImpl Sec) const;
-  virtual bool isBerkeleyData(DataRefImpl Sec) const;
-  virtual bool isDebugSection(DataRefImpl Sec) const;
+  LLVM_OBJECT_ABI virtual bool isSectionBitcode(DataRefImpl Sec) const;
+  LLVM_OBJECT_ABI virtual bool isSectionStripped(DataRefImpl Sec) const;
+  LLVM_OBJECT_ABI virtual bool isBerkeleyText(DataRefImpl Sec) const;
+  LLVM_OBJECT_ABI virtual bool isBerkeleyData(DataRefImpl Sec) const;
+  LLVM_OBJECT_ABI virtual bool isDebugSection(DataRefImpl Sec) const;
   virtual relocation_iterator section_rel_begin(DataRefImpl Sec) const = 0;
   virtual relocation_iterator section_rel_end(DataRefImpl Sec) const = 0;
-  virtual Expected<section_iterator> getRelocatedSection(DataRefImpl Sec) const;
+  LLVM_OBJECT_ABI virtual Expected<section_iterator>
+  getRelocatedSection(DataRefImpl Sec) const;
 
   // Same as above for RelocationRef.
   friend class RelocationRef;
@@ -297,7 +300,7 @@ protected:
     return llvm::binaryformat::Swift5ReflectionSectionKind::unknown;
   };
 
-  Expected<uint64_t> getSymbolValue(DataRefImpl Symb) const;
+  LLVM_OBJECT_ABI Expected<uint64_t> getSymbolValue(DataRefImpl Symb) const;
 
 public:
   ObjectFile() = delete;
@@ -330,7 +333,7 @@ public:
     return section_iterator_range(section_begin(), section_end());
   }
 
-  virtual bool hasDebugInfo() const;
+  LLVM_OBJECT_ABI virtual bool hasDebugInfo() const;
 
   /// The number of bytes used to represent an address in this object
   ///        file format.
@@ -343,13 +346,13 @@ public:
   virtual std::optional<StringRef> tryGetCPUName() const {
     return std::nullopt;
   };
-  virtual void setARMSubArch(Triple &TheTriple) const { }
+  virtual void setARMSubArch(Triple &TheTriple) const {}
   virtual Expected<uint64_t> getStartAddress() const {
     return errorCodeToError(object_error::parse_failed);
   };
 
   /// Create a triple from the data in this object file.
-  Triple makeTriple() const;
+  LLVM_OBJECT_ABI Triple makeTriple() const;
 
   /// Maps a debug section name to a standard DWARF section name.
   virtual StringRef mapDebugSectionName(StringRef Name) const { return Name; }
@@ -358,7 +361,7 @@ public:
   virtual bool isRelocatableObject() const = 0;
 
   /// True if the reflection section can be stripped by the linker.
-  bool isReflectionSectionStrippable(
+  LLVM_OBJECT_ABI bool isReflectionSectionStrippable(
       llvm::binaryformat::Swift5ReflectionSectionKind ReflectionSectionKind)
       const;
 
@@ -366,10 +369,10 @@ public:
   /// @param ObjectPath The path to the object file. ObjectPath.isObject must
   ///        return true.
   /// Create ObjectFile from path.
-  static Expected<OwningBinary<ObjectFile>>
+  LLVM_OBJECT_ABI static Expected<OwningBinary<ObjectFile>>
   createObjectFile(StringRef ObjectPath);
 
-  static Expected<std::unique_ptr<ObjectFile>>
+  LLVM_OBJECT_ABI static Expected<std::unique_ptr<ObjectFile>>
   createObjectFile(MemoryBufferRef Object, llvm::file_magic Type,
                    bool InitContent = true);
   static Expected<std::unique_ptr<ObjectFile>>
@@ -377,28 +380,26 @@ public:
     return createObjectFile(Object, llvm::file_magic::unknown);
   }
 
-  static bool classof(const Binary *v) {
-    return v->isObject();
-  }
+  static bool classof(const Binary *v) { return v->isObject(); }
 
-  static Expected<std::unique_ptr<COFFObjectFile>>
+  LLVM_OBJECT_ABI static Expected<std::unique_ptr<COFFObjectFile>>
   createCOFFObjectFile(MemoryBufferRef Object);
 
-  static Expected<std::unique_ptr<ObjectFile>>
+  LLVM_OBJECT_ABI static Expected<std::unique_ptr<ObjectFile>>
   createXCOFFObjectFile(MemoryBufferRef Object, unsigned FileType);
 
-  static Expected<std::unique_ptr<ObjectFile>>
+  LLVM_OBJECT_ABI static Expected<std::unique_ptr<ObjectFile>>
   createELFObjectFile(MemoryBufferRef Object, bool InitContent = true);
 
-  static Expected<std::unique_ptr<MachOObjectFile>>
+  LLVM_OBJECT_ABI static Expected<std::unique_ptr<MachOObjectFile>>
   createMachOObjectFile(MemoryBufferRef Object, uint32_t UniversalCputype = 0,
                         uint32_t UniversalIndex = 0,
                         size_t MachOFilesetEntryOffset = 0);
 
-  static Expected<std::unique_ptr<ObjectFile>>
+  LLVM_OBJECT_ABI static Expected<std::unique_ptr<ObjectFile>>
   createGOFFObjectFile(MemoryBufferRef Object);
 
-  static Expected<std::unique_ptr<WasmObjectFile>>
+  LLVM_OBJECT_ABI static Expected<std::unique_ptr<WasmObjectFile>>
   createWasmObjectFile(MemoryBufferRef Object);
 };
 
@@ -491,10 +492,8 @@ inline const ObjectFile *SymbolRef::getObject() const {
 }
 
 /// SectionRef
-inline SectionRef::SectionRef(DataRefImpl SectionP,
-                              const ObjectFile *Owner)
-  : SectionPimpl(SectionP)
-  , OwningObject(Owner) {}
+inline SectionRef::SectionRef(DataRefImpl SectionP, const ObjectFile *Owner)
+    : SectionPimpl(SectionP), OwningObject(Owner) {}
 
 inline bool SectionRef::operator==(const SectionRef &Other) const {
   return OwningObject == Other.OwningObject &&
@@ -599,15 +598,12 @@ inline DataRefImpl SectionRef::getRawDataRefImpl() const {
   return SectionPimpl;
 }
 
-inline const ObjectFile *SectionRef::getObject() const {
-  return OwningObject;
-}
+inline const ObjectFile *SectionRef::getObject() const { return OwningObject; }
 
 /// RelocationRef
 inline RelocationRef::RelocationRef(DataRefImpl RelocationP,
-                              const ObjectFile *Owner)
-  : RelocationPimpl(RelocationP)
-  , OwningObject(Owner) {}
+                                    const ObjectFile *Owner)
+    : RelocationPimpl(RelocationP), OwningObject(Owner) {}
 
 inline bool RelocationRef::operator==(const RelocationRef &Other) const {
   return RelocationPimpl == Other.RelocationPimpl;

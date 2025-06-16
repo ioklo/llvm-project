@@ -16,6 +16,7 @@
 #include "llvm/Bitcode/BitcodeReader.h"
 #include "llvm/Object/IRSymtab.h"
 #include "llvm/Object/ModuleSymbolTable.h"
+#include "llvm/Object/ObjectConfig.h"
 #include "llvm/Object/SymbolicFile.h"
 
 namespace llvm {
@@ -27,24 +28,24 @@ class ObjectFile;
 class IRObjectFile : public SymbolicFile {
   std::vector<std::unique_ptr<Module>> Mods;
   ModuleSymbolTable SymTab;
-  IRObjectFile(MemoryBufferRef Object,
-               std::vector<std::unique_ptr<Module>> Mods);
+  LLVM_OBJECT_ABI IRObjectFile(MemoryBufferRef Object,
+                               std::vector<std::unique_ptr<Module>> Mods);
 
 public:
-  ~IRObjectFile() override;
-  void moveSymbolNext(DataRefImpl &Symb) const override;
-  Error printSymbolName(raw_ostream &OS, DataRefImpl Symb) const override;
-  Expected<uint32_t> getSymbolFlags(DataRefImpl Symb) const override;
-  basic_symbol_iterator symbol_begin() const override;
-  basic_symbol_iterator symbol_end() const override;
+  LLVM_OBJECT_ABI ~IRObjectFile() override;
+  LLVM_OBJECT_ABI void moveSymbolNext(DataRefImpl &Symb) const override;
+  LLVM_OBJECT_ABI Error printSymbolName(raw_ostream &OS,
+                                        DataRefImpl Symb) const override;
+  LLVM_OBJECT_ABI Expected<uint32_t>
+  getSymbolFlags(DataRefImpl Symb) const override;
+  LLVM_OBJECT_ABI basic_symbol_iterator symbol_begin() const override;
+  LLVM_OBJECT_ABI basic_symbol_iterator symbol_end() const override;
   bool is64Bit() const override {
     return Triple(getTargetTriple()).isArch64Bit();
   }
-  StringRef getTargetTriple() const;
+  LLVM_OBJECT_ABI StringRef getTargetTriple() const;
 
-  static bool classof(const Binary *v) {
-    return v->isIR();
-  }
+  static bool classof(const Binary *v) { return v->isIR(); }
 
   using module_iterator =
       pointee_iterator<std::vector<std::unique_ptr<Module>>::const_iterator,
@@ -59,16 +60,17 @@ public:
 
   /// Finds and returns bitcode embedded in the given object file, or an
   /// error code if not found.
-  static Expected<MemoryBufferRef> findBitcodeInObject(const ObjectFile &Obj);
+  LLVM_OBJECT_ABI static Expected<MemoryBufferRef>
+  findBitcodeInObject(const ObjectFile &Obj);
 
   /// Finds and returns bitcode in the given memory buffer (which may
   /// be either a bitcode file or a native object file with embedded bitcode),
   /// or an error code if not found.
-  static Expected<MemoryBufferRef>
+  LLVM_OBJECT_ABI static Expected<MemoryBufferRef>
   findBitcodeInMemBuffer(MemoryBufferRef Object);
 
-  static Expected<std::unique_ptr<IRObjectFile>> create(MemoryBufferRef Object,
-                                                        LLVMContext &Context);
+  LLVM_OBJECT_ABI static Expected<std::unique_ptr<IRObjectFile>>
+  create(MemoryBufferRef Object, LLVMContext &Context);
 };
 
 /// The contents of a bitcode file and its irsymtab. Any underlying data
@@ -80,9 +82,9 @@ struct IRSymtabFile {
 };
 
 /// Reads a bitcode file, creating its irsymtab if necessary.
-Expected<IRSymtabFile> readIRSymtab(MemoryBufferRef MBRef);
+LLVM_OBJECT_ABI Expected<IRSymtabFile> readIRSymtab(MemoryBufferRef MBRef);
 
-}
+} // namespace object
 
 } // namespace llvm
 

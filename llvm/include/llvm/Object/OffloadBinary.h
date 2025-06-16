@@ -21,6 +21,7 @@
 #include "llvm/ADT/SmallString.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/Object/Binary.h"
+#include "llvm/Object/ObjectConfig.h"
 #include "llvm/Support/Error.h"
 #include "llvm/Support/MemoryBuffer.h"
 #include <memory>
@@ -76,10 +77,11 @@ public:
   };
 
   /// Attempt to parse the offloading binary stored in \p Data.
-  static Expected<std::unique_ptr<OffloadBinary>> create(MemoryBufferRef);
+  LLVM_OBJECT_ABI static Expected<std::unique_ptr<OffloadBinary>>
+      create(MemoryBufferRef);
 
   /// Serialize the contents of \p File to a binary buffer to be read later.
-  static SmallString<0> write(const OffloadingImage &);
+  LLVM_OBJECT_ABI static SmallString<0> write(const OffloadingImage &);
 
   static uint64_t getAlignment() { return 8; }
 
@@ -185,20 +187,20 @@ public:
 
 /// Extracts embedded device offloading code from a memory \p Buffer to a list
 /// of \p Binaries.
-Error extractOffloadBinaries(MemoryBufferRef Buffer,
-                             SmallVectorImpl<OffloadFile> &Binaries);
+LLVM_OBJECT_ABI Error extractOffloadBinaries(
+    MemoryBufferRef Buffer, SmallVectorImpl<OffloadFile> &Binaries);
 
 /// Convert a string \p Name to an image kind.
-ImageKind getImageKind(StringRef Name);
+LLVM_OBJECT_ABI ImageKind getImageKind(StringRef Name);
 
 /// Convert an image kind to its string representation.
-StringRef getImageKindName(ImageKind Name);
+LLVM_OBJECT_ABI StringRef getImageKindName(ImageKind Name);
 
 /// Convert a string \p Name to an offload kind.
-OffloadKind getOffloadKind(StringRef Name);
+LLVM_OBJECT_ABI OffloadKind getOffloadKind(StringRef Name);
 
 /// Convert an offload kind to its string representation.
-StringRef getOffloadKindName(OffloadKind Name);
+LLVM_OBJECT_ABI StringRef getOffloadKindName(OffloadKind Name);
 
 /// If the target is AMD we check the target IDs for mutual compatibility. A
 /// target id is a string conforming to the folowing BNF syntax:
@@ -209,8 +211,8 @@ StringRef getOffloadKindName(OffloadKind Name);
 /// the state of on, off, and any when unspecified. A target marked as any can
 /// bind with either on or off. This is used to link mutually compatible
 /// architectures together. Returns false in the case of an exact match.
-bool areTargetsCompatible(const OffloadFile::TargetID &LHS,
-                          const OffloadFile::TargetID &RHS);
+LLVM_OBJECT_ABI bool areTargetsCompatible(const OffloadFile::TargetID &LHS,
+                                          const OffloadFile::TargetID &RHS);
 
 } // namespace object
 

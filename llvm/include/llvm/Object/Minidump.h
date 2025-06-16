@@ -15,6 +15,7 @@
 #include "llvm/ADT/iterator.h"
 #include "llvm/BinaryFormat/Minidump.h"
 #include "llvm/Object/Binary.h"
+#include "llvm/Object/ObjectConfig.h"
 #include "llvm/Support/Error.h"
 
 namespace llvm {
@@ -26,7 +27,8 @@ public:
   /// Construct a new MinidumpFile object from the given memory buffer. Returns
   /// an error if this file cannot be identified as a minidump file, or if its
   /// contents are badly corrupted (i.e. we cannot read the stream directory).
-  static Expected<std::unique_ptr<MinidumpFile>> create(MemoryBufferRef Source);
+  LLVM_OBJECT_ABI static Expected<std::unique_ptr<MinidumpFile>>
+  create(MemoryBufferRef Source);
 
   static bool classof(const Binary *B) { return B->isMinidump(); }
 
@@ -43,19 +45,19 @@ public:
 
   /// Returns the raw contents of the stream of the given type, or std::nullopt
   /// if the file does not contain a stream of this type.
-  std::optional<ArrayRef<uint8_t>>
+  LLVM_OBJECT_ABI std::optional<ArrayRef<uint8_t>>
   getRawStream(minidump::StreamType Type) const;
 
   /// Returns the raw contents of an object given by the LocationDescriptor. An
   /// error is returned if the descriptor points outside of the minidump file.
-  Expected<ArrayRef<uint8_t>>
+  LLVM_OBJECT_ABI Expected<ArrayRef<uint8_t>>
   getRawData(minidump::LocationDescriptor Desc) const {
     return getDataSlice(getData(), Desc.RVA, Desc.DataSize);
   }
 
   /// Returns the minidump string at the given offset. An error is returned if
   /// we fail to parse the string, or the string is invalid UTF16.
-  Expected<std::string> getString(size_t Offset) const;
+  LLVM_OBJECT_ABI Expected<std::string> getString(size_t Offset) const;
 
   /// Returns the contents of the SystemInfo stream, cast to the appropriate
   /// type. An error is returned if the file does not contain this stream, or
@@ -265,13 +267,15 @@ public:
   /// contents of the exception strema are not validated before being read, an
   /// error will be returned if the stream is not large enough to contain an
   /// exception stream, or if the stream points beyond the end of the file.
-  iterator_range<ExceptionStreamsIterator> getExceptionStreams() const;
+  LLVM_OBJECT_ABI iterator_range<ExceptionStreamsIterator>
+  getExceptionStreams() const;
 
   /// Returns an iterator that pairs each descriptor with it's respective
   /// content from the Memory64List stream. An error is returned if the file
   /// does not contain a Memory64List stream, or if the descriptor data is
   /// unreadable.
-  iterator_range<FallibleMemory64Iterator> getMemory64List(Error &Err) const;
+  LLVM_OBJECT_ABI iterator_range<FallibleMemory64Iterator>
+  getMemory64List(Error &Err) const;
 
   /// Returns the list of descriptors embedded in the MemoryInfoList stream. The
   /// descriptors provide properties (e.g. permissions) of interesting regions
@@ -280,7 +284,8 @@ public:
   /// contain the number of memory descriptors declared in the stream header.
   /// The consistency of the MemoryInfoList entries themselves is not checked
   /// in any way.
-  Expected<iterator_range<MemoryInfoIterator>> getMemoryInfoList() const;
+  LLVM_OBJECT_ABI Expected<iterator_range<MemoryInfoIterator>>
+  getMemoryInfoList() const;
 
 private:
   static Error createError(StringRef Str) {
@@ -293,7 +298,7 @@ private:
   }
 
   /// Return a slice of the given data array, with bounds checking.
-  static Expected<ArrayRef<uint8_t>>
+  LLVM_OBJECT_ABI static Expected<ArrayRef<uint8_t>>
   getDataSlice(ArrayRef<uint8_t> Data, uint64_t Offset, uint64_t Size);
 
   /// Return the slice of the given data array as an array of objects of the
