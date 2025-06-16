@@ -13,6 +13,7 @@
 #include "llvm/ADT/StringMap.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/DebugInfo/CodeView/CodeView.h"
+#include "llvm/DebugInfo/CodeView/DebugInfoCodeViewConfig.h"
 #include "llvm/DebugInfo/CodeView/DebugSubsection.h"
 #include "llvm/Support/BinaryStreamRef.h"
 #include "llvm/Support/Error.h"
@@ -30,16 +31,17 @@ namespace codeview {
 /// does not own the underlying storage for the buffer.
 class DebugStringTableSubsectionRef : public DebugSubsectionRef {
 public:
-  DebugStringTableSubsectionRef();
+  LLVM_DEBUGINFOCODEVIEW_ABI DebugStringTableSubsectionRef();
 
   static bool classof(const DebugSubsectionRef *S) {
     return S->kind() == DebugSubsectionKind::StringTable;
   }
 
-  Error initialize(BinaryStreamRef Contents);
-  Error initialize(BinaryStreamReader &Reader);
+  LLVM_DEBUGINFOCODEVIEW_ABI Error initialize(BinaryStreamRef Contents);
+  LLVM_DEBUGINFOCODEVIEW_ABI Error initialize(BinaryStreamReader &Reader);
 
-  Expected<StringRef> getString(uint32_t Offset) const;
+  LLVM_DEBUGINFOCODEVIEW_ABI Expected<StringRef>
+  getString(uint32_t Offset) const;
 
   bool valid() const { return Stream.valid(); }
 
@@ -55,7 +57,7 @@ private:
 /// DebugStringTableSubsectionRef.
 class DebugStringTableSubsection : public DebugSubsection {
 public:
-  DebugStringTableSubsection();
+  LLVM_DEBUGINFOCODEVIEW_ABI DebugStringTableSubsection();
 
   static bool classof(const DebugSubsection *S) {
     return S->kind() == DebugSubsectionKind::StringTable;
@@ -63,17 +65,18 @@ public:
 
   // If string S does not exist in the string table, insert it.
   // Returns the ID for S.
-  uint32_t insert(StringRef S);
+  LLVM_DEBUGINFOCODEVIEW_ABI uint32_t insert(StringRef S);
 
   // Return the ID for string S.  Assumes S exists in the table.
-  uint32_t getIdForString(StringRef S) const;
+  LLVM_DEBUGINFOCODEVIEW_ABI uint32_t getIdForString(StringRef S) const;
 
-  StringRef getStringForId(uint32_t Id) const;
+  LLVM_DEBUGINFOCODEVIEW_ABI StringRef getStringForId(uint32_t Id) const;
 
-  uint32_t calculateSerializedSize() const override;
-  Error commit(BinaryStreamWriter &Writer) const override;
+  LLVM_DEBUGINFOCODEVIEW_ABI uint32_t calculateSerializedSize() const override;
+  LLVM_DEBUGINFOCODEVIEW_ABI Error
+  commit(BinaryStreamWriter &Writer) const override;
 
-  uint32_t size() const;
+  LLVM_DEBUGINFOCODEVIEW_ABI uint32_t size() const;
 
   StringMap<uint32_t>::const_iterator begin() const {
     return StringToId.begin();
@@ -81,7 +84,7 @@ public:
 
   StringMap<uint32_t>::const_iterator end() const { return StringToId.end(); }
 
-  std::vector<uint32_t> sortedIds() const;
+  LLVM_DEBUGINFOCODEVIEW_ABI std::vector<uint32_t> sortedIds() const;
 
 private:
   DenseMap<uint32_t, StringRef> IdToString;

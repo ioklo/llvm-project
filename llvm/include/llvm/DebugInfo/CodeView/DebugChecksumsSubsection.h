@@ -13,6 +13,7 @@
 #include "llvm/ADT/DenseMap.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/DebugInfo/CodeView/CodeView.h"
+#include "llvm/DebugInfo/CodeView/DebugInfoCodeViewConfig.h"
 #include "llvm/DebugInfo/CodeView/DebugSubsection.h"
 #include "llvm/Support/Allocator.h"
 #include "llvm/Support/BinaryStreamArray.h"
@@ -62,8 +63,8 @@ public:
 
   bool valid() const { return Checksums.valid(); }
 
-  Error initialize(BinaryStreamReader Reader);
-  Error initialize(BinaryStreamRef Stream);
+  LLVM_DEBUGINFOCODEVIEW_ABI Error initialize(BinaryStreamReader Reader);
+  LLVM_DEBUGINFOCODEVIEW_ABI Error initialize(BinaryStreamRef Stream);
 
   Iterator begin() const { return Checksums.begin(); }
   Iterator end() const { return Checksums.end(); }
@@ -76,18 +77,22 @@ private:
 
 class DebugChecksumsSubsection final : public DebugSubsection {
 public:
-  explicit DebugChecksumsSubsection(DebugStringTableSubsection &Strings);
+  LLVM_DEBUGINFOCODEVIEW_ABI explicit DebugChecksumsSubsection(
+      DebugStringTableSubsection &Strings);
 
   static bool classof(const DebugSubsection *S) {
     return S->kind() == DebugSubsectionKind::FileChecksums;
   }
 
-  void addChecksum(StringRef FileName, FileChecksumKind Kind,
-                   ArrayRef<uint8_t> Bytes);
+  LLVM_DEBUGINFOCODEVIEW_ABI void addChecksum(StringRef FileName,
+                                              FileChecksumKind Kind,
+                                              ArrayRef<uint8_t> Bytes);
 
-  uint32_t calculateSerializedSize() const override;
-  Error commit(BinaryStreamWriter &Writer) const override;
-  uint32_t mapChecksumOffset(StringRef FileName) const;
+  LLVM_DEBUGINFOCODEVIEW_ABI uint32_t calculateSerializedSize() const override;
+  LLVM_DEBUGINFOCODEVIEW_ABI Error
+  commit(BinaryStreamWriter &Writer) const override;
+  LLVM_DEBUGINFOCODEVIEW_ABI uint32_t
+  mapChecksumOffset(StringRef FileName) const;
 
 private:
   DebugStringTableSubsection &Strings;

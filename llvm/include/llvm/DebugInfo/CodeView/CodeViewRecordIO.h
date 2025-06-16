@@ -12,6 +12,7 @@
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/DebugInfo/CodeView/CodeViewError.h"
+#include "llvm/DebugInfo/CodeView/DebugInfoCodeViewConfig.h"
 #include "llvm/Support/BinaryStreamReader.h"
 #include "llvm/Support/BinaryStreamWriter.h"
 #include "llvm/Support/Error.h"
@@ -61,10 +62,12 @@ public:
   explicit CodeViewRecordIO(CodeViewRecordStreamer &Streamer)
       : Streamer(&Streamer) {}
 
-  Error beginRecord(std::optional<uint32_t> MaxLength);
-  Error endRecord();
+  LLVM_DEBUGINFOCODEVIEW_ABI Error
+  beginRecord(std::optional<uint32_t> MaxLength);
+  LLVM_DEBUGINFOCODEVIEW_ABI Error endRecord();
 
-  Error mapInteger(TypeIndex &TypeInd, const Twine &Comment = "");
+  LLVM_DEBUGINFOCODEVIEW_ABI Error mapInteger(TypeIndex &TypeInd,
+                                              const Twine &Comment = "");
 
   bool isStreaming() const {
     return (Streamer != nullptr) && (Reader == nullptr) && (Writer == nullptr);
@@ -76,7 +79,7 @@ public:
     return (Writer != nullptr) && (Streamer == nullptr) && (Reader == nullptr);
   }
 
-  uint32_t maxFieldLength() const;
+  LLVM_DEBUGINFOCODEVIEW_ABI uint32_t maxFieldLength() const;
 
   template <typename T> Error mapObject(T &Value) {
     if (isStreaming()) {
@@ -130,14 +133,19 @@ public:
     return Error::success();
   }
 
-  Error mapEncodedInteger(int64_t &Value, const Twine &Comment = "");
-  Error mapEncodedInteger(uint64_t &Value, const Twine &Comment = "");
-  Error mapEncodedInteger(APSInt &Value, const Twine &Comment = "");
-  Error mapStringZ(StringRef &Value, const Twine &Comment = "");
-  Error mapGuid(GUID &Guid, const Twine &Comment = "");
+  LLVM_DEBUGINFOCODEVIEW_ABI Error mapEncodedInteger(int64_t &Value,
+                                                     const Twine &Comment = "");
+  LLVM_DEBUGINFOCODEVIEW_ABI Error mapEncodedInteger(uint64_t &Value,
+                                                     const Twine &Comment = "");
+  LLVM_DEBUGINFOCODEVIEW_ABI Error mapEncodedInteger(APSInt &Value,
+                                                     const Twine &Comment = "");
+  LLVM_DEBUGINFOCODEVIEW_ABI Error mapStringZ(StringRef &Value,
+                                              const Twine &Comment = "");
+  LLVM_DEBUGINFOCODEVIEW_ABI Error mapGuid(GUID &Guid,
+                                           const Twine &Comment = "");
 
-  Error mapStringZVectorZ(std::vector<StringRef> &Value,
-                          const Twine &Comment = "");
+  LLVM_DEBUGINFOCODEVIEW_ABI Error
+  mapStringZVectorZ(std::vector<StringRef> &Value, const Twine &Comment = "");
 
   template <typename SizeType, typename T, typename ElementMapper>
   Error mapVectorN(T &Items, const ElementMapper &Mapper,
@@ -197,9 +205,10 @@ public:
     return Error::success();
   }
 
-  Error mapByteVectorTail(ArrayRef<uint8_t> &Bytes, const Twine &Comment = "");
-  Error mapByteVectorTail(std::vector<uint8_t> &Bytes,
-                          const Twine &Comment = "");
+  LLVM_DEBUGINFOCODEVIEW_ABI Error mapByteVectorTail(ArrayRef<uint8_t> &Bytes,
+                                                     const Twine &Comment = "");
+  LLVM_DEBUGINFOCODEVIEW_ABI Error
+  mapByteVectorTail(std::vector<uint8_t> &Bytes, const Twine &Comment = "");
 
   Error padToAlignment(uint32_t Align);
   Error skipPadding();

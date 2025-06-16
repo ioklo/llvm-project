@@ -11,6 +11,7 @@
 
 #include "llvm/DebugInfo/CodeView/CVRecord.h"
 #include "llvm/DebugInfo/CodeView/CodeView.h"
+#include "llvm/DebugInfo/CodeView/DebugInfoCodeViewConfig.h"
 
 namespace llvm {
 namespace codeview {
@@ -50,11 +51,12 @@ inline bool symbolEndsScope(SymbolKind Kind) {
 
 /// Given a symbol P for which symbolOpensScope(P) == true, return the
 /// corresponding end offset.
-uint32_t getScopeEndOffset(const CVSymbol &Symbol);
-uint32_t getScopeParentOffset(const CVSymbol &Symbol);
+LLVM_DEBUGINFOCODEVIEW_ABI uint32_t getScopeEndOffset(const CVSymbol &Symbol);
+LLVM_DEBUGINFOCODEVIEW_ABI uint32_t
+getScopeParentOffset(const CVSymbol &Symbol);
 
-CVSymbolArray limitSymbolArrayToScope(const CVSymbolArray &Symbols,
-                                      uint32_t ScopeBegin);
+LLVM_DEBUGINFOCODEVIEW_ABI CVSymbolArray
+limitSymbolArrayToScope(const CVSymbolArray &Symbols, uint32_t ScopeBegin);
 
 } // namespace codeview
 } // namespace llvm

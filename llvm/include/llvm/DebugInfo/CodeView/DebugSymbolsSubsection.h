@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_CODEVIEW_DEBUGSYMBOLSSUBSECTION_H
 
 #include "llvm/DebugInfo/CodeView/CVRecord.h"
+#include "llvm/DebugInfo/CodeView/DebugInfoCodeViewConfig.h"
 #include "llvm/DebugInfo/CodeView/DebugSubsection.h"
 #include "llvm/Support/Error.h"
 
@@ -24,7 +25,7 @@ public:
     return S->kind() == DebugSubsectionKind::Symbols;
   }
 
-  Error initialize(BinaryStreamReader Reader);
+  LLVM_DEBUGINFOCODEVIEW_ABI Error initialize(BinaryStreamReader Reader);
 
   CVSymbolArray::Iterator begin() const { return Records.begin(); }
   CVSymbolArray::Iterator end() const { return Records.end(); }
@@ -40,16 +41,17 @@ public:
     return S->kind() == DebugSubsectionKind::Symbols;
   }
 
-  uint32_t calculateSerializedSize() const override;
-  Error commit(BinaryStreamWriter &Writer) const override;
+  LLVM_DEBUGINFOCODEVIEW_ABI uint32_t calculateSerializedSize() const override;
+  LLVM_DEBUGINFOCODEVIEW_ABI Error
+  commit(BinaryStreamWriter &Writer) const override;
 
-  void addSymbol(CVSymbol Symbol);
+  LLVM_DEBUGINFOCODEVIEW_ABI void addSymbol(CVSymbol Symbol);
 
 private:
   uint32_t Length = 0;
   std::vector<CVSymbol> Records;
 };
-}
-}
+} // namespace codeview
+} // namespace llvm
 
 #endif

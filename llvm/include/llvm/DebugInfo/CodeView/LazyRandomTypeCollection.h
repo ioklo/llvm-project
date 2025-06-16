@@ -11,6 +11,7 @@
 
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/ADT/StringRef.h"
+#include "llvm/DebugInfo/CodeView/DebugInfoCodeViewConfig.h"
 #include "llvm/DebugInfo/CodeView/TypeCollection.h"
 #include "llvm/DebugInfo/CodeView/TypeIndex.h"
 #include "llvm/Support/Allocator.h"
@@ -55,29 +56,39 @@ class LazyRandomTypeCollection : public TypeCollection {
   };
 
 public:
-  explicit LazyRandomTypeCollection(uint32_t RecordCountHint);
-  LazyRandomTypeCollection(StringRef Data, uint32_t RecordCountHint);
-  LazyRandomTypeCollection(ArrayRef<uint8_t> Data, uint32_t RecordCountHint);
+  LLVM_DEBUGINFOCODEVIEW_ABI explicit LazyRandomTypeCollection(
+      uint32_t RecordCountHint);
+  LLVM_DEBUGINFOCODEVIEW_ABI LazyRandomTypeCollection(StringRef Data,
+                                                      uint32_t RecordCountHint);
+  LLVM_DEBUGINFOCODEVIEW_ABI LazyRandomTypeCollection(ArrayRef<uint8_t> Data,
+                                                      uint32_t RecordCountHint);
+  LLVM_DEBUGINFOCODEVIEW_ABI
   LazyRandomTypeCollection(const CVTypeArray &Types, uint32_t RecordCountHint,
                            PartialOffsetArray PartialOffsets);
-  LazyRandomTypeCollection(const CVTypeArray &Types, uint32_t RecordCountHint);
+  LLVM_DEBUGINFOCODEVIEW_ABI LazyRandomTypeCollection(const CVTypeArray &Types,
+                                                      uint32_t RecordCountHint);
 
-  void reset(ArrayRef<uint8_t> Data, uint32_t RecordCountHint);
-  void reset(StringRef Data, uint32_t RecordCountHint);
-  void reset(BinaryStreamReader &Reader, uint32_t RecordCountHint);
+  LLVM_DEBUGINFOCODEVIEW_ABI void reset(ArrayRef<uint8_t> Data,
+                                        uint32_t RecordCountHint);
+  LLVM_DEBUGINFOCODEVIEW_ABI void reset(StringRef Data,
+                                        uint32_t RecordCountHint);
+  LLVM_DEBUGINFOCODEVIEW_ABI void reset(BinaryStreamReader &Reader,
+                                        uint32_t RecordCountHint);
 
-  uint32_t getOffsetOfType(TypeIndex Index);
+  LLVM_DEBUGINFOCODEVIEW_ABI uint32_t getOffsetOfType(TypeIndex Index);
 
-  std::optional<CVType> tryGetType(TypeIndex Index);
+  LLVM_DEBUGINFOCODEVIEW_ABI std::optional<CVType> tryGetType(TypeIndex Index);
 
-  CVType getType(TypeIndex Index) override;
-  StringRef getTypeName(TypeIndex Index) override;
-  bool contains(TypeIndex Index) override;
-  uint32_t size() override;
-  uint32_t capacity() override;
-  std::optional<TypeIndex> getFirst() override;
-  std::optional<TypeIndex> getNext(TypeIndex Prev) override;
-  bool replaceType(TypeIndex &Index, CVType Data, bool Stabilize) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI CVType getType(TypeIndex Index) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI StringRef getTypeName(TypeIndex Index) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI bool contains(TypeIndex Index) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI uint32_t size() override;
+  LLVM_DEBUGINFOCODEVIEW_ABI uint32_t capacity() override;
+  LLVM_DEBUGINFOCODEVIEW_ABI std::optional<TypeIndex> getFirst() override;
+  LLVM_DEBUGINFOCODEVIEW_ABI std::optional<TypeIndex>
+  getNext(TypeIndex Prev) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI bool replaceType(TypeIndex &Index, CVType Data,
+                                              bool Stabilize) override;
 
 private:
   Error ensureTypeExists(TypeIndex Index);

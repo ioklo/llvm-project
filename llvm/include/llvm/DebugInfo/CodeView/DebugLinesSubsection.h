@@ -11,6 +11,7 @@
 
 #include "llvm/ADT/StringRef.h"
 #include "llvm/DebugInfo/CodeView/CodeView.h"
+#include "llvm/DebugInfo/CodeView/DebugInfoCodeViewConfig.h"
 #include "llvm/DebugInfo/CodeView/DebugSubsection.h"
 #include "llvm/DebugInfo/CodeView/Line.h"
 #include "llvm/Support/BinaryStreamArray.h"
@@ -70,8 +71,9 @@ struct LineColumnEntry {
 
 class LineColumnExtractor {
 public:
-  Error operator()(BinaryStreamRef Stream, uint32_t &Len,
-                   LineColumnEntry &Item);
+  LLVM_DEBUGINFOCODEVIEW_ABI Error operator()(BinaryStreamRef Stream,
+                                              uint32_t &Len,
+                                              LineColumnEntry &Item);
 
   const LineFragmentHeader *Header = nullptr;
 };
@@ -83,20 +85,20 @@ class DebugLinesSubsectionRef final : public DebugSubsectionRef {
   using Iterator = LineInfoArray::Iterator;
 
 public:
-  DebugLinesSubsectionRef();
+  LLVM_DEBUGINFOCODEVIEW_ABI DebugLinesSubsectionRef();
 
   static bool classof(const DebugSubsectionRef *S) {
     return S->kind() == DebugSubsectionKind::Lines;
   }
 
-  Error initialize(BinaryStreamReader Reader);
+  LLVM_DEBUGINFOCODEVIEW_ABI Error initialize(BinaryStreamReader Reader);
 
   Iterator begin() const { return LinesAndColumns.begin(); }
   Iterator end() const { return LinesAndColumns.end(); }
 
   const LineFragmentHeader *header() const { return Header; }
 
-  bool hasColumnInfo() const;
+  LLVM_DEBUGINFOCODEVIEW_ABI bool hasColumnInfo() const;
 
 private:
   const LineFragmentHeader *Header = nullptr;
@@ -114,6 +116,7 @@ class DebugLinesSubsection final : public DebugSubsection {
   };
 
 public:
+  LLVM_DEBUGINFOCODEVIEW_ABI
   DebugLinesSubsection(DebugChecksumsSubsection &Checksums,
                        DebugStringTableSubsection &Strings);
 
@@ -121,19 +124,24 @@ public:
     return S->kind() == DebugSubsectionKind::Lines;
   }
 
-  void createBlock(StringRef FileName);
-  void addLineInfo(uint32_t Offset, const LineInfo &Line);
-  void addLineAndColumnInfo(uint32_t Offset, const LineInfo &Line,
-                            uint32_t ColStart, uint32_t ColEnd);
+  LLVM_DEBUGINFOCODEVIEW_ABI void createBlock(StringRef FileName);
+  LLVM_DEBUGINFOCODEVIEW_ABI void addLineInfo(uint32_t Offset,
+                                              const LineInfo &Line);
+  LLVM_DEBUGINFOCODEVIEW_ABI void addLineAndColumnInfo(uint32_t Offset,
+                                                       const LineInfo &Line,
+                                                       uint32_t ColStart,
+                                                       uint32_t ColEnd);
 
-  uint32_t calculateSerializedSize() const override;
-  Error commit(BinaryStreamWriter &Writer) const override;
+  LLVM_DEBUGINFOCODEVIEW_ABI uint32_t calculateSerializedSize() const override;
+  LLVM_DEBUGINFOCODEVIEW_ABI Error
+  commit(BinaryStreamWriter &Writer) const override;
 
-  void setRelocationAddress(uint16_t Segment, uint32_t Offset);
-  void setCodeSize(uint32_t Size);
-  void setFlags(LineFlags Flags);
+  LLVM_DEBUGINFOCODEVIEW_ABI void setRelocationAddress(uint16_t Segment,
+                                                       uint32_t Offset);
+  LLVM_DEBUGINFOCODEVIEW_ABI void setCodeSize(uint32_t Size);
+  LLVM_DEBUGINFOCODEVIEW_ABI void setFlags(LineFlags Flags);
 
-  bool hasColumnInfo() const;
+  LLVM_DEBUGINFOCODEVIEW_ABI bool hasColumnInfo() const;
 
 private:
   DebugChecksumsSubsection &Checksums;

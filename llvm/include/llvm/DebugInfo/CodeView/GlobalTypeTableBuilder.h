@@ -13,6 +13,7 @@
 #include "llvm/ADT/DenseMap.h"
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/DebugInfo/CodeView/CVRecord.h"
+#include "llvm/DebugInfo/CodeView/DebugInfoCodeViewConfig.h"
 #include "llvm/DebugInfo/CodeView/SimpleTypeSerializer.h"
 #include "llvm/DebugInfo/CodeView/TypeCollection.h"
 #include "llvm/DebugInfo/CodeView/TypeHashing.h"
@@ -45,27 +46,30 @@ class GlobalTypeTableBuilder : public TypeCollection {
   SmallVector<GloballyHashedType, 2> SeenHashes;
 
 public:
-  explicit GlobalTypeTableBuilder(BumpPtrAllocator &Storage);
-  ~GlobalTypeTableBuilder();
+  LLVM_DEBUGINFOCODEVIEW_ABI explicit GlobalTypeTableBuilder(
+      BumpPtrAllocator &Storage);
+  LLVM_DEBUGINFOCODEVIEW_ABI ~GlobalTypeTableBuilder();
 
   // TypeCollection overrides
-  std::optional<TypeIndex> getFirst() override;
-  std::optional<TypeIndex> getNext(TypeIndex Prev) override;
-  CVType getType(TypeIndex Index) override;
-  StringRef getTypeName(TypeIndex Index) override;
-  bool contains(TypeIndex Index) override;
-  uint32_t size() override;
-  uint32_t capacity() override;
-  bool replaceType(TypeIndex &Index, CVType Data, bool Stabilize) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI std::optional<TypeIndex> getFirst() override;
+  LLVM_DEBUGINFOCODEVIEW_ABI std::optional<TypeIndex>
+  getNext(TypeIndex Prev) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI CVType getType(TypeIndex Index) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI StringRef getTypeName(TypeIndex Index) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI bool contains(TypeIndex Index) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI uint32_t size() override;
+  LLVM_DEBUGINFOCODEVIEW_ABI uint32_t capacity() override;
+  LLVM_DEBUGINFOCODEVIEW_ABI bool replaceType(TypeIndex &Index, CVType Data,
+                                              bool Stabilize) override;
 
   // public interface
-  void reset();
-  TypeIndex nextTypeIndex() const;
+  LLVM_DEBUGINFOCODEVIEW_ABI void reset();
+  LLVM_DEBUGINFOCODEVIEW_ABI TypeIndex nextTypeIndex() const;
 
   BumpPtrAllocator &getAllocator() { return RecordStorage; }
 
-  ArrayRef<ArrayRef<uint8_t>> records() const;
-  ArrayRef<GloballyHashedType> hashes() const;
+  LLVM_DEBUGINFOCODEVIEW_ABI ArrayRef<ArrayRef<uint8_t>> records() const;
+  LLVM_DEBUGINFOCODEVIEW_ABI ArrayRef<GloballyHashedType> hashes() const;
 
   template <typename CreateFunc>
   TypeIndex insertRecordAs(GloballyHashedType Hash, size_t RecordSize,
@@ -104,8 +108,10 @@ public:
     return Result.first->second;
   }
 
-  TypeIndex insertRecordBytes(ArrayRef<uint8_t> Data);
-  TypeIndex insertRecord(ContinuationRecordBuilder &Builder);
+  LLVM_DEBUGINFOCODEVIEW_ABI TypeIndex
+  insertRecordBytes(ArrayRef<uint8_t> Data);
+  LLVM_DEBUGINFOCODEVIEW_ABI TypeIndex
+  insertRecord(ContinuationRecordBuilder &Builder);
 
   template <typename T> TypeIndex writeLeafType(T &Record) {
     ArrayRef<uint8_t> Data = SimpleSerializer.serialize(Record);

@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_CODEVIEW_STRINGSANDCHECKSUMS_H
 
 #include "llvm/DebugInfo/CodeView/CodeView.h"
+#include "llvm/DebugInfo/CodeView/DebugInfoCodeViewConfig.h"
 #include "llvm/DebugInfo/CodeView/DebugSubsectionRecord.h"
 #include <memory>
 
@@ -23,21 +24,25 @@ class DebugStringTableSubsectionRef;
 class StringsAndChecksumsRef {
 public:
   // If no subsections are known about initially, we find as much as we can.
-  StringsAndChecksumsRef();
+  LLVM_DEBUGINFOCODEVIEW_ABI StringsAndChecksumsRef();
 
   // If only a string table subsection is given, we find a checksums subsection.
-  explicit StringsAndChecksumsRef(const DebugStringTableSubsectionRef &Strings);
+  LLVM_DEBUGINFOCODEVIEW_ABI explicit StringsAndChecksumsRef(
+      const DebugStringTableSubsectionRef &Strings);
 
   // If both subsections are given, we don't need to find anything.
+  LLVM_DEBUGINFOCODEVIEW_ABI
   StringsAndChecksumsRef(const DebugStringTableSubsectionRef &Strings,
                          const DebugChecksumsSubsectionRef &Checksums);
 
-  void setStrings(const DebugStringTableSubsectionRef &Strings);
-  void setChecksums(const DebugChecksumsSubsectionRef &CS);
+  LLVM_DEBUGINFOCODEVIEW_ABI void
+  setStrings(const DebugStringTableSubsectionRef &Strings);
+  LLVM_DEBUGINFOCODEVIEW_ABI void
+  setChecksums(const DebugChecksumsSubsectionRef &CS);
 
-  void reset();
-  void resetStrings();
-  void resetChecksums();
+  LLVM_DEBUGINFOCODEVIEW_ABI void reset();
+  LLVM_DEBUGINFOCODEVIEW_ABI void resetStrings();
+  LLVM_DEBUGINFOCODEVIEW_ABI void resetChecksums();
 
   template <typename T> void initialize(T &&FragmentRange) {
     for (const DebugSubsectionRecord &R : FragmentRange) {

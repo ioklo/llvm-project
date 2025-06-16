@@ -11,6 +11,7 @@
 
 #include "llvm/DebugInfo/CodeView/CVRecord.h"
 #include "llvm/DebugInfo/CodeView/CodeView.h"
+#include "llvm/DebugInfo/CodeView/DebugInfoCodeViewConfig.h"
 #include "llvm/DebugInfo/CodeView/RecordSerialization.h"
 #include "llvm/DebugInfo/CodeView/SymbolRecordMapping.h"
 #include "llvm/DebugInfo/CodeView/SymbolVisitorCallbacks.h"
@@ -46,7 +47,8 @@ class SymbolSerializer : public SymbolVisitorCallbacks {
   }
 
 public:
-  SymbolSerializer(BumpPtrAllocator &Storage, CodeViewContainer Container);
+  LLVM_DEBUGINFOCODEVIEW_ABI SymbolSerializer(BumpPtrAllocator &Storage,
+                                              CodeViewContainer Container);
 
   template <typename SymType>
   static CVSymbol writeOneSymbol(SymType &Sym, BumpPtrAllocator &Storage,

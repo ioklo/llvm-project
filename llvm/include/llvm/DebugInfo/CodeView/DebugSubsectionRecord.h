@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_CODEVIEW_DEBUGSUBSECTIONRECORD_H
 
 #include "llvm/DebugInfo/CodeView/CodeView.h"
+#include "llvm/DebugInfo/CodeView/DebugInfoCodeViewConfig.h"
 #include "llvm/Support/BinaryStreamArray.h"
 #include "llvm/Support/BinaryStreamRef.h"
 #include "llvm/Support/Endian.h"
@@ -34,14 +35,16 @@ struct DebugSubsectionHeader {
 
 class DebugSubsectionRecord {
 public:
-  DebugSubsectionRecord();
-  DebugSubsectionRecord(DebugSubsectionKind Kind, BinaryStreamRef Data);
+  LLVM_DEBUGINFOCODEVIEW_ABI DebugSubsectionRecord();
+  LLVM_DEBUGINFOCODEVIEW_ABI DebugSubsectionRecord(DebugSubsectionKind Kind,
+                                                   BinaryStreamRef Data);
 
-  static Error initialize(BinaryStreamRef Stream, DebugSubsectionRecord &Info);
+  LLVM_DEBUGINFOCODEVIEW_ABI static Error
+  initialize(BinaryStreamRef Stream, DebugSubsectionRecord &Info);
 
-  uint32_t getRecordLength() const;
-  DebugSubsectionKind kind() const;
-  BinaryStreamRef getRecordData() const;
+  LLVM_DEBUGINFOCODEVIEW_ABI uint32_t getRecordLength() const;
+  LLVM_DEBUGINFOCODEVIEW_ABI DebugSubsectionKind kind() const;
+  LLVM_DEBUGINFOCODEVIEW_ABI BinaryStreamRef getRecordData() const;
 
 private:
   DebugSubsectionKind Kind = DebugSubsectionKind::None;
@@ -50,15 +53,18 @@ private:
 
 class DebugSubsectionRecordBuilder {
 public:
+  LLVM_DEBUGINFOCODEVIEW_ABI
   DebugSubsectionRecordBuilder(std::shared_ptr<DebugSubsection> Subsection);
 
   /// Use this to copy existing subsections directly from source to destination.
   /// For example, line table subsections in an object file only need to be
   /// relocated before being copied into the PDB.
+  LLVM_DEBUGINFOCODEVIEW_ABI
   DebugSubsectionRecordBuilder(const DebugSubsectionRecord &Contents);
 
-  uint32_t calculateSerializedLength() const;
-  Error commit(BinaryStreamWriter &Writer, CodeViewContainer Container) const;
+  LLVM_DEBUGINFOCODEVIEW_ABI uint32_t calculateSerializedLength() const;
+  LLVM_DEBUGINFOCODEVIEW_ABI Error commit(BinaryStreamWriter &Writer,
+                                          CodeViewContainer Container) const;
 
 private:
   /// The subsection to build. Will be null if Contents is non-empty.

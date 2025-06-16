@@ -11,14 +11,16 @@
 
 #include "llvm/ADT/StringRef.h"
 #include "llvm/DebugInfo/CodeView/CVRecord.h"
+#include "llvm/DebugInfo/CodeView/DebugInfoCodeViewConfig.h"
 #include <string>
 
 namespace llvm {
 namespace codeview {
 class TypeCollection;
 class TypeIndex;
-std::string computeTypeName(TypeCollection &Types, TypeIndex Index);
-StringRef getSymbolName(CVSymbol Sym);
+LLVM_DEBUGINFOCODEVIEW_ABI std::string computeTypeName(TypeCollection &Types,
+                                                       TypeIndex Index);
+LLVM_DEBUGINFOCODEVIEW_ABI StringRef getSymbolName(CVSymbol Sym);
 } // namespace codeview
 } // namespace llvm
 

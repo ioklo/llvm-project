@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_CODEVIEW_SYMBOLRECORDMAPPING_H
 
 #include "llvm/DebugInfo/CodeView/CodeViewRecordIO.h"
+#include "llvm/DebugInfo/CodeView/DebugInfoCodeViewConfig.h"
 #include "llvm/DebugInfo/CodeView/SymbolVisitorCallbacks.h"
 
 namespace llvm {
@@ -26,8 +27,8 @@ public:
                                CodeViewContainer Container)
       : IO(Writer), Container(Container) {}
 
-  Error visitSymbolBegin(CVSymbol &Record) override;
-  Error visitSymbolEnd(CVSymbol &Record) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI Error visitSymbolBegin(CVSymbol &Record) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI Error visitSymbolEnd(CVSymbol &Record) override;
 
 #define SYMBOL_RECORD(EnumName, EnumVal, Name)                                 \
   Error visitKnownRecord(CVSymbol &CVR, Name &Record) override;
@@ -40,7 +41,7 @@ private:
   CodeViewRecordIO IO;
   CodeViewContainer Container;
 };
-}
-}
+} // namespace codeview
+} // namespace llvm
 
 #endif

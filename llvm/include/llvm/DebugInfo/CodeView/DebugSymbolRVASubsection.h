@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_CODEVIEW_DEBUGSYMBOLRVASUBSECTION_H
 
 #include "llvm/DebugInfo/CodeView/CodeView.h"
+#include "llvm/DebugInfo/CodeView/DebugInfoCodeViewConfig.h"
 #include "llvm/DebugInfo/CodeView/DebugSubsection.h"
 #include "llvm/Support/BinaryStreamArray.h"
 #include "llvm/Support/Endian.h"
@@ -27,7 +28,7 @@ class DebugSymbolRVASubsectionRef final : public DebugSubsectionRef {
 public:
   using ArrayType = FixedStreamArray<support::ulittle32_t>;
 
-  DebugSymbolRVASubsectionRef();
+  LLVM_DEBUGINFOCODEVIEW_ABI DebugSymbolRVASubsectionRef();
 
   static bool classof(const DebugSubsectionRef *S) {
     return S->kind() == DebugSubsectionKind::CoffSymbolRVA;
@@ -36,7 +37,7 @@ public:
   ArrayType::Iterator begin() const { return RVAs.begin(); }
   ArrayType::Iterator end() const { return RVAs.end(); }
 
-  Error initialize(BinaryStreamReader &Reader);
+  LLVM_DEBUGINFOCODEVIEW_ABI Error initialize(BinaryStreamReader &Reader);
 
 private:
   ArrayType RVAs;
@@ -44,14 +45,15 @@ private:
 
 class DebugSymbolRVASubsection final : public DebugSubsection {
 public:
-  DebugSymbolRVASubsection();
+  LLVM_DEBUGINFOCODEVIEW_ABI DebugSymbolRVASubsection();
 
   static bool classof(const DebugSubsection *S) {
     return S->kind() == DebugSubsectionKind::CoffSymbolRVA;
   }
 
-  Error commit(BinaryStreamWriter &Writer) const override;
-  uint32_t calculateSerializedSize() const override;
+  LLVM_DEBUGINFOCODEVIEW_ABI Error
+  commit(BinaryStreamWriter &Writer) const override;
+  LLVM_DEBUGINFOCODEVIEW_ABI uint32_t calculateSerializedSize() const override;
 
   void addRVA(uint32_t RVA) { RVAs.push_back(support::ulittle32_t(RVA)); }
 

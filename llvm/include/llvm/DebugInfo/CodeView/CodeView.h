@@ -17,6 +17,7 @@
 #include <type_traits>
 
 #include "llvm/ADT/STLForwardCompat.h"
+#include "llvm/DebugInfo/CodeView/DebugInfoCodeViewConfig.h"
 #include "llvm/Support/Endian.h"
 
 namespace llvm {
@@ -27,6 +28,7 @@ namespace codeview {
 enum class TypeRecordKind : uint16_t {
 #define TYPE_RECORD(lf_ename, value, name) name = value,
 #include "CodeViewTypes.def"
+
 };
 
 /// Duplicate copy of the above enum, but using the official CV names. Useful
@@ -34,6 +36,7 @@ enum class TypeRecordKind : uint16_t {
 enum TypeLeafKind : uint16_t {
 #define CV_TYPE(name, val) name = val,
 #include "CodeViewTypes.def"
+
 };
 
 /// Distinguishes individual records in the Symbols subsection of a .debug$S
@@ -41,6 +44,7 @@ enum TypeLeafKind : uint16_t {
 enum class SymbolRecordKind : uint16_t {
 #define SYMBOL_RECORD(lf_ename, value, name) name = value,
 #include "CodeViewSymbols.def"
+
 };
 
 /// Duplicate copy of the above enum, but using the official CV names. Useful
@@ -48,6 +52,7 @@ enum class SymbolRecordKind : uint16_t {
 enum SymbolKind : uint16_t {
 #define CV_SYMBOL(name, val) name = val,
 #include "CodeViewSymbols.def"
+
 };
 
 #define CV_DEFINE_ENUM_CLASS_FLAGS_OPERATORS(Class)                            \
@@ -530,6 +535,7 @@ enum class RegisterId : uint16_t {
 #define CV_REGISTERS_ALL
 #define CV_REGISTER(name, value) name = value,
 #include "CodeViewRegisters.def"
+
 #undef CV_REGISTER
 #undef CV_REGISTERS_ALL
 };
@@ -555,9 +561,11 @@ enum class EncodedFramePtrReg : uint8_t {
   BasePtr = 3,
 };
 
-RegisterId decodeFramePtrReg(EncodedFramePtrReg EncodedReg, CPUType CPU);
+LLVM_DEBUGINFOCODEVIEW_ABI RegisterId
+decodeFramePtrReg(EncodedFramePtrReg EncodedReg, CPUType CPU);
 
-EncodedFramePtrReg encodeFramePtrReg(RegisterId Reg, CPUType CPU);
+LLVM_DEBUGINFOCODEVIEW_ABI EncodedFramePtrReg encodeFramePtrReg(RegisterId Reg,
+                                                                CPUType CPU);
 
 /// These values correspond to the THUNK_ORDINAL enumeration.
 enum class ThunkOrdinal : uint8_t {
@@ -646,7 +654,7 @@ enum class JumpTableEntrySize : uint16_t {
   Int8ShiftLeft = 9,
   Int16ShiftLeft = 10,
 };
-}
-}
+} // namespace codeview
+} // namespace llvm
 
 #endif

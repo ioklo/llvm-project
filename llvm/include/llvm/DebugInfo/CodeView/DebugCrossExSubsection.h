@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_CODEVIEW_DEBUGCROSSEXSUBSECTION_H
 
 #include "llvm/DebugInfo/CodeView/CodeView.h"
+#include "llvm/DebugInfo/CodeView/DebugInfoCodeViewConfig.h"
 #include "llvm/DebugInfo/CodeView/DebugSubsection.h"
 #include "llvm/Support/BinaryStreamArray.h"
 #include "llvm/Support/BinaryStreamRef.h"
@@ -34,8 +35,8 @@ public:
     return S->kind() == DebugSubsectionKind::CrossScopeExports;
   }
 
-  Error initialize(BinaryStreamReader Reader);
-  Error initialize(BinaryStreamRef Stream);
+  LLVM_DEBUGINFOCODEVIEW_ABI Error initialize(BinaryStreamReader Reader);
+  LLVM_DEBUGINFOCODEVIEW_ABI Error initialize(BinaryStreamRef Stream);
 
   Iterator begin() const { return References.begin(); }
   Iterator end() const { return References.end(); }
@@ -53,10 +54,11 @@ public:
     return S->kind() == DebugSubsectionKind::CrossScopeExports;
   }
 
-  void addMapping(uint32_t Local, uint32_t Global);
+  LLVM_DEBUGINFOCODEVIEW_ABI void addMapping(uint32_t Local, uint32_t Global);
 
-  uint32_t calculateSerializedSize() const override;
-  Error commit(BinaryStreamWriter &Writer) const override;
+  LLVM_DEBUGINFOCODEVIEW_ABI uint32_t calculateSerializedSize() const override;
+  LLVM_DEBUGINFOCODEVIEW_ABI Error
+  commit(BinaryStreamWriter &Writer) const override;
 
 private:
   std::map<uint32_t, uint32_t> Mappings;

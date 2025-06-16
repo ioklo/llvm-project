@@ -11,6 +11,7 @@
 
 #include "llvm/ADT/StringRef.h"
 #include "llvm/DebugInfo/CodeView/CodeView.h"
+#include "llvm/DebugInfo/CodeView/DebugInfoCodeViewConfig.h"
 #include "llvm/DebugInfo/CodeView/DebugSubsection.h"
 #include "llvm/DebugInfo/CodeView/TypeIndex.h"
 #include "llvm/Support/BinaryStreamArray.h"
@@ -62,19 +63,19 @@ class DebugInlineeLinesSubsectionRef final : public DebugSubsectionRef {
   using Iterator = LinesArray::Iterator;
 
 public:
-  DebugInlineeLinesSubsectionRef();
+  LLVM_DEBUGINFOCODEVIEW_ABI DebugInlineeLinesSubsectionRef();
 
   static bool classof(const DebugSubsectionRef *S) {
     return S->kind() == DebugSubsectionKind::InlineeLines;
   }
 
-  Error initialize(BinaryStreamReader Reader);
+  LLVM_DEBUGINFOCODEVIEW_ABI Error initialize(BinaryStreamReader Reader);
   Error initialize(BinaryStreamRef Section) {
     return initialize(BinaryStreamReader(Section));
   }
 
   bool valid() const { return Lines.valid(); }
-  bool hasExtraFiles() const;
+  LLVM_DEBUGINFOCODEVIEW_ABI bool hasExtraFiles() const;
 
   Iterator begin() const { return Lines.begin(); }
   Iterator end() const { return Lines.end(); }
@@ -91,6 +92,7 @@ public:
     InlineeSourceLineHeader Header;
   };
 
+  LLVM_DEBUGINFOCODEVIEW_ABI
   DebugInlineeLinesSubsection(DebugChecksumsSubsection &Checksums,
                               bool HasExtraFiles = false);
 
@@ -101,8 +103,9 @@ public:
   Error commit(BinaryStreamWriter &Writer) const override;
   uint32_t calculateSerializedSize() const override;
 
-  void addInlineSite(TypeIndex FuncId, StringRef FileName, uint32_t SourceLine);
-  void addExtraFile(StringRef FileName);
+  LLVM_DEBUGINFOCODEVIEW_ABI void
+  addInlineSite(TypeIndex FuncId, StringRef FileName, uint32_t SourceLine);
+  LLVM_DEBUGINFOCODEVIEW_ABI void addExtraFile(StringRef FileName);
 
   bool hasExtraFiles() const { return HasExtraFiles; }
   void setHasExtraFiles(bool Has) { HasExtraFiles = Has; }

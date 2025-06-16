@@ -12,6 +12,7 @@
 #include "llvm/ADT/StringRef.h"
 #include "llvm/DebugInfo/CodeView/CVRecord.h"
 #include "llvm/DebugInfo/CodeView/CodeView.h"
+#include "llvm/DebugInfo/CodeView/DebugInfoCodeViewConfig.h"
 #include "llvm/DebugInfo/CodeView/TypeVisitorCallbacks.h"
 
 namespace llvm {
@@ -37,21 +38,27 @@ public:
   /// which is correct when dumping types from an object file (/Z7).
   void setIpiTypes(TypeCollection &Types) { IpiTypes = &Types; }
 
-  void printTypeIndex(StringRef FieldName, TypeIndex TI) const;
+  LLVM_DEBUGINFOCODEVIEW_ABI void printTypeIndex(StringRef FieldName,
+                                                 TypeIndex TI) const;
 
-  void printItemIndex(StringRef FieldName, TypeIndex TI) const;
+  LLVM_DEBUGINFOCODEVIEW_ABI void printItemIndex(StringRef FieldName,
+                                                 TypeIndex TI) const;
 
   /// Action to take on unknown types. By default, they are ignored.
-  Error visitUnknownType(CVType &Record) override;
-  Error visitUnknownMember(CVMemberRecord &Record) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI Error visitUnknownType(CVType &Record) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI Error
+  visitUnknownMember(CVMemberRecord &Record) override;
 
   /// Paired begin/end actions for all types. Receives all record data,
   /// including the fixed-length record prefix.
-  Error visitTypeBegin(CVType &Record) override;
-  Error visitTypeBegin(CVType &Record, TypeIndex Index) override;
-  Error visitTypeEnd(CVType &Record) override;
-  Error visitMemberBegin(CVMemberRecord &Record) override;
-  Error visitMemberEnd(CVMemberRecord &Record) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI Error visitTypeBegin(CVType &Record) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI Error visitTypeBegin(CVType &Record,
+                                                  TypeIndex Index) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI Error visitTypeEnd(CVType &Record) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI Error
+  visitMemberBegin(CVMemberRecord &Record) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI Error
+  visitMemberEnd(CVMemberRecord &Record) override;
 
 #define TYPE_RECORD(EnumName, EnumVal, Name)                                   \
   Error visitKnownRecord(CVType &CVR, Name##Record &Record) override;
@@ -62,9 +69,10 @@ public:
 #include "llvm/DebugInfo/CodeView/CodeViewTypes.def"
 
 private:
-  void printMemberAttributes(MemberAttributes Attrs);
-  void printMemberAttributes(MemberAccess Access, MethodKind Kind,
-                             MethodOptions Options);
+  LLVM_DEBUGINFOCODEVIEW_ABI void printMemberAttributes(MemberAttributes Attrs);
+  LLVM_DEBUGINFOCODEVIEW_ABI void printMemberAttributes(MemberAccess Access,
+                                                        MethodKind Kind,
+                                                        MethodOptions Options);
 
   /// Get the database of indices for the stream that we are dumping. If ItemDB
   /// is set, then we must be dumping an item (IPI) stream. This will also

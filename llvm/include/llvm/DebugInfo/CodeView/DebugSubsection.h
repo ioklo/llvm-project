@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_CODEVIEW_DEBUGSUBSECTION_H
 
 #include "llvm/DebugInfo/CodeView/CodeView.h"
+#include "llvm/DebugInfo/CodeView/DebugInfoCodeViewConfig.h"
 #include "llvm/Support/Error.h"
 
 #include <cstdint>
@@ -21,7 +22,7 @@ namespace codeview {
 class DebugSubsectionRef {
 public:
   explicit DebugSubsectionRef(DebugSubsectionKind Kind) : Kind(Kind) {}
-  virtual ~DebugSubsectionRef();
+  LLVM_DEBUGINFOCODEVIEW_ABI virtual ~DebugSubsectionRef();
 
   static bool classof(const DebugSubsectionRef *S) { return true; }
 
@@ -34,7 +35,7 @@ protected:
 class DebugSubsection {
 public:
   explicit DebugSubsection(DebugSubsectionKind Kind) : Kind(Kind) {}
-  virtual ~DebugSubsection();
+  LLVM_DEBUGINFOCODEVIEW_ABI virtual ~DebugSubsection();
 
   static bool classof(const DebugSubsection *S) { return true; }
 

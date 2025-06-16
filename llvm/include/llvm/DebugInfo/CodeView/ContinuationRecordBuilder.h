@@ -12,6 +12,7 @@
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/DebugInfo/CodeView/CVRecord.h"
+#include "llvm/DebugInfo/CodeView/DebugInfoCodeViewConfig.h"
 #include "llvm/DebugInfo/CodeView/TypeRecordMapping.h"
 #include "llvm/Support/BinaryByteStream.h"
 #include "llvm/Support/BinaryStreamWriter.h"
@@ -31,24 +32,24 @@ class ContinuationRecordBuilder {
   TypeRecordMapping Mapping;
   ArrayRef<uint8_t> InjectedSegmentBytes;
 
-  uint32_t getCurrentSegmentLength() const;
+  LLVM_DEBUGINFOCODEVIEW_ABI uint32_t getCurrentSegmentLength() const;
 
-  void insertSegmentEnd(uint32_t Offset);
-  CVType createSegmentRecord(uint32_t OffBegin, uint32_t OffEnd,
-                             std::optional<TypeIndex> RefersTo);
+  LLVM_DEBUGINFOCODEVIEW_ABI void insertSegmentEnd(uint32_t Offset);
+  LLVM_DEBUGINFOCODEVIEW_ABI CVType createSegmentRecord(
+      uint32_t OffBegin, uint32_t OffEnd, std::optional<TypeIndex> RefersTo);
 
 public:
-  ContinuationRecordBuilder();
-  ~ContinuationRecordBuilder();
+  LLVM_DEBUGINFOCODEVIEW_ABI ContinuationRecordBuilder();
+  LLVM_DEBUGINFOCODEVIEW_ABI ~ContinuationRecordBuilder();
 
-  void begin(ContinuationRecordKind RecordKind);
+  LLVM_DEBUGINFOCODEVIEW_ABI void begin(ContinuationRecordKind RecordKind);
 
   // This template is explicitly instantiated in the implementation file for all
   // supported types.  The method itself is ugly, so inlining it into the header
   // file clutters an otherwise straightforward interface.
   template <typename RecordType> void writeMemberType(RecordType &Record);
 
-  std::vector<CVType> end(TypeIndex Index);
+  LLVM_DEBUGINFOCODEVIEW_ABI std::vector<CVType> end(TypeIndex Index);
 };
 } // namespace codeview
 } // namespace llvm

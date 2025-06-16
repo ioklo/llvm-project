@@ -16,6 +16,7 @@
 #include "llvm/ADT/iterator_range.h"
 #include "llvm/DebugInfo/CodeView/CVRecord.h"
 #include "llvm/DebugInfo/CodeView/CodeView.h"
+#include "llvm/DebugInfo/CodeView/DebugInfoCodeViewConfig.h"
 #include "llvm/DebugInfo/CodeView/RecordSerialization.h"
 #include "llvm/DebugInfo/CodeView/TypeIndex.h"
 #include "llvm/Support/BinaryStreamArray.h"
@@ -509,7 +510,9 @@ public:
       : SymbolRecord(SymbolRecordKind::DefRangeRegisterSym),
         RecordOffset(RecordOffset) {}
 
-  uint32_t getRelocationOffset() const { return RecordOffset + sizeof(DefRangeRegisterHeader); }
+  uint32_t getRelocationOffset() const {
+    return RecordOffset + sizeof(DefRangeRegisterHeader);
+  }
 
   DefRangeRegisterHeader Hdr;
   LocalVariableAddrRange Range;
@@ -533,7 +536,9 @@ public:
       : SymbolRecord(SymbolRecordKind::DefRangeSubfieldRegisterSym),
         RecordOffset(RecordOffset) {}
 
-  uint32_t getRelocationOffset() const { return RecordOffset + sizeof(DefRangeSubfieldRegisterHeader); }
+  uint32_t getRelocationOffset() const {
+    return RecordOffset + sizeof(DefRangeSubfieldRegisterHeader);
+  }
 
   DefRangeSubfieldRegisterHeader Hdr;
   LocalVariableAddrRange Range;
@@ -594,7 +599,9 @@ public:
   bool hasSpilledUDTMember() const { return Hdr.Flags & IsSubfieldFlag; }
   uint16_t offsetInParent() const { return Hdr.Flags >> OffsetInParentShift; }
 
-  uint32_t getRelocationOffset() const { return RecordOffset + sizeof(DefRangeRegisterRelHeader); }
+  uint32_t getRelocationOffset() const {
+    return RecordOffset + sizeof(DefRangeRegisterRelHeader);
+  }
 
   DefRangeRegisterRelHeader Hdr;
   LocalVariableAddrRange Range;
@@ -1023,8 +1030,8 @@ public:
   uint32_t RecordOffset = 0;
 };
 
-Expected<CVSymbol> readSymbolFromStream(BinaryStreamRef Stream,
-                                        uint32_t Offset);
+LLVM_DEBUGINFOCODEVIEW_ABI Expected<CVSymbol>
+readSymbolFromStream(BinaryStreamRef Stream, uint32_t Offset);
 
 } // end namespace codeview
 } // end namespace llvm

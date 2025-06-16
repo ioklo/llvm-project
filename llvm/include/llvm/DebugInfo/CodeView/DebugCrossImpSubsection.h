@@ -12,6 +12,7 @@
 #include "llvm/ADT/StringMap.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/DebugInfo/CodeView/CodeView.h"
+#include "llvm/DebugInfo/CodeView/DebugInfoCodeViewConfig.h"
 #include "llvm/DebugInfo/CodeView/DebugSubsection.h"
 #include "llvm/Support/BinaryStreamArray.h"
 #include "llvm/Support/BinaryStreamRef.h"
@@ -37,8 +38,9 @@ template <> struct VarStreamArrayExtractor<codeview::CrossModuleImportItem> {
 public:
   using ContextType = void;
 
-  Error operator()(BinaryStreamRef Stream, uint32_t &Len,
-                   codeview::CrossModuleImportItem &Item);
+  LLVM_DEBUGINFOCODEVIEW_ABI Error
+  operator()(BinaryStreamRef Stream, uint32_t &Len,
+             codeview::CrossModuleImportItem &Item);
 };
 
 namespace codeview {
@@ -57,8 +59,8 @@ public:
     return S->kind() == DebugSubsectionKind::CrossScopeImports;
   }
 
-  Error initialize(BinaryStreamReader Reader);
-  Error initialize(BinaryStreamRef Stream);
+  LLVM_DEBUGINFOCODEVIEW_ABI Error initialize(BinaryStreamReader Reader);
+  LLVM_DEBUGINFOCODEVIEW_ABI Error initialize(BinaryStreamRef Stream);
 
   Iterator begin() const { return References.begin(); }
   Iterator end() const { return References.end(); }
@@ -78,10 +80,12 @@ public:
     return S->kind() == DebugSubsectionKind::CrossScopeImports;
   }
 
-  void addImport(StringRef Module, uint32_t ImportId);
+  LLVM_DEBUGINFOCODEVIEW_ABI void addImport(StringRef Module,
+                                            uint32_t ImportId);
 
-  uint32_t calculateSerializedSize() const override;
-  Error commit(BinaryStreamWriter &Writer) const override;
+  LLVM_DEBUGINFOCODEVIEW_ABI uint32_t calculateSerializedSize() const override;
+  LLVM_DEBUGINFOCODEVIEW_ABI Error
+  commit(BinaryStreamWriter &Writer) const override;
 
 private:
   DebugStringTableSubsection &Strings;

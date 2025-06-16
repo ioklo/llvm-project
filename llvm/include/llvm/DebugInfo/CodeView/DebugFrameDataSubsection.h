@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_CODEVIEW_DEBUGFRAMEDATASUBSECTION_H
 
 #include "llvm/DebugInfo/CodeView/CodeView.h"
+#include "llvm/DebugInfo/CodeView/DebugInfoCodeViewConfig.h"
 #include "llvm/DebugInfo/CodeView/DebugSubsection.h"
 #include "llvm/Support/BinaryStreamArray.h"
 #include "llvm/Support/BinaryStreamRef.h"
@@ -29,8 +30,8 @@ public:
     return S->kind() == DebugSubsectionKind::FrameData;
   }
 
-  Error initialize(BinaryStreamReader Reader);
-  Error initialize(BinaryStreamRef Stream);
+  LLVM_DEBUGINFOCODEVIEW_ABI Error initialize(BinaryStreamReader Reader);
+  LLVM_DEBUGINFOCODEVIEW_ABI Error initialize(BinaryStreamRef Stream);
 
   FixedStreamArray<FrameData>::Iterator begin() const { return Frames.begin(); }
   FixedStreamArray<FrameData>::Iterator end() const { return Frames.end(); }
@@ -51,17 +52,18 @@ public:
     return S->kind() == DebugSubsectionKind::FrameData;
   }
 
-  uint32_t calculateSerializedSize() const override;
-  Error commit(BinaryStreamWriter &Writer) const override;
+  LLVM_DEBUGINFOCODEVIEW_ABI uint32_t calculateSerializedSize() const override;
+  LLVM_DEBUGINFOCODEVIEW_ABI Error
+  commit(BinaryStreamWriter &Writer) const override;
 
-  void addFrameData(const FrameData &Frame);
-  void setFrames(ArrayRef<FrameData> Frames);
+  LLVM_DEBUGINFOCODEVIEW_ABI void addFrameData(const FrameData &Frame);
+  LLVM_DEBUGINFOCODEVIEW_ABI void setFrames(ArrayRef<FrameData> Frames);
 
 private:
   bool IncludeRelocPtr = false;
   std::vector<FrameData> Frames;
 };
-}
-}
+} // namespace codeview
+} // namespace llvm
 
 #endif

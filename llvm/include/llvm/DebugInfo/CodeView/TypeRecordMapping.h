@@ -12,6 +12,7 @@
 #include "llvm/DebugInfo/CodeView/CVRecord.h"
 #include "llvm/DebugInfo/CodeView/CodeView.h"
 #include "llvm/DebugInfo/CodeView/CodeViewRecordIO.h"
+#include "llvm/DebugInfo/CodeView/DebugInfoCodeViewConfig.h"
 #include "llvm/DebugInfo/CodeView/TypeVisitorCallbacks.h"
 #include "llvm/Support/Error.h"
 #include <optional>
@@ -30,12 +31,15 @@ public:
   explicit TypeRecordMapping(CodeViewRecordStreamer &Streamer) : IO(Streamer) {}
 
   using TypeVisitorCallbacks::visitTypeBegin;
-  Error visitTypeBegin(CVType &Record) override;
-  Error visitTypeBegin(CVType &Record, TypeIndex Index) override;
-  Error visitTypeEnd(CVType &Record) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI Error visitTypeBegin(CVType &Record) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI Error visitTypeBegin(CVType &Record,
+                                                  TypeIndex Index) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI Error visitTypeEnd(CVType &Record) override;
 
-  Error visitMemberBegin(CVMemberRecord &Record) override;
-  Error visitMemberEnd(CVMemberRecord &Record) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI Error
+  visitMemberBegin(CVMemberRecord &Record) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI Error
+  visitMemberEnd(CVMemberRecord &Record) override;
 
 #define TYPE_RECORD(EnumName, EnumVal, Name)                                   \
   Error visitKnownRecord(CVType &CVR, Name##Record &Record) override;
@@ -51,7 +55,7 @@ private:
 
   CodeViewRecordIO IO;
 };
-}
-}
+} // namespace codeview
+} // namespace llvm
 
 #endif

@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_CODEVIEW_TYPEINDEX_H
 
 #include "llvm/ADT/DenseMapInfo.h"
+#include "llvm/DebugInfo/CodeView/DebugInfoCodeViewConfig.h"
 #include "llvm/Support/Endian.h"
 #include <cassert>
 #include <cinttypes>
@@ -270,7 +271,7 @@ public:
     return A.toArrayIndex() - B.toArrayIndex();
   }
 
-  static StringRef simpleTypeName(TypeIndex TI);
+  LLVM_DEBUGINFOCODEVIEW_ABI static StringRef simpleTypeName(TypeIndex TI);
 
 private:
   support::ulittle32_t Index;
@@ -284,9 +285,11 @@ struct TypeIndexOffset {
   support::ulittle32_t Offset;
 };
 
-void printTypeIndex(ScopedPrinter &Printer, StringRef FieldName, TypeIndex TI,
-                    TypeCollection &Types);
-}
+LLVM_DEBUGINFOCODEVIEW_ABI void printTypeIndex(ScopedPrinter &Printer,
+                                               StringRef FieldName,
+                                               TypeIndex TI,
+                                               TypeCollection &Types);
+} // namespace codeview
 
 template <> struct DenseMapInfo<codeview::TypeIndex> {
   static inline codeview::TypeIndex getEmptyKey() {

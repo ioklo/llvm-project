@@ -12,6 +12,7 @@
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/DebugInfo/CodeView/CVRecord.h"
+#include "llvm/DebugInfo/CodeView/DebugInfoCodeViewConfig.h"
 #include "llvm/DebugInfo/CodeView/SimpleTypeSerializer.h"
 #include "llvm/DebugInfo/CodeView/TypeCollection.h"
 #include "llvm/DebugInfo/CodeView/TypeIndex.h"
@@ -32,28 +33,33 @@ class AppendingTypeTableBuilder : public TypeCollection {
   SmallVector<ArrayRef<uint8_t>, 2> SeenRecords;
 
 public:
-  explicit AppendingTypeTableBuilder(BumpPtrAllocator &Storage);
-  ~AppendingTypeTableBuilder();
+  LLVM_DEBUGINFOCODEVIEW_ABI explicit AppendingTypeTableBuilder(
+      BumpPtrAllocator &Storage);
+  LLVM_DEBUGINFOCODEVIEW_ABI ~AppendingTypeTableBuilder();
 
   // TypeCollection overrides
-  std::optional<TypeIndex> getFirst() override;
-  std::optional<TypeIndex> getNext(TypeIndex Prev) override;
-  CVType getType(TypeIndex Index) override;
-  StringRef getTypeName(TypeIndex Index) override;
-  bool contains(TypeIndex Index) override;
-  uint32_t size() override;
-  uint32_t capacity() override;
-  bool replaceType(TypeIndex &Index, CVType Data, bool Stabilize) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI std::optional<TypeIndex> getFirst() override;
+  LLVM_DEBUGINFOCODEVIEW_ABI std::optional<TypeIndex>
+  getNext(TypeIndex Prev) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI CVType getType(TypeIndex Index) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI StringRef getTypeName(TypeIndex Index) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI bool contains(TypeIndex Index) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI uint32_t size() override;
+  LLVM_DEBUGINFOCODEVIEW_ABI uint32_t capacity() override;
+  LLVM_DEBUGINFOCODEVIEW_ABI bool replaceType(TypeIndex &Index, CVType Data,
+                                              bool Stabilize) override;
 
   // public interface
-  void reset();
-  TypeIndex nextTypeIndex() const;
+  LLVM_DEBUGINFOCODEVIEW_ABI void reset();
+  LLVM_DEBUGINFOCODEVIEW_ABI TypeIndex nextTypeIndex() const;
 
   BumpPtrAllocator &getAllocator() { return RecordStorage; }
 
-  ArrayRef<ArrayRef<uint8_t>> records() const;
-  TypeIndex insertRecordBytes(ArrayRef<uint8_t> &Record);
-  TypeIndex insertRecord(ContinuationRecordBuilder &Builder);
+  LLVM_DEBUGINFOCODEVIEW_ABI ArrayRef<ArrayRef<uint8_t>> records() const;
+  LLVM_DEBUGINFOCODEVIEW_ABI TypeIndex
+  insertRecordBytes(ArrayRef<uint8_t> &Record);
+  LLVM_DEBUGINFOCODEVIEW_ABI TypeIndex
+  insertRecord(ContinuationRecordBuilder &Builder);
 
   template <typename T> TypeIndex writeLeafType(T &Record) {
     ArrayRef<uint8_t> Data = SimpleSerializer.serialize(Record);

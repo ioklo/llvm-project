@@ -11,6 +11,7 @@
 
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/ADT/StringRef.h"
+#include "llvm/DebugInfo/CodeView/DebugInfoCodeViewConfig.h"
 #include "llvm/DebugInfo/CodeView/GUID.h"
 #include "llvm/DebugInfo/CodeView/TypeIndex.h"
 #include "llvm/Support/FormatAdapters.h"
@@ -30,10 +31,11 @@ class GuidAdapter final : public FormatAdapter<ArrayRef<uint8_t>> {
   ArrayRef<uint8_t> Guid;
 
 public:
-  explicit GuidAdapter(ArrayRef<uint8_t> Guid);
-  explicit GuidAdapter(StringRef Guid);
+  LLVM_DEBUGINFOCODEVIEW_ABI explicit GuidAdapter(ArrayRef<uint8_t> Guid);
+  LLVM_DEBUGINFOCODEVIEW_ABI explicit GuidAdapter(StringRef Guid);
 
-  void format(raw_ostream &Stream, StringRef Style) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI void format(raw_ostream &Stream,
+                                         StringRef Style) override;
 };
 
 } // end namespace detail
