@@ -59,8 +59,8 @@ public:
   /// @param OS The output stream
   /// @param S Symbolic name for syntax element to color
   /// @param Mode Enable, disable or compute whether to use colors.
-  LLVM_CTOR_NODISCARD WithColor(raw_ostream &OS, HighlightColor S,
-                                ColorMode Mode = ColorMode::Auto);
+  LLVM_CTOR_NODISCARD LLVM_SUPPORT_ABI WithColor(
+      raw_ostream &OS, HighlightColor S, ColorMode Mode = ColorMode::Auto);
   /// To be used like this: WithColor(OS, raw_ostream::BLACK) << "text";
   /// @param OS The output stream
   /// @param Color ANSI color to use, the special SAVEDCOLOR can be used to
@@ -118,8 +118,7 @@ public:
   /// @param Bold Bold/brighter text, default false
   /// @param BG If true, change the background, default: change foreground
   LLVM_SUPPORT_ABI WithColor &changeColor(raw_ostream::Colors Color,
-                                          bool Bold = false,
-                         bool BG = false);
+                                          bool Bold = false, bool BG = false);
 
   /// Reset the colors to terminal defaults. Call this when you are done
   /// outputting colored text, or before program exit.

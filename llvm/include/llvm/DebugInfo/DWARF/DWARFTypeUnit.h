@@ -11,6 +11,7 @@
 
 #include "llvm/ADT/StringRef.h"
 #include "llvm/DebugInfo/DWARF/DWARFUnit.h"
+#include "llvm/DebugInfo/DWARF/DebugInfoDWARFConfig.h"
 #include <cstdint>
 
 namespace llvm {
@@ -35,7 +36,8 @@ public:
   uint64_t getTypeHash() const { return getHeader().getTypeHash(); }
   uint64_t getTypeOffset() const { return getHeader().getTypeOffset(); }
 
-  void dump(raw_ostream &OS, DIDumpOptions DumpOpts = {}) override;
+  LLVM_DEBUGINFODWARF_ABI void dump(raw_ostream &OS,
+                                    DIDumpOptions DumpOpts = {}) override;
   // Enable LLVM-style RTTI.
   static bool classof(const DWARFUnit *U) { return U->isTypeUnit(); }
 };

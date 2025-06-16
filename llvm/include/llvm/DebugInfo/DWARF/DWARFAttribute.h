@@ -11,6 +11,7 @@
 
 #include "llvm/BinaryFormat/Dwarf.h"
 #include "llvm/DebugInfo/DWARF/DWARFFormValue.h"
+#include "llvm/DebugInfo/DWARF/DebugInfoDWARFConfig.h"
 #include <cstdint>
 
 namespace llvm {
@@ -31,20 +32,18 @@ struct DWARFAttribute {
   /// The form and value for this attribute.
   DWARFFormValue Value;
 
-  bool isValid() const {
-    return Offset != 0 && Attr != dwarf::Attribute(0);
-  }
+  bool isValid() const { return Offset != 0 && Attr != dwarf::Attribute(0); }
 
-  explicit operator bool() const {
-    return isValid();
-  }
+  explicit operator bool() const { return isValid(); }
 
   /// Identify DWARF attributes that may contain a pointer to a location list.
-  static bool mayHaveLocationList(dwarf::Attribute Attr);
+  LLVM_DEBUGINFODWARF_ABI static bool
+  mayHaveLocationList(dwarf::Attribute Attr);
 
   /// Identifies DWARF attributes that may contain a reference to a
   /// DWARF expression.
-  static bool mayHaveLocationExpr(dwarf::Attribute Attr);
+  LLVM_DEBUGINFODWARF_ABI static bool
+  mayHaveLocationExpr(dwarf::Attribute Attr);
 };
 
 } // end namespace llvm

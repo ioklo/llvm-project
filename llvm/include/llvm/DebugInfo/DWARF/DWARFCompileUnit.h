@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_DWARF_DWARFCOMPILEUNIT_H
 
 #include "llvm/DebugInfo/DWARF/DWARFUnit.h"
+#include "llvm/DebugInfo/DWARF/DebugInfoDWARFConfig.h"
 
 namespace llvm {
 
@@ -31,9 +32,10 @@ public:
                   LS, LE, IsDWO, UnitVector) {}
 
   /// VTable anchor.
-  ~DWARFCompileUnit() override;
+  LLVM_DEBUGINFODWARF_ABI ~DWARFCompileUnit() override;
   /// Dump this compile unit to \p OS.
-  void dump(raw_ostream &OS, DIDumpOptions DumpOpts) override;
+  LLVM_DEBUGINFODWARF_ABI void dump(raw_ostream &OS,
+                                    DIDumpOptions DumpOpts) override;
   /// Enable LLVM-style RTTI.
   static bool classof(const DWARFUnit *U) { return !U->isTypeUnit(); }
 };

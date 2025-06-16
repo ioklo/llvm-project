@@ -12,6 +12,7 @@
 #include "llvm/ADT/StringExtras.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/BinaryFormat/Dwarf.h"
+#include "llvm/DebugInfo/DWARF/DebugInfoDWARFConfig.h"
 #include "llvm/Support/Error.h"
 
 #include <string>
@@ -30,37 +31,42 @@ template <typename DieType> struct DWARFTypePrinter {
   DWARFTypePrinter(raw_ostream &OS) : OS(OS) {}
 
   /// Dump the name encoded in the type tag.
-  void appendTypeTagName(dwarf::Tag T);
+  LLVM_DEBUGINFODWARF_ABI void appendTypeTagName(dwarf::Tag T);
 
-  void appendArrayType(const DieType &D);
+  LLVM_DEBUGINFODWARF_ABI void appendArrayType(const DieType &D);
 
-  DieType skipQualifiers(DieType D);
+  LLVM_DEBUGINFODWARF_ABI DieType skipQualifiers(DieType D);
 
-  bool needsParens(DieType D);
+  LLVM_DEBUGINFODWARF_ABI bool needsParens(DieType D);
 
-  void appendPointerLikeTypeBefore(DieType D, DieType Inner, StringRef Ptr);
+  LLVM_DEBUGINFODWARF_ABI void
+  appendPointerLikeTypeBefore(DieType D, DieType Inner, StringRef Ptr);
 
-  DieType appendUnqualifiedNameBefore(DieType D,
-                                      std::string *OriginalFullName = nullptr);
+  LLVM_DEBUGINFODWARF_ABI DieType appendUnqualifiedNameBefore(
+      DieType D, std::string *OriginalFullName = nullptr);
 
-  void appendUnqualifiedNameAfter(DieType D, DieType Inner,
-                                  bool SkipFirstParamIfArtificial = false);
-  void appendQualifiedName(DieType D);
-  DieType appendQualifiedNameBefore(DieType D);
-  bool appendTemplateParameters(DieType D, bool *FirstParameter = nullptr);
-  void appendAndTerminateTemplateParameters(DieType D);
-  void decomposeConstVolatile(DieType &N, DieType &T, DieType &C, DieType &V);
-  void appendConstVolatileQualifierAfter(DieType N);
-  void appendConstVolatileQualifierBefore(DieType N);
+  LLVM_DEBUGINFODWARF_ABI void
+  appendUnqualifiedNameAfter(DieType D, DieType Inner,
+                             bool SkipFirstParamIfArtificial = false);
+  LLVM_DEBUGINFODWARF_ABI void appendQualifiedName(DieType D);
+  LLVM_DEBUGINFODWARF_ABI DieType appendQualifiedNameBefore(DieType D);
+  LLVM_DEBUGINFODWARF_ABI bool
+  appendTemplateParameters(DieType D, bool *FirstParameter = nullptr);
+  LLVM_DEBUGINFODWARF_ABI void appendAndTerminateTemplateParameters(DieType D);
+  LLVM_DEBUGINFODWARF_ABI void decomposeConstVolatile(DieType &N, DieType &T,
+                                                      DieType &C, DieType &V);
+  LLVM_DEBUGINFODWARF_ABI void appendConstVolatileQualifierAfter(DieType N);
+  LLVM_DEBUGINFODWARF_ABI void appendConstVolatileQualifierBefore(DieType N);
 
   /// Recursively append the DIE type name when applicable.
-  void appendUnqualifiedName(DieType D,
-                             std::string *OriginalFullName = nullptr);
+  LLVM_DEBUGINFODWARF_ABI void
+  appendUnqualifiedName(DieType D, std::string *OriginalFullName = nullptr);
 
-  void appendSubroutineNameAfter(DieType D, DieType Inner,
-                                 bool SkipFirstParamIfArtificial, bool Const,
-                                 bool Volatile);
-  void appendScopes(DieType D);
+  LLVM_DEBUGINFODWARF_ABI void
+  appendSubroutineNameAfter(DieType D, DieType Inner,
+                            bool SkipFirstParamIfArtificial, bool Const,
+                            bool Volatile);
+  LLVM_DEBUGINFODWARF_ABI void appendScopes(DieType D);
 
 private:
   /// Returns True if the DIE TAG is one of the ones that is scopped.

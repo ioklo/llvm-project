@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_DWARF_DWARFDEBUGABBREV_H
 
 #include "llvm/DebugInfo/DWARF/DWARFAbbreviationDeclaration.h"
+#include "llvm/DebugInfo/DWARF/DebugInfoDWARFConfig.h"
 #include "llvm/Support/DataExtractor.h"
 #include <cstdint>
 #include <map>
@@ -30,24 +31,21 @@ class DWARFAbbreviationDeclarationSet {
       std::vector<DWARFAbbreviationDeclaration>::const_iterator;
 
 public:
-  DWARFAbbreviationDeclarationSet();
+  LLVM_DEBUGINFODWARF_ABI DWARFAbbreviationDeclarationSet();
 
   uint64_t getOffset() const { return Offset; }
-  void dump(raw_ostream &OS) const;
-  Error extract(DataExtractor Data, uint64_t *OffsetPtr);
+  LLVM_DEBUGINFODWARF_ABI void dump(raw_ostream &OS) const;
+  LLVM_DEBUGINFODWARF_ABI Error extract(DataExtractor Data,
+                                        uint64_t *OffsetPtr);
 
-  const DWARFAbbreviationDeclaration *
+  LLVM_DEBUGINFODWARF_ABI const DWARFAbbreviationDeclaration *
   getAbbreviationDeclaration(uint32_t AbbrCode) const;
 
-  const_iterator begin() const {
-    return Decls.begin();
-  }
+  const_iterator begin() const { return Decls.begin(); }
 
-  const_iterator end() const {
-    return Decls.end();
-  }
+  const_iterator end() const { return Decls.end(); }
 
-  std::string getCodeRange() const;
+  LLVM_DEBUGINFODWARF_ABI std::string getCodeRange() const;
 
   uint32_t getFirstAbbrCode() const { return FirstAbbrCode; }
 
@@ -64,13 +62,13 @@ class DWARFDebugAbbrev {
   mutable std::optional<DataExtractor> Data;
 
 public:
-  DWARFDebugAbbrev(DataExtractor Data);
+  LLVM_DEBUGINFODWARF_ABI DWARFDebugAbbrev(DataExtractor Data);
 
-  Expected<const DWARFAbbreviationDeclarationSet *>
+  LLVM_DEBUGINFODWARF_ABI Expected<const DWARFAbbreviationDeclarationSet *>
   getAbbreviationDeclarationSet(uint64_t CUAbbrOffset) const;
 
-  void dump(raw_ostream &OS) const;
-  Error parse() const;
+  LLVM_DEBUGINFODWARF_ABI void dump(raw_ostream &OS) const;
+  LLVM_DEBUGINFODWARF_ABI Error parse() const;
 
   DWARFAbbreviationDeclarationSetMap::const_iterator begin() const {
     assert(!Data && "Must call parse before iterating over DWARFDebugAbbrev");

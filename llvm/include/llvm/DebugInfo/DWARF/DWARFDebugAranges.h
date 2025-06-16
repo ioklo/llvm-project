@@ -11,6 +11,7 @@
 
 #include "llvm/ADT/DenseSet.h"
 #include "llvm/ADT/STLFunctionalExtras.h"
+#include "llvm/DebugInfo/DWARF/DebugInfoDWARFConfig.h"
 #include <cstdint>
 #include <vector>
 
@@ -22,8 +23,8 @@ class DWARFContext;
 
 class DWARFDebugAranges {
 public:
-  void generate(DWARFContext *CTX);
-  uint64_t findAddress(uint64_t Address) const;
+  LLVM_DEBUGINFODWARF_ABI void generate(DWARFContext *CTX);
+  LLVM_DEBUGINFODWARF_ABI uint64_t findAddress(uint64_t Address) const;
 
 private:
   void clear();
@@ -37,7 +38,7 @@ private:
 
   struct Range {
     explicit Range(uint64_t LowPC, uint64_t HighPC, uint64_t CUOffset)
-      : LowPC(LowPC), Length(HighPC - LowPC), CUOffset(CUOffset) {}
+        : LowPC(LowPC), Length(HighPC - LowPC), CUOffset(CUOffset) {}
 
     void setHighPC(uint64_t HighPC) {
       if (HighPC == -1ULL || HighPC <= LowPC)
@@ -52,12 +53,10 @@ private:
       return -1ULL;
     }
 
-    bool operator<(const Range &other) const {
-      return LowPC < other.LowPC;
-    }
+    bool operator<(const Range &other) const { return LowPC < other.LowPC; }
 
-    uint64_t LowPC; /// Start of address range.
-    uint64_t Length; /// End of address range (not including this address).
+    uint64_t LowPC;    /// Start of address range.
+    uint64_t Length;   /// End of address range (not including this address).
     uint64_t CUOffset; /// Offset of the compile unit or die.
   };
 

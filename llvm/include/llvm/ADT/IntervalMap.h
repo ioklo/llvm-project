@@ -1375,9 +1375,9 @@ protected:
       path.setRoot(&map->rootLeaf(), map->rootSize, Offset);
   }
 
-  LLVM_SUPPORT_ABI void pathFillFind(KeyT x);
-  LLVM_SUPPORT_ABI void treeFind(KeyT x);
-  LLVM_SUPPORT_ABI void treeAdvanceTo(KeyT x);
+  void pathFillFind(KeyT x);
+  void treeFind(KeyT x);
+  void treeAdvanceTo(KeyT x);
 
   /// unsafeStart - Writable access to start() for iterator.
   KeyT &unsafeStart() const {

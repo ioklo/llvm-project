@@ -12,6 +12,7 @@
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/DebugInfo/DWARF/DWARFDataExtractor.h"
 #include "llvm/DebugInfo/DWARF/DWARFUnit.h"
+#include "llvm/DebugInfo/DWARF/DebugInfoDWARFConfig.h"
 #include "llvm/Support/Error.h"
 #include <cstdint>
 
@@ -33,6 +34,7 @@ class DWARFDebugMacro {
   enum HeaderFlagMask {
 #define HANDLE_MACRO_FLAG(ID, NAME) MACRO_##NAME = ID,
 #include "llvm/BinaryFormat/Dwarf.def"
+
   };
   struct MacroHeader {
     /// Macro version information number.
@@ -116,7 +118,7 @@ public:
   DWARFDebugMacro() = default;
 
   /// Print the macro list found within the debug_macinfo/debug_macro section.
-  void dump(raw_ostream &OS) const;
+  LLVM_DEBUGINFODWARF_ABI void dump(raw_ostream &OS) const;
 
   Error parseMacro(DWARFUnitVector::compile_unit_range Units,
                    DataExtractor StringExtractor,

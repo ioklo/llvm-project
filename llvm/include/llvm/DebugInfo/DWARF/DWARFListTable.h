@@ -12,6 +12,7 @@
 #include "llvm/BinaryFormat/Dwarf.h"
 #include "llvm/DebugInfo/DIContext.h"
 #include "llvm/DebugInfo/DWARF/DWARFDataExtractor.h"
+#include "llvm/DebugInfo/DWARF/DebugInfoDWARFConfig.h"
 #include "llvm/Support/Errc.h"
 #include "llvm/Support/Error.h"
 #include "llvm/Support/raw_ostream.h"
@@ -86,9 +87,7 @@ public:
   DWARFListTableHeader(StringRef SectionName, StringRef ListTypeString)
       : SectionName(SectionName), ListTypeString(ListTypeString) {}
 
-  void clear() {
-    HeaderData = {};
-  }
+  void clear() { HeaderData = {}; }
   uint64_t getHeaderOffset() const { return HeaderOffset; }
   uint8_t getAddrSize() const { return HeaderData.AddrSize; }
   uint64_t getLength() const { return HeaderData.Length; }
@@ -110,14 +109,15 @@ public:
     llvm_unreachable("Invalid DWARF format (expected DWARF32 or DWARF64");
   }
 
-  void dump(DataExtractor Data, raw_ostream &OS,
-            DIDumpOptions DumpOpts = {}) const;
+  LLVM_DEBUGINFODWARF_ABI void dump(DataExtractor Data, raw_ostream &OS,
+                                    DIDumpOptions DumpOpts = {}) const;
   std::optional<uint64_t> getOffsetEntry(DataExtractor Data,
                                          uint32_t Index) const {
     if (Index >= HeaderData.OffsetEntryCount)
       return std::nullopt;
 
-    return getOffsetEntry(Data, getHeaderOffset() + getHeaderSize(Format), Format, Index);
+    return getOffsetEntry(Data, getHeaderOffset() + getHeaderSize(Format),
+                          Format, Index);
   }
 
   static std::optional<uint64_t> getOffsetEntry(DataExtractor Data,
@@ -131,12 +131,13 @@ public:
   }
 
   /// Extract the table header and the array of offsets.
-  Error extract(DWARFDataExtractor Data, uint64_t *OffsetPtr);
+  LLVM_DEBUGINFODWARF_ABI Error extract(DWARFDataExtractor Data,
+                                        uint64_t *OffsetPtr);
 
   /// Returns the length of the table, including the length field, or 0 if the
   /// length has not been determined (e.g. because the table has not yet been
   /// parsed, or there was a problem in parsing).
-  uint64_t length() const;
+  LLVM_DEBUGINFODWARF_ABI uint64_t length() const;
 };
 
 /// A class representing a table of lists as specified in the DWARF v5
@@ -233,8 +234,8 @@ Error DWARFListType<ListEntryType>::extract(DWARFDataExtractor Data,
                                             StringRef ListTypeString) {
   if (*OffsetPtr < HeaderOffset || *OffsetPtr >= Data.size())
     return createStringError(errc::invalid_argument,
-                       "invalid %s list offset 0x%" PRIx64,
-                       ListTypeString.data(), *OffsetPtr);
+                             "invalid %s list offset 0x%" PRIx64,
+                             ListTypeString.data(), *OffsetPtr);
   Entries.clear();
   while (Data.isValidOffset(*OffsetPtr)) {
     ListEntryType Entry;
@@ -245,9 +246,9 @@ Error DWARFListType<ListEntryType>::extract(DWARFDataExtractor Data,
       return Error::success();
   }
   return createStringError(errc::illegal_byte_sequence,
-                     "no end of list marker detected at end of %s table "
-                     "starting at offset 0x%" PRIx64,
-                     SectionName.data(), HeaderOffset);
+                           "no end of list marker detected at end of %s table "
+                           "starting at offset 0x%" PRIx64,
+                           SectionName.data(), HeaderOffset);
 }
 
 template <typename DWARFListType>

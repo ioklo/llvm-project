@@ -14,6 +14,7 @@
 #include "llvm/DebugInfo/DWARF/DWARFAddressRange.h"
 #include "llvm/DebugInfo/DWARF/DWARFDie.h"
 #include "llvm/DebugInfo/DWARF/DWARFUnitIndex.h"
+#include "llvm/DebugInfo/DWARF/DebugInfoDWARFConfig.h"
 #include <cstdint>
 #include <map>
 #include <set>
@@ -40,8 +41,10 @@ public:
       : IncludeDetail(includeDetail) {}
   void ShowDetail(bool showDetail) { IncludeDetail = showDetail; }
   size_t GetNumCategories() const { return Aggregation.size(); }
-  void Report(StringRef s, std::function<void()> detailCallback);
-  void EnumerateResults(std::function<void(StringRef, unsigned)> handleCounts);
+  LLVM_DEBUGINFODWARF_ABI void Report(StringRef s,
+                                      std::function<void()> detailCallback);
+  LLVM_DEBUGINFODWARF_ABI void
+  EnumerateResults(std::function<void(StringRef, unsigned)> handleCounts);
 };
 
 /// A class that verifies DWARF debug information given a DWARF Context.
@@ -75,7 +78,8 @@ public:
     /// This is used for finding overlapping ranges in the DW_AT_ranges
     /// attribute of a DIE. It is also used as a set of address ranges that
     /// children address ranges must all be contained in.
-    std::optional<DWARFAddressRange> insert(const DWARFAddressRange &R);
+    LLVM_DEBUGINFODWARF_ABI std::optional<DWARFAddressRange>
+    insert(const DWARFAddressRange &R);
 
     /// Inserts the address range info. If any of its ranges overlaps with a
     /// range in an existing range info, the range info is *not* added and an
@@ -84,14 +88,15 @@ public:
     /// and the returned iterator will point to end().
     ///
     /// This is used for finding overlapping children of the same DIE.
-    die_range_info_iterator insert(const DieRangeInfo &RI);
+    LLVM_DEBUGINFODWARF_ABI die_range_info_iterator
+    insert(const DieRangeInfo &RI);
 
     /// Return true if ranges in this object contains all ranges within RHS.
-    bool contains(const DieRangeInfo &RHS) const;
+    LLVM_DEBUGINFODWARF_ABI bool contains(const DieRangeInfo &RHS) const;
 
     /// Return true if any range in this object intersects with any range in
     /// RHS. Identical ranges are not considered to be intersecting.
-    bool intersects(const DieRangeInfo &RHS) const;
+    LLVM_DEBUGINFODWARF_ABI bool intersects(const DieRangeInfo &RHS) const;
   };
 
 private:
@@ -259,7 +264,8 @@ private:
   /// - Each hashdata offset is valid
   /// - Each DIE is valid
   ///
-  /// \param AccelSection pointer to the section containing the acceleration table
+  /// \param AccelSection pointer to the section containing the acceleration
+  /// table
   /// \param StrData pointer to the string section
   /// \param SectionName the name of the table we're verifying
   ///
@@ -301,6 +307,7 @@ private:
                             const DataExtractor &StrData);
 
 public:
+  LLVM_DEBUGINFODWARF_ABI
   DWARFVerifier(raw_ostream &S, DWARFContext &D,
                 DIDumpOptions DumpOpts = DIDumpOptions::getForSingleDIE());
 
@@ -312,7 +319,7 @@ public:
   ///
   /// \returns true if .debug_abbrev and .debug_abbrev.dwo verify successfully,
   /// false otherwise.
-  bool handleDebugAbbrev();
+  LLVM_DEBUGINFODWARF_ABI bool handleDebugAbbrev();
 
   /// Verify the information in the .debug_info and .debug_types sections.
   ///
@@ -320,7 +327,7 @@ public:
   /// constructed with.
   ///
   /// \returns true if all sections verify successfully, false otherwise.
-  bool handleDebugInfo();
+  LLVM_DEBUGINFODWARF_ABI bool handleDebugInfo();
 
   /// Verify the information in the .debug_cu_index section.
   ///
@@ -329,7 +336,7 @@ public:
   ///
   /// \returns true if the .debug_cu_index verifies successfully, false
   /// otherwise.
-  bool handleDebugCUIndex();
+  LLVM_DEBUGINFODWARF_ABI bool handleDebugCUIndex();
 
   /// Verify the information in the .debug_tu_index section.
   ///
@@ -338,7 +345,7 @@ public:
   ///
   /// \returns true if the .debug_tu_index verifies successfully, false
   /// otherwise.
-  bool handleDebugTUIndex();
+  LLVM_DEBUGINFODWARF_ABI bool handleDebugTUIndex();
 
   /// Verify the information in the .debug_line section.
   ///
@@ -346,7 +353,7 @@ public:
   /// constructed with.
   ///
   /// \returns true if the .debug_line verifies successfully, false otherwise.
-  bool handleDebugLine();
+  LLVM_DEBUGINFODWARF_ABI bool handleDebugLine();
 
   /// Verify the information in accelerator tables, if they exist.
   ///
@@ -355,7 +362,7 @@ public:
   ///
   /// \returns true if the existing Apple-style accelerator tables verify
   /// successfully, false otherwise.
-  bool handleAccelTables();
+  LLVM_DEBUGINFODWARF_ABI bool handleAccelTables();
 
   /// Verify the information in the .debug_str_offsets[.dwo].
   ///
@@ -363,13 +370,14 @@ public:
   /// constructed with.
   ///
   /// \returns true if the .debug_line verifies successfully, false otherwise.
-  bool handleDebugStrOffsets();
-  bool verifyDebugStrOffsets(std::optional<dwarf::DwarfFormat> LegacyFormat,
-                             StringRef SectionName, const DWARFSection &Section,
-                             StringRef StrData);
+  LLVM_DEBUGINFODWARF_ABI bool handleDebugStrOffsets();
+  LLVM_DEBUGINFODWARF_ABI bool
+  verifyDebugStrOffsets(std::optional<dwarf::DwarfFormat> LegacyFormat,
+                        StringRef SectionName, const DWARFSection &Section,
+                        StringRef StrData);
 
   /// Emits any aggregate information collected, depending on the dump options
-  void summarize();
+  LLVM_DEBUGINFODWARF_ABI void summarize();
 };
 
 static inline bool operator<(const DWARFVerifier::DieRangeInfo &LHS,

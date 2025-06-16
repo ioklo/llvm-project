@@ -18,6 +18,7 @@
 #include "llvm/DebugInfo/DWARF/DWARFDie.h"
 #include "llvm/DebugInfo/DWARF/DWARFObject.h"
 #include "llvm/DebugInfo/DWARF/DWARFUnit.h"
+#include "llvm/DebugInfo/DWARF/DebugInfoDWARFConfig.h"
 #include "llvm/Object/Binary.h"
 #include "llvm/Object/ObjectFile.h"
 #include "llvm/Support/DataExtractor.h"
@@ -66,6 +67,7 @@ public:
     };
 
     DWARFContext &D;
+
   public:
     DWARFContextState(DWARFContext &DC) : D(DC) {}
     virtual ~DWARFContextState() = default;
@@ -79,8 +81,8 @@ public:
     virtual const DWARFDebugLoc *getDebugLoc() = 0;
     virtual const DWARFDebugAranges *getDebugAranges() = 0;
     virtual Expected<const DWARFDebugLine::LineTable *>
-        getLineTableForUnit(DWARFUnit *U,
-                            function_ref<void(Error)> RecoverableErrHandler) = 0;
+    getLineTableForUnit(DWARFUnit *U,
+                        function_ref<void(Error)> RecoverableErrHandler) = 0;
     virtual void clearLineTableForUnit(DWARFUnit *U) = 0;
     virtual Expected<const DWARFDebugFrame *> getDebugFrame() = 0;
     virtual Expected<const DWARFDebugFrame *> getEHFrame() = 0;
@@ -94,15 +96,14 @@ public:
     virtual const AppleAcceleratorTable &getAppleNamespaces() = 0;
     virtual const AppleAcceleratorTable &getAppleObjC() = 0;
     virtual std::shared_ptr<DWARFContext>
-        getDWOContext(StringRef AbsolutePath) = 0;
+    getDWOContext(StringRef AbsolutePath) = 0;
     virtual const DenseMap<uint64_t, DWARFTypeUnit *> &
     getTypeUnitMap(bool IsDWO) = 0;
     virtual bool isThreadSafe() const = 0;
 
     /// Parse a macro[.dwo] or macinfo[.dwo] section.
-    std::unique_ptr<DWARFDebugMacro>
+    LLVM_DEBUGINFODWARF_ABI std::unique_ptr<DWARFDebugMacro>
     parseMacroOrMacinfo(MacroSecType SectionType);
-
   };
   friend class DWARFContextState;
 
@@ -132,6 +133,7 @@ private:
   bool ParseCUTUIndexManually = false;
 
 public:
+  LLVM_DEBUGINFODWARF_ABI
   DWARFContext(std::unique_ptr<const DWARFObject> DObj,
                std::string DWPName = "",
                std::function<void(Error)> RecoverableErrorHandler =
@@ -139,7 +141,7 @@ public:
                std::function<void(Error)> WarningHandler =
                    WithColor::defaultWarningHandler,
                bool ThreadSafe = false);
-  ~DWARFContext() override;
+  LLVM_DEBUGINFODWARF_ABI ~DWARFContext() override;
 
   DWARFContext(DWARFContext &) = delete;
   DWARFContext &operator=(DWARFContext &) = delete;
@@ -152,15 +154,17 @@ public:
 
   /// Dump a textual representation to \p OS. If any \p DumpOffsets are present,
   /// dump only the record at the specified offset.
-  void dump(raw_ostream &OS, DIDumpOptions DumpOpts,
-            std::array<std::optional<uint64_t>, DIDT_ID_Count> DumpOffsets);
+  LLVM_DEBUGINFODWARF_ABI void
+  dump(raw_ostream &OS, DIDumpOptions DumpOpts,
+       std::array<std::optional<uint64_t>, DIDT_ID_Count> DumpOffsets);
 
   void dump(raw_ostream &OS, DIDumpOptions DumpOpts) override {
     std::array<std::optional<uint64_t>, DIDT_ID_Count> DumpOffsets;
     dump(OS, DumpOpts, DumpOffsets);
   }
 
-  bool verify(raw_ostream &OS, DIDumpOptions DumpOpts = {}) override;
+  LLVM_DEBUGINFODWARF_ABI bool verify(raw_ostream &OS,
+                                      DIDumpOptions DumpOpts = {}) override;
 
   using unit_iterator_range = DWARFUnitVector::iterator_range;
   using compile_unit_range = DWARFUnitVector::compile_unit_range;
@@ -205,12 +209,10 @@ public:
                                DWOUnits.begin() + DWOUnits.getNumInfoUnits());
   }
 
-  const DWARFUnitVector &getDWOUnitsVector() {
-    return State->getDWOUnits();
-  }
+  const DWARFUnitVector &getDWOUnitsVector() { return State->getDWOUnits(); }
 
   /// Return true of this DWARF context is a DWP file.
-  bool isDWP() const;
+  LLVM_DEBUGINFODWARF_ABI bool isDWP() const;
 
   /// Get units from .debug_types.dwo in the DWO context.
   unit_iterator_range dwo_types_section_units() {
@@ -264,17 +266,20 @@ public:
     return State->getDWOUnits()[index].get();
   }
 
-  DWARFCompileUnit *getDWOCompileUnitForHash(uint64_t Hash);
-  DWARFTypeUnit *getTypeUnitForHash(uint64_t Hash, bool IsDWO);
+  LLVM_DEBUGINFODWARF_ABI DWARFCompileUnit *
+  getDWOCompileUnitForHash(uint64_t Hash);
+  LLVM_DEBUGINFODWARF_ABI DWARFTypeUnit *getTypeUnitForHash(uint64_t Hash,
+                                                            bool IsDWO);
 
   /// Return the DWARF unit that includes an offset (relative to .debug_info).
-  DWARFUnit *getUnitForOffset(uint64_t Offset);
+  LLVM_DEBUGINFODWARF_ABI DWARFUnit *getUnitForOffset(uint64_t Offset);
 
   /// Return the compile unit that includes an offset (relative to .debug_info).
-  DWARFCompileUnit *getCompileUnitForOffset(uint64_t Offset);
+  LLVM_DEBUGINFODWARF_ABI DWARFCompileUnit *
+  getCompileUnitForOffset(uint64_t Offset);
 
   /// Get a DIE given an exact offset.
-  DWARFDie getDIEForOffset(uint64_t Offset);
+  LLVM_DEBUGINFODWARF_ABI DWARFDie getDIEForOffset(uint64_t Offset);
 
   unsigned getMaxVersion() {
     // Ensure info units have been parsed to discover MaxVersion
@@ -293,68 +298,69 @@ public:
       MaxVersion = Version;
   }
 
-  const DWARFUnitIndex &getCUIndex();
-  DWARFGdbIndex &getGdbIndex();
-  const DWARFUnitIndex &getTUIndex();
+  LLVM_DEBUGINFODWARF_ABI const DWARFUnitIndex &getCUIndex();
+  LLVM_DEBUGINFODWARF_ABI DWARFGdbIndex &getGdbIndex();
+  LLVM_DEBUGINFODWARF_ABI const DWARFUnitIndex &getTUIndex();
 
   /// Get a pointer to the parsed DebugAbbrev object.
-  const DWARFDebugAbbrev *getDebugAbbrev();
+  LLVM_DEBUGINFODWARF_ABI const DWARFDebugAbbrev *getDebugAbbrev();
 
   /// Get a pointer to the parsed DebugLoc object.
-  const DWARFDebugLoc *getDebugLoc();
+  LLVM_DEBUGINFODWARF_ABI const DWARFDebugLoc *getDebugLoc();
 
   /// Get a pointer to the parsed dwo abbreviations object.
-  const DWARFDebugAbbrev *getDebugAbbrevDWO();
+  LLVM_DEBUGINFODWARF_ABI const DWARFDebugAbbrev *getDebugAbbrevDWO();
 
   /// Get a pointer to the parsed DebugAranges object.
-  const DWARFDebugAranges *getDebugAranges();
+  LLVM_DEBUGINFODWARF_ABI const DWARFDebugAranges *getDebugAranges();
 
   /// Get a pointer to the parsed frame information object.
-  Expected<const DWARFDebugFrame *> getDebugFrame();
+  LLVM_DEBUGINFODWARF_ABI Expected<const DWARFDebugFrame *> getDebugFrame();
 
   /// Get a pointer to the parsed eh frame information object.
-  Expected<const DWARFDebugFrame *> getEHFrame();
+  LLVM_DEBUGINFODWARF_ABI Expected<const DWARFDebugFrame *> getEHFrame();
 
   /// Get a pointer to the parsed DebugMacinfo information object.
-  const DWARFDebugMacro *getDebugMacinfo();
+  LLVM_DEBUGINFODWARF_ABI const DWARFDebugMacro *getDebugMacinfo();
 
   /// Get a pointer to the parsed DebugMacinfoDWO information object.
-  const DWARFDebugMacro *getDebugMacinfoDWO();
+  LLVM_DEBUGINFODWARF_ABI const DWARFDebugMacro *getDebugMacinfoDWO();
 
   /// Get a pointer to the parsed DebugMacro information object.
-  const DWARFDebugMacro *getDebugMacro();
+  LLVM_DEBUGINFODWARF_ABI const DWARFDebugMacro *getDebugMacro();
 
   /// Get a pointer to the parsed DebugMacroDWO information object.
-  const DWARFDebugMacro *getDebugMacroDWO();
+  LLVM_DEBUGINFODWARF_ABI const DWARFDebugMacro *getDebugMacroDWO();
 
   /// Get a reference to the parsed accelerator table object.
-  const DWARFDebugNames &getDebugNames();
+  LLVM_DEBUGINFODWARF_ABI const DWARFDebugNames &getDebugNames();
 
   /// Get a reference to the parsed accelerator table object.
-  const AppleAcceleratorTable &getAppleNames();
+  LLVM_DEBUGINFODWARF_ABI const AppleAcceleratorTable &getAppleNames();
 
   /// Get a reference to the parsed accelerator table object.
-  const AppleAcceleratorTable &getAppleTypes();
+  LLVM_DEBUGINFODWARF_ABI const AppleAcceleratorTable &getAppleTypes();
 
   /// Get a reference to the parsed accelerator table object.
-  const AppleAcceleratorTable &getAppleNamespaces();
+  LLVM_DEBUGINFODWARF_ABI const AppleAcceleratorTable &getAppleNamespaces();
 
   /// Get a reference to the parsed accelerator table object.
-  const AppleAcceleratorTable &getAppleObjC();
+  LLVM_DEBUGINFODWARF_ABI const AppleAcceleratorTable &getAppleObjC();
 
   /// Get a pointer to a parsed line table corresponding to a compile unit.
   /// Report any parsing issues as warnings on stderr.
-  const DWARFDebugLine::LineTable *getLineTableForUnit(DWARFUnit *U);
+  LLVM_DEBUGINFODWARF_ABI const DWARFDebugLine::LineTable *
+  getLineTableForUnit(DWARFUnit *U);
 
   /// Get a pointer to a parsed line table corresponding to a compile unit.
   /// Report any recoverable parsing problems using the handler.
-  Expected<const DWARFDebugLine::LineTable *>
+  LLVM_DEBUGINFODWARF_ABI Expected<const DWARFDebugLine::LineTable *>
   getLineTableForUnit(DWARFUnit *U,
                       function_ref<void(Error)> RecoverableErrorHandler);
 
   // Clear the line table object corresponding to a compile unit for memory
   // management purpose. When it's referred to again, it'll be re-populated.
-  void clearLineTableForUnit(DWARFUnit *U);
+  LLVM_DEBUGINFODWARF_ABI void clearLineTableForUnit(DWARFUnit *U);
 
   DataExtractor getStringExtractor() const {
     return DataExtractor(DObj->getStrSection(), false, 0);
@@ -384,21 +390,22 @@ public:
   ///            DWO file searched as well. This allows for lookups to succeed
   ///            by searching the split DWARF debug info when using the main
   ///            executable's debug info.
-  DIEsForAddress getDIEsForAddress(uint64_t Address, bool CheckDWO = false);
+  LLVM_DEBUGINFODWARF_ABI DIEsForAddress
+  getDIEsForAddress(uint64_t Address, bool CheckDWO = false);
 
-  DILineInfo getLineInfoForAddress(
+  LLVM_DEBUGINFODWARF_ABI DILineInfo getLineInfoForAddress(
       object::SectionedAddress Address,
       DILineInfoSpecifier Specifier = DILineInfoSpecifier()) override;
-  DILineInfo
+  LLVM_DEBUGINFODWARF_ABI DILineInfo
   getLineInfoForDataAddress(object::SectionedAddress Address) override;
-  DILineInfoTable getLineInfoForAddressRange(
+  LLVM_DEBUGINFODWARF_ABI DILineInfoTable getLineInfoForAddressRange(
       object::SectionedAddress Address, uint64_t Size,
       DILineInfoSpecifier Specifier = DILineInfoSpecifier()) override;
-  DIInliningInfo getInliningInfoForAddress(
+  LLVM_DEBUGINFODWARF_ABI DIInliningInfo getInliningInfoForAddress(
       object::SectionedAddress Address,
       DILineInfoSpecifier Specifier = DILineInfoSpecifier()) override;
 
-  std::vector<DILocal>
+  LLVM_DEBUGINFODWARF_ABI std::vector<DILocal>
   getLocalsForAddress(object::SectionedAddress Address) override;
 
   bool isLittleEndian() const { return DObj->isLittleEndian(); }
@@ -431,7 +438,8 @@ public:
     return make_error<StringError>(Buffer, EC);
   }
 
-  std::shared_ptr<DWARFContext> getDWOContext(StringRef AbsolutePath);
+  LLVM_DEBUGINFODWARF_ABI std::shared_ptr<DWARFContext>
+  getDWOContext(StringRef AbsolutePath);
 
   function_ref<void(Error)> getRecoverableErrorHandler() {
     return RecoverableErrorHandler;
@@ -441,7 +449,7 @@ public:
 
   enum class ProcessDebugRelocations { Process, Ignore };
 
-  static std::unique_ptr<DWARFContext>
+  LLVM_DEBUGINFODWARF_ABI static std::unique_ptr<DWARFContext>
   create(const object::ObjectFile &Obj,
          ProcessDebugRelocations RelocAction = ProcessDebugRelocations::Process,
          const LoadedObjectInfo *L = nullptr, std::string DWPName = "",
@@ -451,7 +459,7 @@ public:
              WithColor::defaultWarningHandler,
          bool ThreadSafe = false);
 
-  static std::unique_ptr<DWARFContext>
+  LLVM_DEBUGINFODWARF_ABI static std::unique_ptr<DWARFContext>
   create(const StringMap<std::unique_ptr<MemoryBuffer>> &Sections,
          uint8_t AddrSize, bool isLittleEndian = sys::IsLittleEndianHost,
          std::function<void(Error)> RecoverableErrorHandler =
@@ -462,7 +470,7 @@ public:
 
   /// Get address size from CUs.
   /// TODO: refactor compile_units() to make this const.
-  uint8_t getCUAddrSize();
+  LLVM_DEBUGINFODWARF_ABI uint8_t getCUAddrSize();
 
   Triple::ArchType getArch() const {
     return getDWARFObj().getFile()->getArch();
@@ -472,7 +480,8 @@ public:
   /// address.
   /// TODO: change input parameter from "uint64_t Address"
   ///       into "SectionedAddress Address"
-  DWARFCompileUnit *getCompileUnitForCodeAddress(uint64_t Address);
+  LLVM_DEBUGINFODWARF_ABI DWARFCompileUnit *
+  getCompileUnitForCodeAddress(uint64_t Address);
 
   /// Return the compile unit which contains data with the provided address.
   /// Note: This is more expensive than `getCompileUnitForAddress`, as if
@@ -481,7 +490,8 @@ public:
   /// address.
   /// TODO: change input parameter from "uint64_t Address" into
   ///       "SectionedAddress Address"
-  DWARFCompileUnit *getCompileUnitForDataAddress(uint64_t Address);
+  LLVM_DEBUGINFODWARF_ABI DWARFCompileUnit *
+  getCompileUnitForDataAddress(uint64_t Address);
 
   /// Returns whether CU/TU should be populated manually. TU Index populated
   /// manually only for DWARF5.

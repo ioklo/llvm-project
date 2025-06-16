@@ -11,6 +11,7 @@
 
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/ADT/StringRef.h"
+#include "llvm/DebugInfo/DWARF/DebugInfoDWARFConfig.h"
 #include <cstdint>
 #include <memory>
 
@@ -59,6 +60,7 @@ enum DWARFSectionKind {
   DW_SECT_EXT_unknown = 0,
 #define HANDLE_DW_SECT(ID, NAME) DW_SECT_##NAME = ID,
 #include "llvm/BinaryFormat/Dwarf.def"
+
   DW_SECT_EXT_TYPES = 2,
   DW_SECT_EXT_LOC = 9,
   DW_SECT_EXT_MACINFO = 10,
@@ -73,6 +75,7 @@ inline const char *toString(DWARFSectionKind Kind) {
   case DW_SECT_##NAME:                                                         \
     return "DW_SECT_" STRINGIZE(NAME);
 #include "llvm/BinaryFormat/Dwarf.def"
+
   case DW_SECT_EXT_TYPES:
     return "DW_SECT_TYPES";
   case DW_SECT_EXT_LOC:
@@ -88,13 +91,15 @@ inline const char *toString(DWARFSectionKind Kind) {
 /// The conversion depends on the version of the index section.
 /// IndexVersion is expected to be either 2 for pre-standard GNU proposal
 /// or 5 for DWARFv5 package file.
-uint32_t serializeSectionKind(DWARFSectionKind Kind, unsigned IndexVersion);
+LLVM_DEBUGINFODWARF_ABI uint32_t serializeSectionKind(DWARFSectionKind Kind,
+                                                      unsigned IndexVersion);
 
 /// Convert a value read from an index section to the internal representation.
 ///
 /// The conversion depends on the index section version, which is expected
 /// to be either 2 for pre-standard GNU proposal or 5 for DWARFv5 package file.
-DWARFSectionKind deserializeSectionKind(uint32_t Value, unsigned IndexVersion);
+LLVM_DEBUGINFODWARF_ABI DWARFSectionKind
+deserializeSectionKind(uint32_t Value, unsigned IndexVersion);
 
 class DWARFUnitIndex {
   struct Header {
@@ -135,9 +140,10 @@ public:
     friend class DWARFUnitIndex;
 
   public:
-    const SectionContribution *getContribution(DWARFSectionKind Sec) const;
-    const SectionContribution *getContribution() const;
-    SectionContribution &getContribution();
+    LLVM_DEBUGINFODWARF_ABI const SectionContribution *
+    getContribution(DWARFSectionKind Sec) const;
+    LLVM_DEBUGINFODWARF_ABI const SectionContribution *getContribution() const;
+    LLVM_DEBUGINFODWARF_ABI SectionContribution &getContribution();
 
     const SectionContribution *getContributions() const {
       return Contributions.get();
@@ -170,13 +176,13 @@ public:
 
   explicit operator bool() const { return Header.NumBuckets; }
 
-  bool parse(DataExtractor IndexData);
-  void dump(raw_ostream &OS) const;
+  LLVM_DEBUGINFODWARF_ABI bool parse(DataExtractor IndexData);
+  LLVM_DEBUGINFODWARF_ABI void dump(raw_ostream &OS) const;
 
   uint32_t getVersion() const { return Header.Version; }
 
-  const Entry *getFromOffset(uint64_t Offset) const;
-  const Entry *getFromHash(uint64_t Offset) const;
+  LLVM_DEBUGINFODWARF_ABI const Entry *getFromOffset(uint64_t Offset) const;
+  LLVM_DEBUGINFODWARF_ABI const Entry *getFromHash(uint64_t Offset) const;
 
   ArrayRef<DWARFSectionKind> getColumnKinds() const {
     return ArrayRef(ColumnKinds.get(), Header.NumColumns);

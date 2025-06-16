@@ -15,6 +15,7 @@
 #include "llvm/BinaryFormat/Dwarf.h"
 #include "llvm/DebugInfo/DWARF/DWARFDataExtractor.h"
 #include "llvm/DebugInfo/DWARF/DWARFFormValue.h"
+#include "llvm/DebugInfo/DWARF/DebugInfoDWARFConfig.h"
 #include <cstdint>
 #include <utility>
 
@@ -86,7 +87,7 @@ public:
   DWARFAcceleratorTable(const DWARFDataExtractor &AccelSection,
                         DataExtractor StringSection)
       : AccelSection(AccelSection), StringSection(StringSection) {}
-  virtual ~DWARFAcceleratorTable();
+  LLVM_DEBUGINFODWARF_ABI virtual ~DWARFAcceleratorTable();
 
   virtual Error extract() = 0;
   virtual void dump(raw_ostream &OS) const = 0;
@@ -106,7 +107,7 @@ class AppleAcceleratorTable : public DWARFAcceleratorTable {
     uint32_t HashCount;
     uint32_t HeaderDataLength;
 
-    void dump(ScopedPrinter &W) const;
+    LLVM_DEBUGINFODWARF_ABI void dump(ScopedPrinter &W) const;
   };
 
   struct HeaderData {
@@ -116,7 +117,7 @@ class AppleAcceleratorTable : public DWARFAcceleratorTable {
     uint64_t DIEOffsetBase;
     SmallVector<std::pair<AtomType, Form>, 3> Atoms;
 
-    std::optional<uint64_t>
+    LLVM_DEBUGINFODWARF_ABI std::optional<uint64_t>
     extractOffset(std::optional<DWARFFormValue> Value) const;
   };
 
@@ -217,19 +218,19 @@ public:
     void extract(uint64_t *Offset);
 
   public:
-    std::optional<uint64_t> getCUOffset() const override;
+    LLVM_DEBUGINFODWARF_ABI std::optional<uint64_t> getCUOffset() const override;
 
     /// Returns the Section Offset of the Debug Info Entry associated with this
     /// Accelerator Entry or std::nullopt if the DIE offset is not recorded in
     /// this Accelerator Entry. The returned offset is relative to the start of
     /// the Section containing the DIE.
-    std::optional<uint64_t> getDIESectionOffset() const;
+    LLVM_DEBUGINFODWARF_ABI std::optional<uint64_t> getDIESectionOffset() const;
 
-    std::optional<dwarf::Tag> getTag() const override;
+    LLVM_DEBUGINFODWARF_ABI std::optional<dwarf::Tag> getTag() const override;
 
     /// Returns the value of the Atom in this Accelerator Entry, if the Entry
     /// contains such Atom.
-    std::optional<DWARFFormValue> lookup(HeaderData::AtomType Atom) const;
+    LLVM_DEBUGINFODWARF_ABI std::optional<DWARFFormValue> lookup(HeaderData::AtomType Atom) const;
 
     friend class AppleAcceleratorTable;
     friend class ValueIterator;
@@ -244,7 +245,7 @@ public:
 
   public:
     /// Construct a new iterator for the entries at \p DataOffset.
-    SameNameIterator(const AppleAcceleratorTable &AccelTable,
+    LLVM_DEBUGINFODWARF_ABI SameNameIterator(const AppleAcceleratorTable &AccelTable,
                      uint64_t DataOffset);
 
     const Entry &operator*() {
@@ -301,7 +302,7 @@ public:
     void prepareNextStringOrEnd();
 
   public:
-    Iterator(const AppleAcceleratorTable &Table, bool SetEnd = false);
+    LLVM_DEBUGINFODWARF_ABI Iterator(const AppleAcceleratorTable &Table, bool SetEnd = false);
 
     Iterator &operator++() {
       prepareNextEntryOrEnd();
@@ -318,18 +319,18 @@ public:
                         DataExtractor StringSection)
       : DWARFAcceleratorTable(AccelSection, StringSection) {}
 
-  Error extract() override;
-  uint32_t getNumBuckets() const;
-  uint32_t getNumHashes() const;
-  uint32_t getSizeHdr() const;
-  uint32_t getHeaderDataLength() const;
+  LLVM_DEBUGINFODWARF_ABI Error extract() override;
+  LLVM_DEBUGINFODWARF_ABI uint32_t getNumBuckets() const;
+  LLVM_DEBUGINFODWARF_ABI uint32_t getNumHashes() const;
+  LLVM_DEBUGINFODWARF_ABI uint32_t getSizeHdr() const;
+  LLVM_DEBUGINFODWARF_ABI uint32_t getHeaderDataLength() const;
 
   /// Returns the size of one HashData entry.
   uint32_t getHashDataEntryLength() const { return HashDataEntryLength; }
 
   /// Return the Atom description, which can be used to interpret the raw values
   /// of the Accelerator Entries in this table.
-  ArrayRef<std::pair<HeaderData::AtomType, HeaderData::Form>> getAtomsDesc();
+  LLVM_DEBUGINFODWARF_ABI ArrayRef<std::pair<HeaderData::AtomType, HeaderData::Form>> getAtomsDesc();
 
   /// Returns true iff `AtomTy` is one of the atoms available in Entries of this
   /// table.
@@ -337,7 +338,7 @@ public:
     return is_contained(make_first_range(HdrData.Atoms), AtomTy);
   }
 
-  bool validateForms();
+  LLVM_DEBUGINFODWARF_ABI bool validateForms();
 
   /// Return information related to the DWARF DIE we're looking for when
   /// performing a lookup by name.
@@ -347,11 +348,11 @@ public:
   /// DieOffset is the offset into the .debug_info section for the DIE
   /// related to the input hash data offset.
   /// DieTag is the tag of the DIE
-  std::pair<uint64_t, dwarf::Tag> readAtoms(uint64_t *HashDataOffset);
-  void dump(raw_ostream &OS) const override;
+  LLVM_DEBUGINFODWARF_ABI std::pair<uint64_t, dwarf::Tag> readAtoms(uint64_t *HashDataOffset);
+  LLVM_DEBUGINFODWARF_ABI void dump(raw_ostream &OS) const override;
 
   /// Look up all entries in the accelerator table matching \c Key.
-  iterator_range<SameNameIterator> equal_range(StringRef Key) const;
+  LLVM_DEBUGINFODWARF_ABI iterator_range<SameNameIterator> equal_range(StringRef Key) const;
 
   /// Lookup all entries in the accelerator table.
   auto entries() const {
@@ -400,8 +401,8 @@ public:
     uint32_t AugmentationStringSize;
     SmallString<8> AugmentationString;
 
-    Error extract(const DWARFDataExtractor &AS, uint64_t *Offset);
-    void dump(ScopedPrinter &W) const;
+    LLVM_DEBUGINFODWARF_ABI Error extract(const DWARFDataExtractor &AS, uint64_t *Offset);
+    LLVM_DEBUGINFODWARF_ABI void dump(ScopedPrinter &W) const;
   };
 
   /// Index attribute and its encoding.
@@ -430,7 +431,7 @@ public:
         : AbbrevOffset(AbbrevOffset), Code(Code), Tag(Tag),
           Attributes(std::move(Attributes)) {}
 
-    void dump(ScopedPrinter &W) const;
+    LLVM_DEBUGINFODWARF_ABI void dump(ScopedPrinter &W) const;
   };
 
   /// DWARF v5-specific implementation of an Accelerator Entry.
@@ -438,19 +439,19 @@ public:
     const NameIndex *NameIdx;
     const Abbrev *Abbr;
 
-    Entry(const NameIndex &NameIdx, const Abbrev &Abbr);
+    LLVM_DEBUGINFODWARF_ABI Entry(const NameIndex &NameIdx, const Abbrev &Abbr);
 
   public:
     const NameIndex *getNameIndex() const { return NameIdx; }
-    std::optional<uint64_t> getCUOffset() const override;
-    std::optional<uint64_t> getLocalTUOffset() const override;
-    std::optional<uint64_t> getForeignTUTypeSignature() const override;
+    LLVM_DEBUGINFODWARF_ABI std::optional<uint64_t> getCUOffset() const override;
+    LLVM_DEBUGINFODWARF_ABI std::optional<uint64_t> getLocalTUOffset() const override;
+    LLVM_DEBUGINFODWARF_ABI std::optional<uint64_t> getForeignTUTypeSignature() const override;
     std::optional<dwarf::Tag> getTag() const override { return tag(); }
 
     // Special function that will return the related CU offset needed type
     // units. This gets used to find the .dwo file that originated the entries
     // for a given type unit.
-    std::optional<uint64_t> getRelatedCUOffset() const;
+    LLVM_DEBUGINFODWARF_ABI std::optional<uint64_t> getRelatedCUOffset() const;
 
     /// Returns the Index into the Compilation Unit list of the owning Name
     /// Index or std::nullopt if this Accelerator Entry does not have an
@@ -461,12 +462,12 @@ public:
     /// with that unit, so this function will return 0 even without an explicit
     /// DW_IDX_compile_unit attribute, unless there is a DW_IDX_type_unit
     /// attribute.
-    std::optional<uint64_t> getCUIndex() const;
+    LLVM_DEBUGINFODWARF_ABI std::optional<uint64_t> getCUIndex() const;
 
     /// Similar functionality to getCUIndex() but without the DW_IDX_type_unit
     /// restriction. This allows us to get the associated a compilation unit
     /// index for an entry that is a type unit.
-    std::optional<uint64_t> getRelatedCUIndex() const;
+    LLVM_DEBUGINFODWARF_ABI std::optional<uint64_t> getRelatedCUIndex() const;
 
     /// Returns the index of the Type Unit of the owning
     /// Name
@@ -474,24 +475,24 @@ public:
     /// associated Type Unit. It is up to the user to verify that the
     /// returned Index is a valid index in the owning NameIndex (or use
     /// getLocalTUOffset(), which will handle that check itself).
-    std::optional<uint64_t> getTUIndex() const;
+    LLVM_DEBUGINFODWARF_ABI std::optional<uint64_t> getTUIndex() const;
 
     /// .debug_names-specific getter, which always succeeds (DWARF v5 index
     /// entries always have a tag).
     dwarf::Tag tag() const { return Abbr->Tag; }
 
     /// Returns the Offset of the DIE within the containing CU or TU.
-    std::optional<uint64_t> getDIEUnitOffset() const;
+    LLVM_DEBUGINFODWARF_ABI std::optional<uint64_t> getDIEUnitOffset() const;
 
     /// Returns true if this Entry has information about its parent DIE (i.e. if
     /// it has an IDX_parent attribute)
-    bool hasParentInformation() const;
+    LLVM_DEBUGINFODWARF_ABI bool hasParentInformation() const;
 
     /// Returns the Entry corresponding to the parent of the DIE represented by
     /// `this` Entry. If the parent is not in the table, nullopt is returned.
     /// Precondition: hasParentInformation() == true.
     /// An error is returned for ill-formed tables.
-    Expected<std::optional<DWARFDebugNames::Entry>> getParentDIEEntry() const;
+    LLVM_DEBUGINFODWARF_ABI Expected<std::optional<DWARFDebugNames::Entry>> getParentDIEEntry() const;
 
     /// Return the Abbreviation that can be used to interpret the raw values of
     /// this Accelerator Entry.
@@ -499,10 +500,10 @@ public:
 
     /// Returns the value of the Index Attribute in this Accelerator Entry, if
     /// the Entry contains such Attribute.
-    std::optional<DWARFFormValue> lookup(dwarf::Index Index) const;
+    LLVM_DEBUGINFODWARF_ABI std::optional<DWARFFormValue> lookup(dwarf::Index Index) const;
 
-    void dump(ScopedPrinter &W) const;
-    void dumpParentIdx(ScopedPrinter &W, const DWARFFormValue &FormValue) const;
+    LLVM_DEBUGINFODWARF_ABI void dump(ScopedPrinter &W) const;
+    LLVM_DEBUGINFODWARF_ABI void dumpParentIdx(ScopedPrinter &W, const DWARFFormValue &FormValue) const;
 
     friend class NameIndex;
     friend class ValueIterator;
@@ -512,10 +513,10 @@ public:
   /// the entry list.
   class SentinelError : public ErrorInfo<SentinelError> {
   public:
-    static char ID;
+    LLVM_DEBUGINFODWARF_ABI static char ID;
 
     void log(raw_ostream &OS) const override { OS << "Sentinel"; }
-    std::error_code convertToErrorCode() const override;
+    LLVM_DEBUGINFODWARF_ABI std::error_code convertToErrorCode() const override;
   };
 
 private:
@@ -633,32 +634,32 @@ public:
     DWARFDebugNamesOffsets getOffsets() const { return Offsets; }
 
     /// Reads offset of compilation unit CU. CU is 0-based.
-    uint64_t getCUOffset(uint32_t CU) const;
+    LLVM_DEBUGINFODWARF_ABI uint64_t getCUOffset(uint32_t CU) const;
     uint32_t getCUCount() const { return Hdr.CompUnitCount; }
 
     /// Reads offset of local type unit TU, TU is 0-based.
-    uint64_t getLocalTUOffset(uint32_t TU) const;
+    LLVM_DEBUGINFODWARF_ABI uint64_t getLocalTUOffset(uint32_t TU) const;
     uint32_t getLocalTUCount() const { return Hdr.LocalTypeUnitCount; }
 
     /// Reads signature of foreign type unit TU. TU is 0-based.
-    uint64_t getForeignTUSignature(uint32_t TU) const;
+    LLVM_DEBUGINFODWARF_ABI uint64_t getForeignTUSignature(uint32_t TU) const;
     uint32_t getForeignTUCount() const { return Hdr.ForeignTypeUnitCount; }
 
     /// Reads an entry in the Bucket Array for the given Bucket. The returned
     /// value is a (1-based) index into the Names, StringOffsets and
     /// EntryOffsets arrays. The input Bucket index is 0-based.
-    uint32_t getBucketArrayEntry(uint32_t Bucket) const;
+    LLVM_DEBUGINFODWARF_ABI uint32_t getBucketArrayEntry(uint32_t Bucket) const;
     uint32_t getBucketCount() const { return Hdr.BucketCount; }
 
     /// Reads an entry in the Hash Array for the given Index. The input Index
     /// is 1-based.
-    uint32_t getHashArrayEntry(uint32_t Index) const;
+    LLVM_DEBUGINFODWARF_ABI uint32_t getHashArrayEntry(uint32_t Index) const;
 
     /// Reads an entry in the Name Table for the given Index. The Name Table
     /// consists of two arrays -- String Offsets and Entry Offsets. The returned
     /// offsets are relative to the starts of respective sections. Input Index
     /// is 1-based.
-    NameTableEntry getNameTableEntry(uint32_t Index) const;
+    LLVM_DEBUGINFODWARF_ABI NameTableEntry getNameTableEntry(uint32_t Index) const;
 
     uint32_t getNameCount() const { return Hdr.NameCount; }
 
@@ -666,7 +667,7 @@ public:
       return Abbrevs;
     }
 
-    Expected<Entry> getEntry(uint64_t *Offset) const;
+    LLVM_DEBUGINFODWARF_ABI Expected<Entry> getEntry(uint64_t *Offset) const;
 
     /// Returns the Entry at the relative `Offset` from the start of the Entry
     /// pool.
@@ -676,18 +677,18 @@ public:
     }
 
     /// Look up all entries in this Name Index matching \c Key.
-    iterator_range<ValueIterator> equal_range(StringRef Key) const;
+    LLVM_DEBUGINFODWARF_ABI iterator_range<ValueIterator> equal_range(StringRef Key) const;
 
     NameIterator begin() const { return NameIterator(this, 1); }
     NameIterator end() const { return NameIterator(this, getNameCount() + 1); }
 
-    Error extract();
+    LLVM_DEBUGINFODWARF_ABI Error extract();
     uint64_t getUnitOffset() const { return Base; }
     uint64_t getNextUnitOffset() const {
       return Base + dwarf::getUnitLengthFieldByteSize(Hdr.Format) +
              Hdr.UnitLength;
     }
-    void dump(ScopedPrinter &W) const;
+    LLVM_DEBUGINFODWARF_ABI void dump(ScopedPrinter &W) const;
 
     friend class DWARFDebugNames;
   };
@@ -728,11 +729,11 @@ public:
     /// Create a "begin" iterator for looping over all entries in the
     /// accelerator table matching Key. The iterator will run through all Name
     /// Indexes in the section in sequence.
-    ValueIterator(const DWARFDebugNames &AccelTable, StringRef Key);
+    LLVM_DEBUGINFODWARF_ABI ValueIterator(const DWARFDebugNames &AccelTable, StringRef Key);
 
     /// Create a "begin" iterator for looping over all entries in a specific
     /// Name Index. Other indices in the section will not be visited.
-    ValueIterator(const NameIndex &NI, StringRef Key);
+    LLVM_DEBUGINFODWARF_ABI ValueIterator(const NameIndex &NI, StringRef Key);
 
     /// End marker.
     ValueIterator() = default;
@@ -811,11 +812,11 @@ public:
                   DataExtractor StringSection)
       : DWARFAcceleratorTable(AccelSection, StringSection) {}
 
-  Error extract() override;
-  void dump(raw_ostream &OS) const override;
+  LLVM_DEBUGINFODWARF_ABI Error extract() override;
+  LLVM_DEBUGINFODWARF_ABI void dump(raw_ostream &OS) const override;
 
   /// Look up all entries in the accelerator table matching \c Key.
-  iterator_range<ValueIterator> equal_range(StringRef Key) const;
+  LLVM_DEBUGINFODWARF_ABI iterator_range<ValueIterator> equal_range(StringRef Key) const;
 
   using const_iterator = SmallVector<NameIndex, 0>::const_iterator;
   const_iterator begin() const { return NameIndices.begin(); }
@@ -823,13 +824,13 @@ public:
 
   /// Return the Name Index covering the compile unit or local type unit at
   /// UnitOffset, or nullptr if there is no Name Index covering that unit.
-  const NameIndex *getCUOrTUNameIndex(uint64_t UnitOffset);
+  LLVM_DEBUGINFODWARF_ABI const NameIndex *getCUOrTUNameIndex(uint64_t UnitOffset);
 };
 
 /// Calculates the starting offsets for various sections within the
 /// .debug_names section.
 namespace dwarf {
-DWARFDebugNames::DWARFDebugNamesOffsets
+LLVM_DEBUGINFODWARF_ABI DWARFDebugNames::DWARFDebugNamesOffsets
 findDebugNamesOffsets(uint64_t EndOfHeaderOffset,
                       const DWARFDebugNames::Header &Hdr);
 }
@@ -838,7 +839,7 @@ findDebugNamesOffsets(uint64_t EndOfHeaderOffset,
 /// parameters, returns a substring of `Name` containing no template
 /// parameters.
 /// E.g.: StripTemplateParameters("foo<int>") = "foo".
-std::optional<StringRef> StripTemplateParameters(StringRef Name);
+LLVM_DEBUGINFODWARF_ABI std::optional<StringRef> StripTemplateParameters(StringRef Name);
 
 struct ObjCSelectorNames {
   /// For "-[A(Category) method:]", this would be "method:"
@@ -854,7 +855,7 @@ struct ObjCSelectorNames {
 /// If `Name` is the AT_name of a DIE which refers to an Objective-C selector,
 /// returns an instance of ObjCSelectorNames. The Selector and ClassName fields
 /// are guaranteed to be non-empty in the result.
-std::optional<ObjCSelectorNames> getObjCNamesIfSelector(StringRef Name);
+LLVM_DEBUGINFODWARF_ABI std::optional<ObjCSelectorNames> getObjCNamesIfSelector(StringRef Name);
 
 } // end namespace llvm
 

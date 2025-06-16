@@ -12,6 +12,7 @@
 #include "llvm/ADT/StringRef.h"
 #include "llvm/ADT/iterator.h"
 #include "llvm/BinaryFormat/Dwarf.h"
+#include "llvm/DebugInfo/DWARF/DebugInfoDWARFConfig.h"
 #include "llvm/Support/DataExtractor.h"
 
 namespace llvm {
@@ -64,7 +65,7 @@ public:
 
     /// Description of the encoding of one expression Op.
     struct Description {
-      DwarfVersion Version; ///< Dwarf version where the Op was introduced.
+      DwarfVersion Version;     ///< Dwarf version where the Op was introduced.
       SmallVector<Encoding> Op; ///< Encoding for Op operands.
 
       template <typename... Ts>
@@ -86,7 +87,7 @@ public:
   public:
     const Description &getDescription() const { return Desc; }
     uint8_t getCode() const { return Opcode; }
-    std::optional<unsigned> getSubCode() const;
+    LLVM_DEBUGINFODWARF_ABI std::optional<unsigned> getSubCode() const;
     uint64_t getNumOperands() const { return Operands.size(); }
     ArrayRef<uint64_t> getRawOperands() const { return Operands; };
     uint64_t getRawOperand(unsigned Idx) const { return Operands[Idx]; }
@@ -98,11 +99,13 @@ public:
     }
     uint64_t getEndOffset() const { return EndOffset; }
     bool isError() const { return Error; }
-    bool print(raw_ostream &OS, DIDumpOptions DumpOpts,
-               const DWARFExpression *Expr, DWARFUnit *U) const;
+    LLVM_DEBUGINFODWARF_ABI bool print(raw_ostream &OS, DIDumpOptions DumpOpts,
+                                       const DWARFExpression *Expr,
+                                       DWARFUnit *U) const;
 
     /// Verify \p Op. Does not affect the return of \a isError().
-    static bool verify(const Operation &Op, DWARFUnit *U);
+    LLVM_DEBUGINFODWARF_ABI static bool verify(const Operation &Op,
+                                               DWARFUnit *U);
 
   private:
     bool extract(DataExtractor Data, uint8_t AddressSize, uint64_t Offset,
@@ -152,26 +155,27 @@ public:
   iterator begin() const { return iterator(this, 0); }
   iterator end() const { return iterator(this, Data.getData().size()); }
 
-  void print(raw_ostream &OS, DIDumpOptions DumpOpts, DWARFUnit *U,
-             bool IsEH = false) const;
+  LLVM_DEBUGINFODWARF_ABI void print(raw_ostream &OS, DIDumpOptions DumpOpts,
+                                     DWARFUnit *U, bool IsEH = false) const;
 
   /// Print the expression in a format intended to be compact and useful to a
   /// user, but not perfectly unambiguous, or capable of representing every
   /// valid DWARF expression. Returns true if the expression was sucessfully
   /// printed.
-  bool printCompact(raw_ostream &OS,
-                    std::function<StringRef(uint64_t RegNum, bool IsEH)>
-                        GetNameForDWARFReg = nullptr);
+  LLVM_DEBUGINFODWARF_ABI bool printCompact(
+      raw_ostream &OS,
+      std::function<StringRef(uint64_t RegNum, bool IsEH)> GetNameForDWARFReg =
+          nullptr);
 
-  bool verify(DWARFUnit *U);
+  LLVM_DEBUGINFODWARF_ABI bool verify(DWARFUnit *U);
 
-  bool operator==(const DWARFExpression &RHS) const;
+  LLVM_DEBUGINFODWARF_ABI bool operator==(const DWARFExpression &RHS) const;
 
   StringRef getData() const { return Data.getData(); }
 
-  static bool prettyPrintRegisterOp(DWARFUnit *U, raw_ostream &OS,
-                                    DIDumpOptions DumpOpts, uint8_t Opcode,
-                                    const ArrayRef<uint64_t> Operands);
+  LLVM_DEBUGINFODWARF_ABI static bool
+  prettyPrintRegisterOp(DWARFUnit *U, raw_ostream &OS, DIDumpOptions DumpOpts,
+                        uint8_t Opcode, const ArrayRef<uint64_t> Operands);
 
 private:
   DataExtractor Data;
@@ -183,5 +187,5 @@ inline bool operator==(const DWARFExpression::iterator &LHS,
                        const DWARFExpression::iterator &RHS) {
   return LHS.Expr == RHS.Expr && LHS.Offset == RHS.Offset;
 }
-}
+} // namespace llvm
 #endif

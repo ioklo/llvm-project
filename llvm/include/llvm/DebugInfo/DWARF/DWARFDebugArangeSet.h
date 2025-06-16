@@ -11,6 +11,7 @@
 
 #include "llvm/ADT/iterator_range.h"
 #include "llvm/BinaryFormat/Dwarf.h"
+#include "llvm/DebugInfo/DWARF/DebugInfoDWARFConfig.h"
 #include "llvm/Support/Error.h"
 #include <cstdint>
 #include <vector>
@@ -33,8 +34,9 @@ public:
     uint64_t CuOffset;
     /// The DWARF version number.
     uint16_t Version;
-    /// The size in bytes of an address on the target architecture. For segmented
-    /// addressing, this is the size of the offset portion of the address.
+    /// The size in bytes of an address on the target architecture. For
+    /// segmented addressing, this is the size of the offset portion of the
+    /// address.
     uint8_t AddrSize;
     /// The size in bytes of a segment descriptor on the target architecture.
     /// If the target system uses a flat address space, this value is 0.
@@ -46,7 +48,8 @@ public:
     uint64_t Length;
 
     uint64_t getEndAddress() const { return Address + Length; }
-    void dump(raw_ostream &OS, uint32_t AddressSize) const;
+    LLVM_DEBUGINFODWARF_ABI void dump(raw_ostream &OS,
+                                      uint32_t AddressSize) const;
   };
 
 private:
@@ -60,10 +63,11 @@ private:
 public:
   DWARFDebugArangeSet() { clear(); }
 
-  void clear();
-  Error extract(DWARFDataExtractor data, uint64_t *offset_ptr,
-                function_ref<void(Error)> WarningHandler = nullptr);
-  void dump(raw_ostream &OS) const;
+  LLVM_DEBUGINFODWARF_ABI void clear();
+  LLVM_DEBUGINFODWARF_ABI Error
+  extract(DWARFDataExtractor data, uint64_t *offset_ptr,
+          function_ref<void(Error)> WarningHandler = nullptr);
+  LLVM_DEBUGINFODWARF_ABI void dump(raw_ostream &OS) const;
 
   uint64_t getCompileUnitDIEOffset() const { return HeaderData.CuOffset; }
 

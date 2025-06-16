@@ -11,6 +11,7 @@
 
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/DebugInfo/DWARF/DWARFDataExtractor.h"
+#include "llvm/DebugInfo/DWARF/DebugInfoDWARFConfig.h"
 #include "llvm/Support/Errc.h"
 #include <cstdint>
 
@@ -64,12 +65,13 @@ public:
   /// iff it has successfully reched the end of the list. This means that one
   /// can attempt to parse another list after the current one (\p Offset will be
   /// updated to point past the end of the current list).
-  bool dumpLocationList(uint64_t *Offset, raw_ostream &OS,
-                        std::optional<object::SectionedAddress> BaseAddr,
-                        const DWARFObject &Obj, DWARFUnit *U,
-                        DIDumpOptions DumpOpts, unsigned Indent) const;
+  LLVM_DEBUGINFODWARF_ABI bool
+  dumpLocationList(uint64_t *Offset, raw_ostream &OS,
+                   std::optional<object::SectionedAddress> BaseAddr,
+                   const DWARFObject &Obj, DWARFUnit *U, DIDumpOptions DumpOpts,
+                   unsigned Indent) const;
 
-  Error visitAbsoluteLocationList(
+  LLVM_DEBUGINFODWARF_ABI Error visitAbsoluteLocationList(
       uint64_t Offset, std::optional<object::SectionedAddress> BaseAddr,
       std::function<std::optional<object::SectionedAddress>(uint32_t)>
           LookupAddr,
@@ -108,17 +110,19 @@ public:
       : DWARFLocationTable(std::move(Data)) {}
 
   /// Print the location lists found within the debug_loc section.
-  void dump(raw_ostream &OS, const DWARFObject &Obj, DIDumpOptions DumpOpts,
-            std::optional<uint64_t> Offset) const;
+  LLVM_DEBUGINFODWARF_ABI void dump(raw_ostream &OS, const DWARFObject &Obj,
+                                    DIDumpOptions DumpOpts,
+                                    std::optional<uint64_t> Offset) const;
 
-  Error visitLocationList(
+  LLVM_DEBUGINFODWARF_ABI Error visitLocationList(
       uint64_t *Offset,
       function_ref<bool(const DWARFLocationEntry &)> Callback) const override;
 
 protected:
-  void dumpRawEntry(const DWARFLocationEntry &Entry, raw_ostream &OS,
-                    unsigned Indent, DIDumpOptions DumpOpts,
-                    const DWARFObject &Obj) const override;
+  LLVM_DEBUGINFODWARF_ABI void
+  dumpRawEntry(const DWARFLocationEntry &Entry, raw_ostream &OS,
+               unsigned Indent, DIDumpOptions DumpOpts,
+               const DWARFObject &Obj) const override;
 };
 
 class DWARFDebugLoclists final : public DWARFLocationTable {
@@ -126,18 +130,21 @@ public:
   DWARFDebugLoclists(DWARFDataExtractor Data, uint16_t Version)
       : DWARFLocationTable(std::move(Data)), Version(Version) {}
 
-  Error visitLocationList(
+  LLVM_DEBUGINFODWARF_ABI Error visitLocationList(
       uint64_t *Offset,
       function_ref<bool(const DWARFLocationEntry &)> Callback) const override;
 
   /// Dump all location lists within the given range.
-  void dumpRange(uint64_t StartOffset, uint64_t Size, raw_ostream &OS,
-                 const DWARFObject &Obj, DIDumpOptions DumpOpts);
+  LLVM_DEBUGINFODWARF_ABI void dumpRange(uint64_t StartOffset, uint64_t Size,
+                                         raw_ostream &OS,
+                                         const DWARFObject &Obj,
+                                         DIDumpOptions DumpOpts);
 
 protected:
-  void dumpRawEntry(const DWARFLocationEntry &Entry, raw_ostream &OS,
-                    unsigned Indent, DIDumpOptions DumpOpts,
-                    const DWARFObject &Obj) const override;
+  LLVM_DEBUGINFODWARF_ABI void
+  dumpRawEntry(const DWARFLocationEntry &Entry, raw_ostream &OS,
+               unsigned Indent, DIDumpOptions DumpOpts,
+               const DWARFObject &Obj) const override;
 
 private:
   uint16_t Version;
@@ -145,11 +152,12 @@ private:
 
 class ResolverError : public ErrorInfo<ResolverError> {
 public:
-  static char ID;
+  LLVM_DEBUGINFODWARF_ABI static char ID;
 
-  ResolverError(uint32_t Index, dwarf::LoclistEntries Kind) : Index(Index), Kind(Kind) {}
+  ResolverError(uint32_t Index, dwarf::LoclistEntries Kind)
+      : Index(Index), Kind(Kind) {}
 
-  void log(raw_ostream &OS) const override;
+  LLVM_DEBUGINFODWARF_ABI void log(raw_ostream &OS) const override;
   std::error_code convertToErrorCode() const override {
     return llvm::errc::invalid_argument;
   }
