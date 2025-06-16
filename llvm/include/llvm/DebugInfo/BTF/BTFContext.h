@@ -15,6 +15,7 @@
 #define LLVM_DEBUGINFO_BTF_BTFCONTEXT_H
 
 #include "llvm/DebugInfo/BTF/BTFParser.h"
+#include "llvm/DebugInfo/BTF/DebugInfoBTFConfig.h"
 #include "llvm/DebugInfo/DIContext.h"
 
 namespace llvm {
@@ -30,22 +31,22 @@ public:
     // BTF is no DWARF, so ignore this operation for now.
   }
 
-  DILineInfo getLineInfoForAddress(
+  LLVM_DEBUGINFOBTF_ABI DILineInfo getLineInfoForAddress(
       object::SectionedAddress Address,
       DILineInfoSpecifier Specifier = DILineInfoSpecifier()) override;
 
-  DILineInfo
+  LLVM_DEBUGINFOBTF_ABI DILineInfo
   getLineInfoForDataAddress(object::SectionedAddress Address) override;
 
-  DILineInfoTable getLineInfoForAddressRange(
+  LLVM_DEBUGINFOBTF_ABI DILineInfoTable getLineInfoForAddressRange(
       object::SectionedAddress Address, uint64_t Size,
       DILineInfoSpecifier Specifier = DILineInfoSpecifier()) override;
 
-  DIInliningInfo getInliningInfoForAddress(
+  LLVM_DEBUGINFOBTF_ABI DIInliningInfo getInliningInfoForAddress(
       object::SectionedAddress Address,
       DILineInfoSpecifier Specifier = DILineInfoSpecifier()) override;
 
-  std::vector<DILocal>
+  LLVM_DEBUGINFOBTF_ABI std::vector<DILocal>
   getLocalsForAddress(object::SectionedAddress Address) override;
 
   static std::unique_ptr<BTFContext> create(
