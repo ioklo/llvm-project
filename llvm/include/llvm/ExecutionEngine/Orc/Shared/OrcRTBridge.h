@@ -15,6 +15,7 @@
 
 #include "llvm/ExecutionEngine/Orc/Shared/ExecutorAddress.h"
 #include "llvm/ExecutionEngine/Orc/Shared/ExecutorSymbolDef.h"
+#include "llvm/ExecutionEngine/Orc/Shared/OrcSharedConfig.h"
 #include "llvm/ExecutionEngine/Orc/Shared/SimpleRemoteEPCUtils.h"
 #include "llvm/ExecutionEngine/Orc/Shared/TargetProcessControlTypes.h"
 
@@ -22,34 +23,43 @@ namespace llvm {
 namespace orc {
 namespace rt {
 
-extern const char *SimpleExecutorDylibManagerInstanceName;
-extern const char *SimpleExecutorDylibManagerOpenWrapperName;
-extern const char *SimpleExecutorDylibManagerLookupWrapperName;
+LLVM_ORCSHARED_ABI extern const char *SimpleExecutorDylibManagerInstanceName;
+LLVM_ORCSHARED_ABI extern const char *SimpleExecutorDylibManagerOpenWrapperName;
+LLVM_ORCSHARED_ABI extern const char
+    *SimpleExecutorDylibManagerLookupWrapperName;
 
-extern const char *SimpleExecutorMemoryManagerInstanceName;
-extern const char *SimpleExecutorMemoryManagerReserveWrapperName;
-extern const char *SimpleExecutorMemoryManagerFinalizeWrapperName;
-extern const char *SimpleExecutorMemoryManagerDeallocateWrapperName;
+LLVM_ORCSHARED_ABI extern const char *SimpleExecutorMemoryManagerInstanceName;
+LLVM_ORCSHARED_ABI extern const char
+    *SimpleExecutorMemoryManagerReserveWrapperName;
+LLVM_ORCSHARED_ABI extern const char
+    *SimpleExecutorMemoryManagerFinalizeWrapperName;
+LLVM_ORCSHARED_ABI extern const char
+    *SimpleExecutorMemoryManagerDeallocateWrapperName;
 
-extern const char *ExecutorSharedMemoryMapperServiceInstanceName;
-extern const char *ExecutorSharedMemoryMapperServiceReserveWrapperName;
-extern const char *ExecutorSharedMemoryMapperServiceInitializeWrapperName;
-extern const char *ExecutorSharedMemoryMapperServiceDeinitializeWrapperName;
-extern const char *ExecutorSharedMemoryMapperServiceReleaseWrapperName;
+LLVM_ORCSHARED_ABI extern const char
+    *ExecutorSharedMemoryMapperServiceInstanceName;
+LLVM_ORCSHARED_ABI extern const char
+    *ExecutorSharedMemoryMapperServiceReserveWrapperName;
+LLVM_ORCSHARED_ABI extern const char
+    *ExecutorSharedMemoryMapperServiceInitializeWrapperName;
+LLVM_ORCSHARED_ABI extern const char
+    *ExecutorSharedMemoryMapperServiceDeinitializeWrapperName;
+LLVM_ORCSHARED_ABI extern const char
+    *ExecutorSharedMemoryMapperServiceReleaseWrapperName;
 
-extern const char *MemoryWriteUInt8sWrapperName;
-extern const char *MemoryWriteUInt16sWrapperName;
-extern const char *MemoryWriteUInt32sWrapperName;
-extern const char *MemoryWriteUInt64sWrapperName;
-extern const char *MemoryWriteBuffersWrapperName;
-extern const char *MemoryWritePointersWrapperName;
+LLVM_ORCSHARED_ABI extern const char *MemoryWriteUInt8sWrapperName;
+LLVM_ORCSHARED_ABI extern const char *MemoryWriteUInt16sWrapperName;
+LLVM_ORCSHARED_ABI extern const char *MemoryWriteUInt32sWrapperName;
+LLVM_ORCSHARED_ABI extern const char *MemoryWriteUInt64sWrapperName;
+LLVM_ORCSHARED_ABI extern const char *MemoryWriteBuffersWrapperName;
+LLVM_ORCSHARED_ABI extern const char *MemoryWritePointersWrapperName;
 
-extern const char *RegisterEHFrameSectionWrapperName;
-extern const char *DeregisterEHFrameSectionWrapperName;
+LLVM_ORCSHARED_ABI extern const char *RegisterEHFrameSectionWrapperName;
+LLVM_ORCSHARED_ABI extern const char *DeregisterEHFrameSectionWrapperName;
 
-extern const char *RunAsMainWrapperName;
-extern const char *RunAsVoidFunctionWrapperName;
-extern const char *RunAsIntFunctionWrapperName;
+LLVM_ORCSHARED_ABI extern const char *RunAsMainWrapperName;
+LLVM_ORCSHARED_ABI extern const char *RunAsVoidFunctionWrapperName;
+LLVM_ORCSHARED_ABI extern const char *RunAsIntFunctionWrapperName;
 
 using SPSSimpleExecutorDylibManagerOpenSignature =
     shared::SPSExpected<shared::SPSExecutorAddr>(shared::SPSExecutorAddr,
@@ -90,8 +100,8 @@ using SPSRunAsIntFunctionSignature = int32_t(shared::SPSExecutorAddr, int32_t);
 } // end namespace rt
 
 namespace rt_alt {
-extern const char *UnwindInfoManagerRegisterActionName;
-extern const char *UnwindInfoManagerDeregisterActionName;
+LLVM_ORCSHARED_ABI extern const char *UnwindInfoManagerRegisterActionName;
+LLVM_ORCSHARED_ABI extern const char *UnwindInfoManagerDeregisterActionName;
 } // end namespace rt_alt
 } // end namespace orc
 } // end namespace llvm

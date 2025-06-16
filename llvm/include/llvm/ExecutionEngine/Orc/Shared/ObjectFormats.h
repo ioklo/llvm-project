@@ -15,28 +15,29 @@
 
 #include "llvm/ADT/StringRef.h"
 #include "llvm/ExecutionEngine/Orc/Shared/MachOObjectFormat.h"
+#include "llvm/ExecutionEngine/Orc/Shared/OrcSharedConfig.h"
 
 namespace llvm {
 namespace orc {
 
 // ELF section names.
-extern StringRef ELFEHFrameSectionName;
+LLVM_ORCSHARED_ABI extern StringRef ELFEHFrameSectionName;
 
-extern StringRef ELFInitArrayFuncSectionName;
-extern StringRef ELFInitFuncSectionName;
-extern StringRef ELFFiniArrayFuncSectionName;
-extern StringRef ELFFiniFuncSectionName;
-extern StringRef ELFCtorArrayFuncSectionName;
-extern StringRef ELFDtorArrayFuncSectionName;
+LLVM_ORCSHARED_ABI extern StringRef ELFInitArrayFuncSectionName;
+LLVM_ORCSHARED_ABI extern StringRef ELFInitFuncSectionName;
+LLVM_ORCSHARED_ABI extern StringRef ELFFiniArrayFuncSectionName;
+LLVM_ORCSHARED_ABI extern StringRef ELFFiniFuncSectionName;
+LLVM_ORCSHARED_ABI extern StringRef ELFCtorArrayFuncSectionName;
+LLVM_ORCSHARED_ABI extern StringRef ELFDtorArrayFuncSectionName;
 
-extern StringRef ELFInitSectionNames[3];
+LLVM_ORCSHARED_ABI extern StringRef ELFInitSectionNames[3];
 
-extern StringRef ELFThreadBSSSectionName;
-extern StringRef ELFThreadDataSectionName;
+LLVM_ORCSHARED_ABI extern StringRef ELFThreadBSSSectionName;
+LLVM_ORCSHARED_ABI extern StringRef ELFThreadDataSectionName;
 
-bool isELFInitializerSection(StringRef SecName);
+LLVM_ORCSHARED_ABI bool isELFInitializerSection(StringRef SecName);
 
-bool isCOFFInitializerSection(StringRef Name);
+LLVM_ORCSHARED_ABI bool isCOFFInitializerSection(StringRef Name);
 
 } // end namespace orc
 } // end namespace llvm

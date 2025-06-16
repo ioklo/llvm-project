@@ -18,6 +18,7 @@
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/ADT/StringMap.h"
 #include "llvm/ExecutionEngine/Orc/Shared/ExecutorAddress.h"
+#include "llvm/ExecutionEngine/Orc/Shared/OrcSharedConfig.h"
 #include "llvm/ExecutionEngine/Orc/Shared/SimplePackedSerialization.h"
 #include "llvm/Support/Error.h"
 
@@ -30,8 +31,8 @@ namespace llvm {
 namespace orc {
 
 namespace SimpleRemoteEPCDefaultBootstrapSymbolNames {
-extern const char *ExecutorSessionObjectName;
-extern const char *DispatchFnName;
+LLVM_ORCSHARED_ABI extern const char *ExecutorSessionObjectName;
+LLVM_ORCSHARED_ABI extern const char *DispatchFnName;
 } // end namespace SimpleRemoteEPCDefaultBootstrapSymbolNames
 
 enum class SimpleRemoteEPCOpcode : uint8_t {
@@ -55,7 +56,7 @@ class SimpleRemoteEPCTransportClient {
 public:
   enum HandleMessageAction { ContinueSession, EndSession };
 
-  virtual ~SimpleRemoteEPCTransportClient();
+  LLVM_ORCSHARED_ABI virtual ~SimpleRemoteEPCTransportClient();
 
   /// Handle receipt of a message.
   ///
@@ -77,7 +78,7 @@ public:
 
 class SimpleRemoteEPCTransport {
 public:
-  virtual ~SimpleRemoteEPCTransport();
+  LLVM_ORCSHARED_ABI virtual ~SimpleRemoteEPCTransport();
 
   /// Called during setup of the client to indicate that the client is ready
   /// to receive messages.
@@ -104,7 +105,8 @@ class FDSimpleRemoteEPCTransport : public SimpleRemoteEPCTransport {
 public:
   /// Create a FDSimpleRemoteEPCTransport using the given FDs for
   /// reading (InFD) and writing (OutFD).
-  static Expected<std::unique_ptr<FDSimpleRemoteEPCTransport>>
+  LLVM_ORCSHARED_ABI static Expected<
+      std::unique_ptr<FDSimpleRemoteEPCTransport>>
   Create(SimpleRemoteEPCTransportClient &C, int InFD, int OutFD);
 
   /// Create a FDSimpleRemoteEPCTransport using the given FD for both
@@ -114,14 +116,15 @@ public:
     return Create(C, FD, FD);
   }
 
-  ~FDSimpleRemoteEPCTransport() override;
+  LLVM_ORCSHARED_ABI ~FDSimpleRemoteEPCTransport() override;
 
-  Error start() override;
+  LLVM_ORCSHARED_ABI Error start() override;
 
-  Error sendMessage(SimpleRemoteEPCOpcode OpC, uint64_t SeqNo,
-                    ExecutorAddr TagAddr, ArrayRef<char> ArgBytes) override;
+  LLVM_ORCSHARED_ABI Error sendMessage(SimpleRemoteEPCOpcode OpC,
+                                       uint64_t SeqNo, ExecutorAddr TagAddr,
+                                       ArrayRef<char> ArgBytes) override;
 
-  void disconnect() override;
+  LLVM_ORCSHARED_ABI void disconnect() override;
 
 private:
   FDSimpleRemoteEPCTransport(SimpleRemoteEPCTransportClient &C, int InFD,

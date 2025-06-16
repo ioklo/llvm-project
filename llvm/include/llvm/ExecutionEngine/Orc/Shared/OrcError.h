@@ -13,6 +13,7 @@
 #ifndef LLVM_EXECUTIONENGINE_ORC_SHARED_ORCERROR_H
 #define LLVM_EXECUTIONENGINE_ORC_SHARED_ORCERROR_H
 
+#include "llvm/ExecutionEngine/Orc/Shared/OrcSharedConfig.h"
 #include "llvm/Support/Error.h"
 #include "llvm/Support/raw_ostream.h"
 #include <string>
@@ -42,28 +43,30 @@ enum class OrcErrorCode : int {
   UnexpectedSymbolDefinitions,
 };
 
-std::error_code orcError(OrcErrorCode ErrCode);
+LLVM_ORCSHARED_ABI std::error_code orcError(OrcErrorCode ErrCode);
 
 class DuplicateDefinition : public ErrorInfo<DuplicateDefinition> {
 public:
-  static char ID;
+  LLVM_ORCSHARED_ABI static char ID;
 
-  DuplicateDefinition(std::string SymbolName);
-  std::error_code convertToErrorCode() const override;
-  void log(raw_ostream &OS) const override;
-  const std::string &getSymbolName() const;
+  LLVM_ORCSHARED_ABI DuplicateDefinition(std::string SymbolName);
+  LLVM_ORCSHARED_ABI std::error_code convertToErrorCode() const override;
+  LLVM_ORCSHARED_ABI void log(raw_ostream &OS) const override;
+  LLVM_ORCSHARED_ABI const std::string &getSymbolName() const;
+
 private:
   std::string SymbolName;
 };
 
 class JITSymbolNotFound : public ErrorInfo<JITSymbolNotFound> {
 public:
-  static char ID;
+  LLVM_ORCSHARED_ABI static char ID;
 
-  JITSymbolNotFound(std::string SymbolName);
-  std::error_code convertToErrorCode() const override;
-  void log(raw_ostream &OS) const override;
-  const std::string &getSymbolName() const;
+  LLVM_ORCSHARED_ABI JITSymbolNotFound(std::string SymbolName);
+  LLVM_ORCSHARED_ABI std::error_code convertToErrorCode() const override;
+  LLVM_ORCSHARED_ABI void log(raw_ostream &OS) const override;
+  LLVM_ORCSHARED_ABI const std::string &getSymbolName() const;
+
 private:
   std::string SymbolName;
 };

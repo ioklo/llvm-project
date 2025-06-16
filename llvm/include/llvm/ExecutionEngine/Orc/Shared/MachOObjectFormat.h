@@ -14,6 +14,7 @@
 #define LLVM_EXECUTIONENGINE_ORC_SHARED_MACHOOBJECTFORMAT_H
 
 #include "llvm/ADT/StringRef.h"
+#include "llvm/ExecutionEngine/Orc/Shared/OrcSharedConfig.h"
 
 namespace llvm {
 namespace orc {
@@ -22,43 +23,44 @@ namespace orc {
 
 // MachO section names.
 
-extern StringRef MachODataCommonSectionName;
-extern StringRef MachODataDataSectionName;
-extern StringRef MachOEHFrameSectionName;
-extern StringRef MachOCompactUnwindSectionName;
-extern StringRef MachOCStringSectionName;
-extern StringRef MachOModInitFuncSectionName;
-extern StringRef MachOObjCCatListSectionName;
-extern StringRef MachOObjCCatList2SectionName;
-extern StringRef MachOObjCClassListSectionName;
-extern StringRef MachOObjCClassNameSectionName;
-extern StringRef MachOObjCClassRefsSectionName;
-extern StringRef MachOObjCConstSectionName;
-extern StringRef MachOObjCDataSectionName;
-extern StringRef MachOObjCImageInfoSectionName;
-extern StringRef MachOObjCMethNameSectionName;
-extern StringRef MachOObjCMethTypeSectionName;
-extern StringRef MachOObjCNLCatListSectionName;
-extern StringRef MachOObjCNLClassListSectionName;
-extern StringRef MachOObjCProtoListSectionName;
-extern StringRef MachOObjCProtoRefsSectionName;
-extern StringRef MachOObjCSelRefsSectionName;
-extern StringRef MachOSwift5ProtoSectionName;
-extern StringRef MachOSwift5ProtosSectionName;
-extern StringRef MachOSwift5TypesSectionName;
-extern StringRef MachOSwift5TypeRefSectionName;
-extern StringRef MachOSwift5FieldMetadataSectionName;
-extern StringRef MachOSwift5EntrySectionName;
-extern StringRef MachOTextTextSectionName;
-extern StringRef MachOThreadBSSSectionName;
-extern StringRef MachOThreadDataSectionName;
-extern StringRef MachOThreadVarsSectionName;
-extern StringRef MachOUnwindInfoSectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachODataCommonSectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachODataDataSectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachOEHFrameSectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachOCompactUnwindSectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachOCStringSectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachOModInitFuncSectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachOObjCCatListSectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachOObjCCatList2SectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachOObjCClassListSectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachOObjCClassNameSectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachOObjCClassRefsSectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachOObjCConstSectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachOObjCDataSectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachOObjCImageInfoSectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachOObjCMethNameSectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachOObjCMethTypeSectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachOObjCNLCatListSectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachOObjCNLClassListSectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachOObjCProtoListSectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachOObjCProtoRefsSectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachOObjCSelRefsSectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachOSwift5ProtoSectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachOSwift5ProtosSectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachOSwift5TypesSectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachOSwift5TypeRefSectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachOSwift5FieldMetadataSectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachOSwift5EntrySectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachOTextTextSectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachOThreadBSSSectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachOThreadDataSectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachOThreadVarsSectionName;
+LLVM_ORCSHARED_ABI extern StringRef MachOUnwindInfoSectionName;
 
-extern StringRef MachOInitSectionNames[22];
+LLVM_ORCSHARED_ABI extern StringRef MachOInitSectionNames[22];
 
-bool isMachOInitializerSection(StringRef SegName, StringRef SecName);
-bool isMachOInitializerSection(StringRef QualifiedName);
+LLVM_ORCSHARED_ABI bool isMachOInitializerSection(StringRef SegName,
+                                                  StringRef SecName);
+LLVM_ORCSHARED_ABI bool isMachOInitializerSection(StringRef QualifiedName);
 
 } // end namespace orc
 } // end namespace llvm
