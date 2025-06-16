@@ -31,6 +31,7 @@
 #ifdef EXPENSIVE_CHECKS
 #include <cstdint>
 #endif
+#include "llvm/IR/CoreConfig.h"
 #include <string>
 
 namespace llvm {
@@ -92,7 +93,7 @@ enum class ThinOrFullLTOPhase {
 /// constrained passes described below.
 ///
 class Pass {
-  AnalysisResolver *Resolver = nullptr;  // Used to resolve analysis
+  AnalysisResolver *Resolver = nullptr; // Used to resolve analysis
   const void *PassID;
   PassKind Kind;
 
@@ -110,13 +111,11 @@ public:
   virtual StringRef getPassName() const;
 
   /// getPassID - Return the PassID number that corresponds to this pass.
-  AnalysisID getPassID() const {
-    return PassID;
-  }
+  AnalysisID getPassID() const { return PassID; }
 
   /// doInitialization - Virtual method overridden by subclasses to do
   /// any necessary initialization before any pass is run.
-  virtual bool doInitialization(Module &)  { return false; }
+  virtual bool doInitialization(Module &) { return false; }
 
   /// doFinalization - Virtual method overriden by subclasses to do any
   /// necessary clean up after all passes have run.
@@ -139,8 +138,7 @@ public:
 
   /// Each pass is responsible for assigning a pass manager to itself.
   /// PMS is the stack of available pass manager.
-  virtual void assignPassManager(PMStack &,
-                                 PassManagerType) {}
+  virtual void assignPassManager(PMStack &, PassManagerType) {}
 
   /// Check if available pass managers are suitable for this pass or not.
   virtual void preparePassManager(PMStack &);
@@ -204,8 +202,9 @@ public:
   /// the case when the analysis is not available.  This method is often used by
   /// transformation APIs to update analysis results for a pass automatically as
   /// the transform is performed.
-  template<typename AnalysisType> AnalysisType *
-    getAnalysisIfAvailable() const; // Defined in PassAnalysisSupport.h
+  template <typename AnalysisType>
+  AnalysisType *
+  getAnalysisIfAvailable() const; // Defined in PassAnalysisSupport.h
 
   /// mustPreserveAnalysisID - This method serves the same function as
   /// getAnalysisIfAvailable, but works if you just have an AnalysisID.  This
@@ -217,7 +216,7 @@ public:
   /// getAnalysis<AnalysisType>() - This function is used by subclasses to get
   /// to the analysis information that they claim to use by overriding the
   /// getAnalysisUsage function.
-  template<typename AnalysisType>
+  template <typename AnalysisType>
   AnalysisType &getAnalysis() const; // Defined in PassAnalysisSupport.h
 
   template <typename AnalysisType>
@@ -225,7 +224,7 @@ public:
   getAnalysis(Function &F,
               bool *Changed = nullptr); // Defined in PassAnalysisSupport.h
 
-  template<typename AnalysisType>
+  template <typename AnalysisType>
   AnalysisType &getAnalysisID(AnalysisID PI) const;
 
   template <typename AnalysisType>
@@ -334,13 +333,13 @@ protected:
 /// If the user specifies the -time-passes argument on an LLVM tool command line
 /// then the value of this boolean will be true, otherwise false.
 /// This is the storage for the -time-passes option.
-extern bool TimePassesIsEnabled;
+LLVM_CORE_ABI extern bool TimePassesIsEnabled;
 /// If TimePassesPerRun is true, there would be one line of report for
 /// each pass invocation.
 /// If TimePassesPerRun is false, there would be only one line of
 /// report for each pass (even there are more than one pass objects).
 /// (For new pass manager only)
-extern bool TimePassesPerRun;
+LLVM_CORE_ABI extern bool TimePassesPerRun;
 
 } // end namespace llvm
 

@@ -12,6 +12,7 @@
 #include "llvm/Bitcode/BitcodeReader.h"
 #include "llvm/IR/LLVMContext.h"
 #include "llvm/IR/Module.h"
+#include "llvm/IR/CoreConfig.h"
 #include "llvm/Support/MemoryBuffer.h"
 #include "llvm/Support/SourceMgr.h"
 #include "llvm/Support/Timer.h"
@@ -22,7 +23,7 @@
 using namespace llvm;
 
 namespace llvm {
-  extern bool TimePassesIsEnabled;
+  LLVM_CORE_ABI extern bool TimePassesIsEnabled;
 }
 
 const char TimeIRParsingGroupName[] = "irparse";
