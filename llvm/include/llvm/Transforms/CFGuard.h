@@ -12,6 +12,7 @@
 #define LLVM_TRANSFORMS_CFGUARD_H
 
 #include "llvm/IR/PassManager.h"
+#include "llvm/Transforms/CFGuardConfig.h"
 
 namespace llvm {
 
@@ -22,17 +23,18 @@ public:
   enum class Mechanism { Check, Dispatch };
 
   CFGuardPass(Mechanism M = Mechanism::Check) : GuardMechanism(M) {}
-  PreservedAnalyses run(Function &F, FunctionAnalysisManager &FAM);
+  LLVM_CFGUARD_ABI PreservedAnalyses run(Function &F,
+                                         FunctionAnalysisManager &FAM);
 
 private:
   Mechanism GuardMechanism;
 };
 
 /// Insert Control FLow Guard checks on indirect function calls.
-FunctionPass *createCFGuardCheckPass();
+LLVM_CFGUARD_ABI FunctionPass *createCFGuardCheckPass();
 
 /// Insert Control FLow Guard dispatches on indirect function calls.
-FunctionPass *createCFGuardDispatchPass();
+LLVM_CFGUARD_ABI FunctionPass *createCFGuardDispatchPass();
 
 } // namespace llvm
 

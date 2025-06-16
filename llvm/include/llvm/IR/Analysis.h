@@ -301,7 +301,7 @@ public:
 
 private:
   /// A special key used to indicate all analyses.
-  static AnalysisSetKey AllAnalysesKey;
+  LLVM_CORE_ABI static AnalysisSetKey AllAnalysesKey;
 
   /// The IDs of analyses and analysis sets that are preserved.
   SmallPtrSet<void *, 2> PreservedIDs;
