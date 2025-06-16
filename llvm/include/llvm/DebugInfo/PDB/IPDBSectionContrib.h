@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_PDB_IPDBSECTIONCONTRIB_H
 
 #include "PDBTypes.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 
 namespace llvm {
 namespace pdb {
@@ -18,13 +19,13 @@ namespace pdb {
 /// contributions whose information are stored in the PDB.
 class IPDBSectionContrib {
 public:
-  virtual ~IPDBSectionContrib();
+  LLVM_DEBUGINFOPDB_ABI virtual ~IPDBSectionContrib();
 
   virtual std::unique_ptr<PDBSymbolCompiland> getCompiland() const = 0;
   virtual uint32_t getAddressSection() const = 0;
   virtual uint32_t getAddressOffset() const = 0;
   virtual uint32_t getRelativeVirtualAddress() const = 0;
-  virtual uint64_t getVirtualAddress() const  = 0;
+  virtual uint64_t getVirtualAddress() const = 0;
   virtual uint32_t getLength() const = 0;
   virtual bool isNotPaged() const = 0;
   virtual bool hasCode() const = 0;
@@ -43,7 +44,7 @@ public:
   virtual uint32_t getRelocationsCrc32() const = 0;
   virtual uint32_t getCompilandId() const = 0;
 };
-}
-}
+} // namespace pdb
+} // namespace llvm
 
 #endif // LLVM_DEBUGINFO_PDB_IPDBSECTIONCONTRIB_H

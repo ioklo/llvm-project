@@ -11,6 +11,7 @@
 
 #include "llvm/DebugInfo/CodeView/TypeIndex.h"
 #include "llvm/DebugInfo/CodeView/TypeRecord.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/IPDBRawSymbol.h"
 #include "llvm/DebugInfo/PDB/Native/NativeRawSymbol.h"
 #include "llvm/DebugInfo/PDB/PDBTypes.h"
@@ -20,35 +21,39 @@ namespace pdb {
 
 class NativeTypeFunctionSig : public NativeRawSymbol {
 protected:
-  void initialize() override;
+  LLVM_DEBUGINFOPDB_ABI void initialize() override;
 
 public:
-  NativeTypeFunctionSig(NativeSession &Session, SymIndexId Id,
-                        codeview::TypeIndex TI, codeview::ProcedureRecord Proc);
+  LLVM_DEBUGINFOPDB_ABI NativeTypeFunctionSig(NativeSession &Session,
+                                              SymIndexId Id,
+                                              codeview::TypeIndex TI,
+                                              codeview::ProcedureRecord Proc);
 
+  LLVM_DEBUGINFOPDB_ABI
   NativeTypeFunctionSig(NativeSession &Session, SymIndexId Id,
                         codeview::TypeIndex TI,
                         codeview::MemberFunctionRecord MemberFunc);
 
-  ~NativeTypeFunctionSig() override;
+  LLVM_DEBUGINFOPDB_ABI ~NativeTypeFunctionSig() override;
 
-  void dump(raw_ostream &OS, int Indent, PdbSymbolIdField ShowIdFields,
-            PdbSymbolIdField RecurseIdFields) const override;
+  LLVM_DEBUGINFOPDB_ABI void
+  dump(raw_ostream &OS, int Indent, PdbSymbolIdField ShowIdFields,
+       PdbSymbolIdField RecurseIdFields) const override;
 
-  std::unique_ptr<IPDBEnumSymbols>
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumSymbols>
   findChildren(PDB_SymType Type) const override;
 
-  SymIndexId getClassParentId() const override;
-  PDB_CallingConv getCallingConvention() const override;
-  uint32_t getCount() const override;
-  SymIndexId getTypeId() const override;
-  int32_t getThisAdjust() const override;
-  bool hasConstructor() const override;
-  bool isConstType() const override;
-  bool isConstructorVirtualBase() const override;
-  bool isCxxReturnUdt() const override;
-  bool isUnalignedType() const override;
-  bool isVolatileType() const override;
+  LLVM_DEBUGINFOPDB_ABI SymIndexId getClassParentId() const override;
+  LLVM_DEBUGINFOPDB_ABI PDB_CallingConv getCallingConvention() const override;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getCount() const override;
+  LLVM_DEBUGINFOPDB_ABI SymIndexId getTypeId() const override;
+  LLVM_DEBUGINFOPDB_ABI int32_t getThisAdjust() const override;
+  LLVM_DEBUGINFOPDB_ABI bool hasConstructor() const override;
+  LLVM_DEBUGINFOPDB_ABI bool isConstType() const override;
+  LLVM_DEBUGINFOPDB_ABI bool isConstructorVirtualBase() const override;
+  LLVM_DEBUGINFOPDB_ABI bool isCxxReturnUdt() const override;
+  LLVM_DEBUGINFOPDB_ABI bool isUnalignedType() const override;
+  LLVM_DEBUGINFOPDB_ABI bool isVolatileType() const override;
 
 private:
   void initializeArgList(codeview::TypeIndex ArgListTI);

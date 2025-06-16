@@ -11,6 +11,7 @@
 
 #include "llvm/DebugInfo/CodeView/CodeView.h"
 #include "llvm/DebugInfo/CodeView/TypeIndex.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/IPDBEnumChildren.h"
 #include "llvm/DebugInfo/PDB/PDBSymbol.h"
 
@@ -26,17 +27,20 @@ class NativeSession;
 
 class NativeEnumTypes : public IPDBEnumChildren<PDBSymbol> {
 public:
+  LLVM_DEBUGINFOPDB_ABI
   NativeEnumTypes(NativeSession &Session,
                   codeview::LazyRandomTypeCollection &TypeCollection,
                   std::vector<codeview::TypeLeafKind> Kinds);
 
+  LLVM_DEBUGINFOPDB_ABI
   NativeEnumTypes(NativeSession &Session,
                   std::vector<codeview::TypeIndex> Indices);
 
-  uint32_t getChildCount() const override;
-  std::unique_ptr<PDBSymbol> getChildAtIndex(uint32_t Index) const override;
-  std::unique_ptr<PDBSymbol> getNext() override;
-  void reset() override;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getChildCount() const override;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<PDBSymbol>
+  getChildAtIndex(uint32_t Index) const override;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<PDBSymbol> getNext() override;
+  LLVM_DEBUGINFOPDB_ABI void reset() override;
 
 private:
   std::vector<codeview::TypeIndex> Matches;

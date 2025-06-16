@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_PDB_DIA_DIAINJECTEDSOURCE_H
 
 #include "DIASupport.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/IPDBInjectedSource.h"
 
 namespace llvm {
@@ -18,15 +19,16 @@ class DIASession;
 
 class DIAInjectedSource : public IPDBInjectedSource {
 public:
-  explicit DIAInjectedSource(CComPtr<IDiaInjectedSource> DiaSourceFile);
+  LLVM_DEBUGINFOPDB_ABI explicit DIAInjectedSource(
+      CComPtr<IDiaInjectedSource> DiaSourceFile);
 
-  uint32_t getCrc32() const override;
-  uint64_t getCodeByteSize() const override;
-  std::string getFileName() const override;
-  std::string getObjectFileName() const override;
-  std::string getVirtualFileName() const override;
-  uint32_t getCompression() const override;
-  std::string getCode() const override;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getCrc32() const override;
+  LLVM_DEBUGINFOPDB_ABI uint64_t getCodeByteSize() const override;
+  LLVM_DEBUGINFOPDB_ABI std::string getFileName() const override;
+  LLVM_DEBUGINFOPDB_ABI std::string getObjectFileName() const override;
+  LLVM_DEBUGINFOPDB_ABI std::string getVirtualFileName() const override;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getCompression() const override;
+  LLVM_DEBUGINFOPDB_ABI std::string getCode() const override;
 
 private:
   CComPtr<IDiaInjectedSource> SourceFile;

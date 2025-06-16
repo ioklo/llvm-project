@@ -11,6 +11,7 @@
 
 #include "llvm/ADT/DenseMap.h"
 #include "llvm/ADT/SmallVector.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/Native/HashTable.h"
 #include "llvm/DebugInfo/PDB/Native/NamedStreamMap.h"
 #include "llvm/DebugInfo/PDB/Native/PDBStringTableBuilder.h"
@@ -28,7 +29,7 @@ struct GUID;
 namespace msf {
 class MSFBuilder;
 struct MSFLayout;
-}
+} // namespace msf
 namespace pdb {
 struct SrcHeaderBlockEntry;
 class DbiStreamBuilder;
@@ -38,28 +39,30 @@ class TpiStreamBuilder;
 
 class PDBFileBuilder {
 public:
-  explicit PDBFileBuilder(BumpPtrAllocator &Allocator);
-  ~PDBFileBuilder();
+  LLVM_DEBUGINFOPDB_ABI explicit PDBFileBuilder(BumpPtrAllocator &Allocator);
+  LLVM_DEBUGINFOPDB_ABI ~PDBFileBuilder();
   PDBFileBuilder(const PDBFileBuilder &) = delete;
   PDBFileBuilder &operator=(const PDBFileBuilder &) = delete;
 
-  Error initialize(uint32_t BlockSize);
+  LLVM_DEBUGINFOPDB_ABI Error initialize(uint32_t BlockSize);
 
-  msf::MSFBuilder &getMsfBuilder();
-  InfoStreamBuilder &getInfoBuilder();
-  DbiStreamBuilder &getDbiBuilder();
-  TpiStreamBuilder &getTpiBuilder();
-  TpiStreamBuilder &getIpiBuilder();
-  PDBStringTableBuilder &getStringTableBuilder();
-  GSIStreamBuilder &getGsiBuilder();
+  LLVM_DEBUGINFOPDB_ABI msf::MSFBuilder &getMsfBuilder();
+  LLVM_DEBUGINFOPDB_ABI InfoStreamBuilder &getInfoBuilder();
+  LLVM_DEBUGINFOPDB_ABI DbiStreamBuilder &getDbiBuilder();
+  LLVM_DEBUGINFOPDB_ABI TpiStreamBuilder &getTpiBuilder();
+  LLVM_DEBUGINFOPDB_ABI TpiStreamBuilder &getIpiBuilder();
+  LLVM_DEBUGINFOPDB_ABI PDBStringTableBuilder &getStringTableBuilder();
+  LLVM_DEBUGINFOPDB_ABI GSIStreamBuilder &getGsiBuilder();
 
   // If HashPDBContentsToGUID is true on the InfoStreamBuilder, Guid is filled
   // with the computed PDB GUID on return.
-  Error commit(StringRef Filename, codeview::GUID *Guid);
+  LLVM_DEBUGINFOPDB_ABI Error commit(StringRef Filename, codeview::GUID *Guid);
 
-  Expected<uint32_t> getNamedStreamIndex(StringRef Name) const;
-  Error addNamedStream(StringRef Name, StringRef Data);
-  void addInjectedSource(StringRef Name, std::unique_ptr<MemoryBuffer> Buffer);
+  LLVM_DEBUGINFOPDB_ABI Expected<uint32_t>
+  getNamedStreamIndex(StringRef Name) const;
+  LLVM_DEBUGINFOPDB_ABI Error addNamedStream(StringRef Name, StringRef Data);
+  LLVM_DEBUGINFOPDB_ABI void
+  addInjectedSource(StringRef Name, std::unique_ptr<MemoryBuffer> Buffer);
 
 private:
   struct InjectedSourceDescriptor {
@@ -104,7 +107,7 @@ private:
   NamedStreamMap NamedStreams;
   DenseMap<uint32_t, std::string> NamedStreamData;
 };
-}
-}
+} // namespace pdb
+} // namespace llvm
 
 #endif

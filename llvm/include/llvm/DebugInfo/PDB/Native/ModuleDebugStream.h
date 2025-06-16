@@ -12,6 +12,7 @@
 #include "llvm/ADT/iterator_range.h"
 #include "llvm/DebugInfo/CodeView/CVRecord.h"
 #include "llvm/DebugInfo/CodeView/DebugSubsectionRecord.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/Native/DbiModuleDescriptor.h"
 #include "llvm/Support/BinaryStreamRef.h"
 #include "llvm/Support/Error.h"
@@ -32,42 +33,45 @@ class ModuleDebugStreamRef {
   using DebugSubsectionIterator = codeview::DebugSubsectionArray::Iterator;
 
 public:
+  LLVM_DEBUGINFOPDB_ABI
   ModuleDebugStreamRef(const DbiModuleDescriptor &Module,
                        std::unique_ptr<msf::MappedBlockStream> Stream);
   ModuleDebugStreamRef(ModuleDebugStreamRef &&Other) = default;
   ModuleDebugStreamRef(const ModuleDebugStreamRef &Other) = default;
-  ~ModuleDebugStreamRef();
+  LLVM_DEBUGINFOPDB_ABI ~ModuleDebugStreamRef();
 
-  Error reload();
+  LLVM_DEBUGINFOPDB_ABI Error reload();
 
   uint32_t signature() const { return Signature; }
 
   iterator_range<codeview::CVSymbolArray::Iterator>
-  symbols(bool *HadError) const;
+      LLVM_DEBUGINFOPDB_ABI symbols(bool *HadError) const;
 
   const codeview::CVSymbolArray &getSymbolArray() const { return SymbolArray; }
-  const codeview::CVSymbolArray
+  const codeview::CVSymbolArray LLVM_DEBUGINFOPDB_ABI
   getSymbolArrayForScope(uint32_t ScopeBegin) const;
 
-  BinarySubstreamRef getSymbolsSubstream() const;
-  BinarySubstreamRef getC11LinesSubstream() const;
-  BinarySubstreamRef getC13LinesSubstream() const;
-  BinarySubstreamRef getGlobalRefsSubstream() const;
+  LLVM_DEBUGINFOPDB_ABI BinarySubstreamRef getSymbolsSubstream() const;
+  LLVM_DEBUGINFOPDB_ABI BinarySubstreamRef getC11LinesSubstream() const;
+  LLVM_DEBUGINFOPDB_ABI BinarySubstreamRef getC13LinesSubstream() const;
+  LLVM_DEBUGINFOPDB_ABI BinarySubstreamRef getGlobalRefsSubstream() const;
 
   ModuleDebugStreamRef &operator=(ModuleDebugStreamRef &&Other) = delete;
 
-  codeview::CVSymbol readSymbolAtOffset(uint32_t Offset) const;
+  LLVM_DEBUGINFOPDB_ABI codeview::CVSymbol
+  readSymbolAtOffset(uint32_t Offset) const;
 
-  iterator_range<DebugSubsectionIterator> subsections() const;
+  LLVM_DEBUGINFOPDB_ABI iterator_range<DebugSubsectionIterator>
+  subsections() const;
   codeview::DebugSubsectionArray getSubsectionsArray() const {
     return Subsections;
   }
 
-  bool hasDebugSubsections() const;
+  LLVM_DEBUGINFOPDB_ABI bool hasDebugSubsections() const;
 
-  Error commit();
+  LLVM_DEBUGINFOPDB_ABI Error commit();
 
-  Expected<codeview::DebugChecksumsSubsectionRef>
+  LLVM_DEBUGINFOPDB_ABI Expected<codeview::DebugChecksumsSubsectionRef>
   findChecksumsSubsection() const;
 
 private:

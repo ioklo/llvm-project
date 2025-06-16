@@ -11,6 +11,7 @@
 
 #include "PDBSymbol.h"
 #include "PDBTypes.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 
 namespace llvm {
 
@@ -20,7 +21,7 @@ class PDBSymbolUsingNamespace : public PDBSymbol {
   DECLARE_PDB_SYMBOL_CONCRETE_TYPE(PDB_SymType::UsingNamespace)
 
 public:
-  void dump(PDBSymDumper &Dumper) const override;
+  LLVM_DEBUGINFOPDB_ABI void dump(PDBSymDumper &Dumper) const override;
 
   FORWARD_SYMBOL_ID_METHOD(getLexicalParent)
   FORWARD_SYMBOL_METHOD(getName)

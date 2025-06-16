@@ -10,6 +10,7 @@
 
 #include "PDBSymbol.h"
 #include "PDBTypes.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include <string>
 
 namespace llvm {
@@ -21,17 +22,17 @@ namespace pdb {
 class PDBSymbolCompiland : public PDBSymbol {
   DECLARE_PDB_SYMBOL_CONCRETE_TYPE(PDB_SymType::Compiland)
 public:
-  void dump(PDBSymDumper &Dumper) const override;
+  LLVM_DEBUGINFOPDB_ABI void dump(PDBSymDumper &Dumper) const override;
 
   FORWARD_SYMBOL_METHOD(isEditAndContinueEnabled)
   FORWARD_SYMBOL_ID_METHOD(getLexicalParent)
   FORWARD_SYMBOL_METHOD(getLibraryName)
   FORWARD_SYMBOL_METHOD(getName)
 
-  std::string getSourceFileName() const;
-  std::string getSourceFileFullPath() const;
+  LLVM_DEBUGINFOPDB_ABI std::string getSourceFileName() const;
+  LLVM_DEBUGINFOPDB_ABI std::string getSourceFileFullPath() const;
 };
-}
-}
+} // namespace pdb
+} // namespace llvm
 
 #endif // LLVM_DEBUGINFO_PDB_PDBSYMBOLCOMPILAND_H

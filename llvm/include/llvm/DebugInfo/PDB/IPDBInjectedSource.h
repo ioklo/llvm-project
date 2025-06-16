@@ -9,6 +9,7 @@
 #ifndef LLVM_DEBUGINFO_PDB_IPDBINJECTEDSOURCE_H
 #define LLVM_DEBUGINFO_PDB_IPDBINJECTEDSOURCE_H
 
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include <cstdint>
 #include <string>
 
@@ -20,7 +21,7 @@ namespace pdb {
 /// in theory could be used to add arbitrary source code.
 class IPDBInjectedSource {
 public:
-  virtual ~IPDBInjectedSource();
+  LLVM_DEBUGINFOPDB_ABI virtual ~IPDBInjectedSource();
 
   virtual uint32_t getCrc32() const = 0;
   virtual uint64_t getCodeByteSize() const = 0;

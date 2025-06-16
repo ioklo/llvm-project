@@ -12,6 +12,7 @@
 #include "IPDBRawSymbol.h"
 #include "PDBExtras.h"
 #include "PDBTypes.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/Support/Casting.h"
 
 #define FORWARD_SYMBOL_METHOD(MethodName)                                      \
@@ -69,19 +70,19 @@ public:                                                                        \
 /// reference "Lexical and Class Hierarchy of Symbol Types":
 /// https://msdn.microsoft.com/en-us/library/370hs6k4.aspx
 class PDBSymbol {
-  static std::unique_ptr<PDBSymbol> createSymbol(const IPDBSession &PDBSession,
-                                                 PDB_SymType Tag);
+  LLVM_DEBUGINFOPDB_ABI static std::unique_ptr<PDBSymbol>
+  createSymbol(const IPDBSession &PDBSession, PDB_SymType Tag);
 
 protected:
-  explicit PDBSymbol(const IPDBSession &PDBSession);
-  PDBSymbol(PDBSymbol &&Other);
+  LLVM_DEBUGINFOPDB_ABI explicit PDBSymbol(const IPDBSession &PDBSession);
+  LLVM_DEBUGINFOPDB_ABI PDBSymbol(PDBSymbol &&Other);
 
 public:
-  static std::unique_ptr<PDBSymbol>
+  LLVM_DEBUGINFOPDB_ABI static std::unique_ptr<PDBSymbol>
   create(const IPDBSession &PDBSession,
          std::unique_ptr<IPDBRawSymbol> RawSymbol);
-  static std::unique_ptr<PDBSymbol> create(const IPDBSession &PDBSession,
-                                           IPDBRawSymbol &RawSymbol);
+  LLVM_DEBUGINFOPDB_ABI static std::unique_ptr<PDBSymbol>
+  create(const IPDBSession &PDBSession, IPDBRawSymbol &RawSymbol);
 
   template <typename ConcreteT>
   static std::unique_ptr<ConcreteT>
@@ -97,7 +98,7 @@ public:
     return unique_dyn_cast_or_null<ConcreteT>(std::move(S));
   }
 
-  virtual ~PDBSymbol();
+  LLVM_DEBUGINFOPDB_ABI virtual ~PDBSymbol();
 
   /// Dumps the contents of a symbol a raw_ostream.  By default this will just
   /// call dump() on the underlying RawSymbol, which allows us to discover
@@ -109,13 +110,14 @@ public:
   /// normally goes on the right side of the symbol.
   virtual void dumpRight(PDBSymDumper &Dumper) const {}
 
-  void defaultDump(raw_ostream &OS, int Indent, PdbSymbolIdField ShowFlags,
-                   PdbSymbolIdField RecurseFlags) const;
-  void dumpProperties() const;
-  void dumpChildStats() const;
+  LLVM_DEBUGINFOPDB_ABI void defaultDump(raw_ostream &OS, int Indent,
+                                         PdbSymbolIdField ShowFlags,
+                                         PdbSymbolIdField RecurseFlags) const;
+  LLVM_DEBUGINFOPDB_ABI void dumpProperties() const;
+  LLVM_DEBUGINFOPDB_ABI void dumpChildStats() const;
 
-  PDB_SymType getSymTag() const;
-  uint32_t getSymIndexId() const;
+  LLVM_DEBUGINFOPDB_ABI PDB_SymType getSymTag() const;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getSymIndexId() const;
 
   template <typename T> std::unique_ptr<T> findOneChild() const {
     auto Enumerator(findAllChildren<T>());
@@ -131,34 +133,39 @@ public:
       return nullptr;
     return std::make_unique<ConcreteSymbolEnumerator<T>>(std::move(BaseIter));
   }
-  std::unique_ptr<IPDBEnumSymbols> findAllChildren(PDB_SymType Type) const;
-  std::unique_ptr<IPDBEnumSymbols> findAllChildren() const;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumSymbols>
+  findAllChildren(PDB_SymType Type) const;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumSymbols>
+  findAllChildren() const;
 
-  std::unique_ptr<IPDBEnumSymbols>
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumSymbols>
   findChildren(PDB_SymType Type, StringRef Name,
                PDB_NameSearchFlags Flags) const;
-  std::unique_ptr<IPDBEnumSymbols> findChildrenByRVA(PDB_SymType Type,
-                                                     StringRef Name,
-                                                     PDB_NameSearchFlags Flags,
-                                                     uint32_t RVA) const;
-  std::unique_ptr<IPDBEnumSymbols> findInlineFramesByVA(uint64_t VA) const;
-  std::unique_ptr<IPDBEnumSymbols> findInlineFramesByRVA(uint32_t RVA) const;
-  std::unique_ptr<IPDBEnumLineNumbers>
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumSymbols>
+  findChildrenByRVA(PDB_SymType Type, StringRef Name, PDB_NameSearchFlags Flags,
+                    uint32_t RVA) const;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumSymbols>
+  findInlineFramesByVA(uint64_t VA) const;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumSymbols>
+  findInlineFramesByRVA(uint32_t RVA) const;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumLineNumbers>
   findInlineeLinesByVA(uint64_t VA, uint32_t Length) const;
-  std::unique_ptr<IPDBEnumLineNumbers>
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumLineNumbers>
   findInlineeLinesByRVA(uint32_t RVA, uint32_t Length) const;
 
-  std::string getName() const;
+  LLVM_DEBUGINFOPDB_ABI std::string getName() const;
 
   const IPDBRawSymbol &getRawSymbol() const { return *RawSymbol; }
   IPDBRawSymbol &getRawSymbol() { return *RawSymbol; }
 
   const IPDBSession &getSession() const { return Session; }
 
-  std::unique_ptr<IPDBEnumSymbols> getChildStats(TagStats &Stats) const;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumSymbols>
+  getChildStats(TagStats &Stats) const;
 
 protected:
-  std::unique_ptr<PDBSymbol> getSymbolByIdHelper(uint32_t Id) const;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<PDBSymbol>
+  getSymbolByIdHelper(uint32_t Id) const;
 
   template <typename ConcreteType>
   std::unique_ptr<ConcreteType> getConcreteSymbolByIdHelper(uint32_t Id) const {
@@ -170,7 +177,7 @@ protected:
   IPDBRawSymbol *RawSymbol = nullptr;
 };
 
+} // namespace pdb
 } // namespace llvm
-}
 
 #endif

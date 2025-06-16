@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_PDB_DIA_DIAENUMTABLES_H
 
 #include "DIASupport.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/IPDBEnumChildren.h"
 #include "llvm/DebugInfo/PDB/IPDBTable.h"
 
@@ -19,17 +20,19 @@ class IPDBTable;
 
 class DIAEnumTables : public IPDBEnumChildren<IPDBTable> {
 public:
-  explicit DIAEnumTables(CComPtr<IDiaEnumTables> DiaEnumerator);
+  LLVM_DEBUGINFOPDB_ABI explicit DIAEnumTables(
+      CComPtr<IDiaEnumTables> DiaEnumerator);
 
-  uint32_t getChildCount() const override;
-  std::unique_ptr<IPDBTable> getChildAtIndex(uint32_t Index) const override;
-  std::unique_ptr<IPDBTable> getNext() override;
-  void reset() override;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getChildCount() const override;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBTable>
+  getChildAtIndex(uint32_t Index) const override;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBTable> getNext() override;
+  LLVM_DEBUGINFOPDB_ABI void reset() override;
 
 private:
   CComPtr<IDiaEnumTables> Enumerator;
 };
-}
-}
+} // namespace pdb
+} // namespace llvm
 
 #endif // LLVM_DEBUGINFO_PDB_DIA_DIAENUMTABLES_H

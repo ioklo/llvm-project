@@ -75,8 +75,10 @@ public:
   bool hasChecksums() const { return Checksums != nullptr; }
 
 private:
-  void initializeStrings(const DebugSubsectionRecord &SR);
-  void initializeChecksums(const DebugSubsectionRecord &FCR);
+  LLVM_DEBUGINFOCODEVIEW_ABI void
+  initializeStrings(const DebugSubsectionRecord &SR);
+  LLVM_DEBUGINFOCODEVIEW_ABI void
+  initializeChecksums(const DebugSubsectionRecord &FCR);
 
   std::shared_ptr<DebugStringTableSubsectionRef> OwnedStrings;
   std::shared_ptr<DebugChecksumsSubsectionRef> OwnedChecksums;

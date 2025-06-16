@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_PDB_NATIVE_NATIVESOURCEFILE_H
 
 #include "llvm/DebugInfo/CodeView/DebugChecksumsSubsection.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/IPDBSourceFile.h"
 #include "llvm/DebugInfo/PDB/PDBTypes.h"
 
@@ -21,14 +22,15 @@ class NativeSession;
 
 class NativeSourceFile : public IPDBSourceFile {
 public:
-  explicit NativeSourceFile(NativeSession &Session, uint32_t FileId,
-                            const codeview::FileChecksumEntry &Checksum);
+  LLVM_DEBUGINFOPDB_ABI explicit NativeSourceFile(
+      NativeSession &Session, uint32_t FileId,
+      const codeview::FileChecksumEntry &Checksum);
 
-  std::string getFileName() const override;
-  uint32_t getUniqueId() const override;
-  std::string getChecksum() const override;
-  PDB_Checksum getChecksumType() const override;
-  std::unique_ptr<IPDBEnumChildren<PDBSymbolCompiland>>
+  LLVM_DEBUGINFOPDB_ABI std::string getFileName() const override;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getUniqueId() const override;
+  LLVM_DEBUGINFOPDB_ABI std::string getChecksum() const override;
+  LLVM_DEBUGINFOPDB_ABI PDB_Checksum getChecksumType() const override;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumChildren<PDBSymbolCompiland>>
   getCompilands() const override;
 
 private:

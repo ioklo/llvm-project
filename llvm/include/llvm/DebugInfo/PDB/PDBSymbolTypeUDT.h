@@ -9,6 +9,7 @@
 #ifndef LLVM_DEBUGINFO_PDB_PDBSYMBOLTYPEUDT_H
 #define LLVM_DEBUGINFO_PDB_PDBSYMBOLTYPEUDT_H
 
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/IPDBRawSymbol.h"
 
 #include "PDBSymbol.h"
@@ -23,7 +24,7 @@ class PDBSymDumper;
 class PDBSymbolTypeUDT : public PDBSymbol {
   DECLARE_PDB_SYMBOL_CONCRETE_TYPE(PDB_SymType::UDT)
 public:
-  void dump(PDBSymDumper &Dumper) const override;
+  LLVM_DEBUGINFOPDB_ABI void dump(PDBSymDumper &Dumper) const override;
 
   FORWARD_SYMBOL_ID_METHOD(getClassParent)
   FORWARD_SYMBOL_ID_METHOD(getUnmodifiedType)
@@ -46,7 +47,7 @@ public:
   FORWARD_SYMBOL_METHOD(isVolatileType)
   FORWARD_SYMBOL_METHOD(getAccess)
 };
-}
+} // namespace pdb
 } // namespace llvm
 
 #endif // LLVM_DEBUGINFO_PDB_PDBSYMBOLTYPEUDT_H

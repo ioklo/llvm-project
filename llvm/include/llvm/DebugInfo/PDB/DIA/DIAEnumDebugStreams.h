@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_PDB_DIA_DIAENUMDEBUGSTREAMS_H
 
 #include "DIASupport.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/IPDBDataStream.h"
 #include "llvm/DebugInfo/PDB/IPDBEnumChildren.h"
 
@@ -20,17 +21,19 @@ class IPDBDataStream;
 
 class DIAEnumDebugStreams : public IPDBEnumChildren<IPDBDataStream> {
 public:
-  explicit DIAEnumDebugStreams(CComPtr<IDiaEnumDebugStreams> DiaEnumerator);
+  LLVM_DEBUGINFOPDB_ABI explicit DIAEnumDebugStreams(
+      CComPtr<IDiaEnumDebugStreams> DiaEnumerator);
 
-  uint32_t getChildCount() const override;
-  ChildTypePtr getChildAtIndex(uint32_t Index) const override;
-  ChildTypePtr getNext() override;
-  void reset() override;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getChildCount() const override;
+  LLVM_DEBUGINFOPDB_ABI ChildTypePtr
+  getChildAtIndex(uint32_t Index) const override;
+  LLVM_DEBUGINFOPDB_ABI ChildTypePtr getNext() override;
+  LLVM_DEBUGINFOPDB_ABI void reset() override;
 
 private:
   CComPtr<IDiaEnumDebugStreams> Enumerator;
 };
-}
-}
+} // namespace pdb
+} // namespace llvm
 
 #endif

@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_PDB_NATIVE_NATIVELINENUMBER_H
 
 #include "llvm/DebugInfo/CodeView/Line.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/IPDBLineNumber.h"
 
 namespace llvm {
@@ -19,24 +20,23 @@ class NativeSession;
 
 class NativeLineNumber : public IPDBLineNumber {
 public:
-  explicit NativeLineNumber(const NativeSession &Session,
-                            const codeview::LineInfo Line,
-                            uint32_t ColumnNumber, uint32_t Length,
-                            uint32_t Section, uint32_t Offset,
-                            uint32_t SrcFileId, uint32_t CompilandId);
+  LLVM_DEBUGINFOPDB_ABI explicit NativeLineNumber(
+      const NativeSession &Session, const codeview::LineInfo Line,
+      uint32_t ColumnNumber, uint32_t Length, uint32_t Section, uint32_t Offset,
+      uint32_t SrcFileId, uint32_t CompilandId);
 
-  uint32_t getLineNumber() const override;
-  uint32_t getLineNumberEnd() const override;
-  uint32_t getColumnNumber() const override;
-  uint32_t getColumnNumberEnd() const override;
-  uint32_t getAddressSection() const override;
-  uint32_t getAddressOffset() const override;
-  uint32_t getRelativeVirtualAddress() const override;
-  uint64_t getVirtualAddress() const override;
-  uint32_t getLength() const override;
-  uint32_t getSourceFileId() const override;
-  uint32_t getCompilandId() const override;
-  bool isStatement() const override;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getLineNumber() const override;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getLineNumberEnd() const override;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getColumnNumber() const override;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getColumnNumberEnd() const override;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getAddressSection() const override;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getAddressOffset() const override;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getRelativeVirtualAddress() const override;
+  LLVM_DEBUGINFOPDB_ABI uint64_t getVirtualAddress() const override;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getLength() const override;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getSourceFileId() const override;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getCompilandId() const override;
+  LLVM_DEBUGINFOPDB_ABI bool isStatement() const override;
 
 private:
   const NativeSession &Session;

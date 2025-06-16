@@ -11,6 +11,7 @@
 
 #include "llvm/DebugInfo/CodeView/CVRecord.h"
 #include "llvm/DebugInfo/CodeView/TypeIndex.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/Native/RawConstants.h"
 #include "llvm/Support/Allocator.h"
 #include "llvm/Support/BinaryStreamRef.h"
@@ -32,30 +33,34 @@ template <> struct BinaryItemTraits<llvm::codeview::CVType> {
 namespace msf {
 class MSFBuilder;
 struct MSFLayout;
-}
+} // namespace msf
 namespace pdb {
 struct TpiStreamHeader;
 
 class TpiStreamBuilder {
 public:
-  explicit TpiStreamBuilder(msf::MSFBuilder &Msf, uint32_t StreamIdx);
-  ~TpiStreamBuilder();
+  LLVM_DEBUGINFOPDB_ABI explicit TpiStreamBuilder(msf::MSFBuilder &Msf,
+                                                  uint32_t StreamIdx);
+  LLVM_DEBUGINFOPDB_ABI ~TpiStreamBuilder();
 
   TpiStreamBuilder(const TpiStreamBuilder &) = delete;
   TpiStreamBuilder &operator=(const TpiStreamBuilder &) = delete;
 
-  void setVersionHeader(PdbRaw_TpiVer Version);
-  void addTypeRecord(ArrayRef<uint8_t> Type, std::optional<uint32_t> Hash);
-  void addTypeRecords(ArrayRef<uint8_t> Types, ArrayRef<uint16_t> Sizes,
-                      ArrayRef<uint32_t> Hashes);
+  LLVM_DEBUGINFOPDB_ABI void setVersionHeader(PdbRaw_TpiVer Version);
+  LLVM_DEBUGINFOPDB_ABI void addTypeRecord(ArrayRef<uint8_t> Type,
+                                           std::optional<uint32_t> Hash);
+  LLVM_DEBUGINFOPDB_ABI void addTypeRecords(ArrayRef<uint8_t> Types,
+                                            ArrayRef<uint16_t> Sizes,
+                                            ArrayRef<uint32_t> Hashes);
 
-  Error finalizeMsfLayout();
+  LLVM_DEBUGINFOPDB_ABI Error finalizeMsfLayout();
 
   uint32_t getRecordCount() const { return TypeRecordCount; }
 
-  Error commit(const msf::MSFLayout &Layout, WritableBinaryStreamRef Buffer);
+  LLVM_DEBUGINFOPDB_ABI Error commit(const msf::MSFLayout &Layout,
+                                     WritableBinaryStreamRef Buffer);
 
-  uint32_t calculateSerializedLength();
+  LLVM_DEBUGINFOPDB_ABI uint32_t calculateSerializedLength();
 
 private:
   void updateTypeIndexOffsets(ArrayRef<uint16_t> Sizes);
@@ -81,6 +86,6 @@ private:
   uint32_t Idx;
 };
 } // namespace pdb
-}
+} // namespace llvm
 
 #endif

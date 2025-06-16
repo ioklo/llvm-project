@@ -31,7 +31,8 @@ public:
   LLVM_DEBUGINFOCODEVIEW_ABI Error visitSymbolEnd(CVSymbol &Record) override;
 
 #define SYMBOL_RECORD(EnumName, EnumVal, Name)                                 \
-  Error visitKnownRecord(CVSymbol &CVR, Name &Record) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI Error visitKnownRecord(CVSymbol &CVR,             \
+                                                    Name &Record) override;
 #define SYMBOL_RECORD_ALIAS(EnumName, EnumVal, Name, AliasName)
 #include "llvm/DebugInfo/CodeView/CodeViewSymbols.def"
 

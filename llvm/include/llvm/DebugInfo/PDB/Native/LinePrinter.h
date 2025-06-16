@@ -12,6 +12,7 @@
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/ADT/Twine.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/Native/FormatUtil.h"
 #include "llvm/Support/BinaryStreamRef.h"
 #include "llvm/Support/FormatVariadic.h"
@@ -51,15 +52,16 @@ class LinePrinter {
   friend class WithColor;
 
 public:
-  LinePrinter(int Indent, bool UseColor, raw_ostream &Stream,
-              const FilterOptions &Filters);
+  LLVM_DEBUGINFOPDB_ABI LinePrinter(int Indent, bool UseColor,
+                                    raw_ostream &Stream,
+                                    const FilterOptions &Filters);
 
-  void Indent(uint32_t Amount = 0);
-  void Unindent(uint32_t Amount = 0);
-  void NewLine();
+  LLVM_DEBUGINFOPDB_ABI void Indent(uint32_t Amount = 0);
+  LLVM_DEBUGINFOPDB_ABI void Unindent(uint32_t Amount = 0);
+  LLVM_DEBUGINFOPDB_ABI void NewLine();
 
-  void printLine(const Twine &T);
-  void print(const Twine &T);
+  LLVM_DEBUGINFOPDB_ABI void printLine(const Twine &T);
+  LLVM_DEBUGINFOPDB_ABI void print(const Twine &T);
   template <typename... Ts> void formatLine(const char *Fmt, Ts &&...Items) {
     printLine(formatv(Fmt, std::forward<Ts>(Items)...));
   }
@@ -67,27 +69,32 @@ public:
     print(formatv(Fmt, std::forward<Ts>(Items)...));
   }
 
-  void formatBinary(StringRef Label, ArrayRef<uint8_t> Data,
-                    uint64_t StartOffset);
-  void formatBinary(StringRef Label, ArrayRef<uint8_t> Data, uint64_t BaseAddr,
-                    uint64_t StartOffset);
+  LLVM_DEBUGINFOPDB_ABI void
+  formatBinary(StringRef Label, ArrayRef<uint8_t> Data, uint64_t StartOffset);
+  LLVM_DEBUGINFOPDB_ABI void formatBinary(StringRef Label,
+                                          ArrayRef<uint8_t> Data,
+                                          uint64_t BaseAddr,
+                                          uint64_t StartOffset);
 
-  void formatMsfStreamData(StringRef Label, PDBFile &File, uint32_t StreamIdx,
-                           StringRef StreamPurpose, uint64_t Offset,
-                           uint64_t Size);
-  void formatMsfStreamData(StringRef Label, PDBFile &File,
-                           const msf::MSFStreamLayout &Stream,
-                           BinarySubstreamRef Substream);
-  void formatMsfStreamBlocks(PDBFile &File, const msf::MSFStreamLayout &Stream);
+  LLVM_DEBUGINFOPDB_ABI void
+  formatMsfStreamData(StringRef Label, PDBFile &File, uint32_t StreamIdx,
+                      StringRef StreamPurpose, uint64_t Offset, uint64_t Size);
+  LLVM_DEBUGINFOPDB_ABI void
+  formatMsfStreamData(StringRef Label, PDBFile &File,
+                      const msf::MSFStreamLayout &Stream,
+                      BinarySubstreamRef Substream);
+  LLVM_DEBUGINFOPDB_ABI void
+  formatMsfStreamBlocks(PDBFile &File, const msf::MSFStreamLayout &Stream);
 
   bool hasColor() const { return UseColor; }
   raw_ostream &getStream() { return OS; }
   int getIndentLevel() const { return CurrentIndent; }
 
-  bool IsClassExcluded(const ClassLayout &Class);
-  bool IsTypeExcluded(llvm::StringRef TypeName, uint64_t Size);
-  bool IsSymbolExcluded(llvm::StringRef SymbolName);
-  bool IsCompilandExcluded(llvm::StringRef CompilandName);
+  LLVM_DEBUGINFOPDB_ABI bool IsClassExcluded(const ClassLayout &Class);
+  LLVM_DEBUGINFOPDB_ABI bool IsTypeExcluded(llvm::StringRef TypeName,
+                                            uint64_t Size);
+  LLVM_DEBUGINFOPDB_ABI bool IsSymbolExcluded(llvm::StringRef SymbolName);
+  LLVM_DEBUGINFOPDB_ABI bool IsCompilandExcluded(llvm::StringRef CompilandName);
 
   const FilterOptions &getFilters() const { return Filters; }
 
@@ -169,8 +176,8 @@ enum class PDB_ColorItem {
 
 class WithColor {
 public:
-  WithColor(LinePrinter &P, PDB_ColorItem C);
-  ~WithColor();
+  LLVM_DEBUGINFOPDB_ABI WithColor(LinePrinter &P, PDB_ColorItem C);
+  LLVM_DEBUGINFOPDB_ABI ~WithColor();
 
   raw_ostream &get() { return OS; }
 

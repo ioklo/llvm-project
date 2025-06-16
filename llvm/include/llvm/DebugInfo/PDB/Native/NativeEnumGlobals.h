@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_PDB_NATIVE_NATIVEENUMGLOBALS_H
 
 #include "llvm/DebugInfo/CodeView/CodeView.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/IPDBEnumChildren.h"
 #include "llvm/DebugInfo/PDB/PDBSymbol.h"
 
@@ -22,13 +23,15 @@ class NativeSession;
 
 class NativeEnumGlobals : public IPDBEnumChildren<PDBSymbol> {
 public:
+  LLVM_DEBUGINFOPDB_ABI
   NativeEnumGlobals(NativeSession &Session,
                     std::vector<codeview::SymbolKind> Kinds);
 
-  uint32_t getChildCount() const override;
-  std::unique_ptr<PDBSymbol> getChildAtIndex(uint32_t Index) const override;
-  std::unique_ptr<PDBSymbol> getNext() override;
-  void reset() override;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getChildCount() const override;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<PDBSymbol>
+  getChildAtIndex(uint32_t Index) const override;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<PDBSymbol> getNext() override;
+  LLVM_DEBUGINFOPDB_ABI void reset() override;
 
 private:
   std::vector<uint32_t> MatchOffsets;

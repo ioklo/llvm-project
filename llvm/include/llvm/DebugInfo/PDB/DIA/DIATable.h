@@ -10,22 +10,23 @@
 #define LLVM_DEBUGINFO_PDB_DIA_DIATABLE_H
 
 #include "DIASupport.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/IPDBTable.h"
 
 namespace llvm {
 namespace pdb {
 class DIATable : public IPDBTable {
 public:
-  explicit DIATable(CComPtr<IDiaTable> DiaTable);
+  LLVM_DEBUGINFOPDB_ABI explicit DIATable(CComPtr<IDiaTable> DiaTable);
 
-  uint32_t getItemCount() const override;
-  std::string getName() const override;
-  PDB_TableType getTableType() const override;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getItemCount() const override;
+  LLVM_DEBUGINFOPDB_ABI std::string getName() const override;
+  LLVM_DEBUGINFOPDB_ABI PDB_TableType getTableType() const override;
 
 private:
   CComPtr<IDiaTable> Table;
 };
-}
-}
+} // namespace pdb
+} // namespace llvm
 
 #endif // LLVM_DEBUGINFO_PDB_DIA_DIATABLE_H

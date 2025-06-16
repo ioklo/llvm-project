@@ -11,6 +11,7 @@
 
 #include "llvm/DebugInfo/CodeView/TypeIndex.h"
 #include "llvm/DebugInfo/CodeView/TypeRecord.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/IPDBRawSymbol.h"
 #include "llvm/DebugInfo/PDB/Native/NativeRawSymbol.h"
 #include "llvm/DebugInfo/PDB/PDBTypes.h"
@@ -21,35 +22,37 @@ namespace pdb {
 class NativeTypePointer : public NativeRawSymbol {
 public:
   // Create a pointer record for a simple type.
-  NativeTypePointer(NativeSession &Session, SymIndexId Id,
-                    codeview::TypeIndex TI);
+  LLVM_DEBUGINFOPDB_ABI NativeTypePointer(NativeSession &Session, SymIndexId Id,
+                                          codeview::TypeIndex TI);
 
   // Create a pointer record for a non-simple type.
-  NativeTypePointer(NativeSession &Session, SymIndexId Id,
-                    codeview::TypeIndex TI, codeview::PointerRecord PR);
-  ~NativeTypePointer() override;
+  LLVM_DEBUGINFOPDB_ABI NativeTypePointer(NativeSession &Session, SymIndexId Id,
+                                          codeview::TypeIndex TI,
+                                          codeview::PointerRecord PR);
+  LLVM_DEBUGINFOPDB_ABI ~NativeTypePointer() override;
 
-  void dump(raw_ostream &OS, int Indent, PdbSymbolIdField ShowIdFields,
-            PdbSymbolIdField RecurseIdFields) const override;
+  LLVM_DEBUGINFOPDB_ABI void
+  dump(raw_ostream &OS, int Indent, PdbSymbolIdField ShowIdFields,
+       PdbSymbolIdField RecurseIdFields) const override;
 
-  SymIndexId getClassParentId() const override;
-  bool isConstType() const override;
-  uint64_t getLength() const override;
-  bool isReference() const override;
-  bool isRValueReference() const override;
-  bool isPointerToDataMember() const override;
-  bool isPointerToMemberFunction() const override;
-  SymIndexId getTypeId() const override;
-  bool isRestrictedType() const override;
-  bool isVolatileType() const override;
-  bool isUnalignedType() const override;
+  LLVM_DEBUGINFOPDB_ABI SymIndexId getClassParentId() const override;
+  LLVM_DEBUGINFOPDB_ABI bool isConstType() const override;
+  LLVM_DEBUGINFOPDB_ABI uint64_t getLength() const override;
+  LLVM_DEBUGINFOPDB_ABI bool isReference() const override;
+  LLVM_DEBUGINFOPDB_ABI bool isRValueReference() const override;
+  LLVM_DEBUGINFOPDB_ABI bool isPointerToDataMember() const override;
+  LLVM_DEBUGINFOPDB_ABI bool isPointerToMemberFunction() const override;
+  LLVM_DEBUGINFOPDB_ABI SymIndexId getTypeId() const override;
+  LLVM_DEBUGINFOPDB_ABI bool isRestrictedType() const override;
+  LLVM_DEBUGINFOPDB_ABI bool isVolatileType() const override;
+  LLVM_DEBUGINFOPDB_ABI bool isUnalignedType() const override;
 
-  bool isSingleInheritance() const override;
-  bool isMultipleInheritance() const override;
-  bool isVirtualInheritance() const override;
+  LLVM_DEBUGINFOPDB_ABI bool isSingleInheritance() const override;
+  LLVM_DEBUGINFOPDB_ABI bool isMultipleInheritance() const override;
+  LLVM_DEBUGINFOPDB_ABI bool isVirtualInheritance() const override;
 
 protected:
-  bool isMemberPointer() const;
+  LLVM_DEBUGINFOPDB_ABI bool isMemberPointer() const;
   codeview::TypeIndex TI;
   std::optional<codeview::PointerRecord> Record;
 };

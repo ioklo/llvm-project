@@ -9,6 +9,7 @@
 #ifndef LLVM_DEBUGINFO_PDB_NATIVE_NATIVEENUMLINENUMBERS_H
 #define LLVM_DEBUGINFO_PDB_NATIVE_NATIVEENUMLINENUMBERS_H
 
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/IPDBEnumChildren.h"
 #include "llvm/DebugInfo/PDB/IPDBLineNumber.h"
 #include "llvm/DebugInfo/PDB/Native/NativeLineNumber.h"
@@ -19,12 +20,14 @@ namespace pdb {
 
 class NativeEnumLineNumbers : public IPDBEnumChildren<IPDBLineNumber> {
 public:
-  explicit NativeEnumLineNumbers(std::vector<NativeLineNumber> LineNums);
+  LLVM_DEBUGINFOPDB_ABI explicit NativeEnumLineNumbers(
+      std::vector<NativeLineNumber> LineNums);
 
-  uint32_t getChildCount() const override;
-  ChildTypePtr getChildAtIndex(uint32_t Index) const override;
-  ChildTypePtr getNext() override;
-  void reset() override;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getChildCount() const override;
+  LLVM_DEBUGINFOPDB_ABI ChildTypePtr
+  getChildAtIndex(uint32_t Index) const override;
+  LLVM_DEBUGINFOPDB_ABI ChildTypePtr getNext() override;
+  LLVM_DEBUGINFOPDB_ABI void reset() override;
 
 private:
   std::vector<NativeLineNumber> Lines;

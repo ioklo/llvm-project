@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_PDB_NATIVE_NATIVETYPETYPEDEF_H
 
 #include "llvm/DebugInfo/CodeView/SymbolRecord.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/IPDBRawSymbol.h"
 #include "llvm/DebugInfo/PDB/Native/NativeRawSymbol.h"
 #include "llvm/DebugInfo/PDB/PDBTypes.h"
@@ -25,16 +26,17 @@ class NativeSession;
 class NativeTypeTypedef : public NativeRawSymbol {
 public:
   // Create a pointer record for a non-simple type.
-  NativeTypeTypedef(NativeSession &Session, SymIndexId Id,
-                    codeview::UDTSym Typedef);
+  LLVM_DEBUGINFOPDB_ABI NativeTypeTypedef(NativeSession &Session, SymIndexId Id,
+                                          codeview::UDTSym Typedef);
 
-  ~NativeTypeTypedef() override;
+  LLVM_DEBUGINFOPDB_ABI ~NativeTypeTypedef() override;
 
-  void dump(raw_ostream &OS, int Indent, PdbSymbolIdField ShowIdFields,
-            PdbSymbolIdField RecurseIdFields) const override;
+  LLVM_DEBUGINFOPDB_ABI void
+  dump(raw_ostream &OS, int Indent, PdbSymbolIdField ShowIdFields,
+       PdbSymbolIdField RecurseIdFields) const override;
 
-  std::string getName() const override;
-  SymIndexId getTypeId() const override;
+  LLVM_DEBUGINFOPDB_ABI std::string getName() const override;
+  LLVM_DEBUGINFOPDB_ABI SymIndexId getTypeId() const override;
 
 protected:
   codeview::UDTSym Record;

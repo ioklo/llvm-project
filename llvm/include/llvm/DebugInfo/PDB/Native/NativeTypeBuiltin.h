@@ -9,8 +9,8 @@
 #ifndef LLVM_DEBUGINFO_PDB_NATIVE_NATIVETYPEBUILTIN_H
 #define LLVM_DEBUGINFO_PDB_NATIVE_NATIVETYPEBUILTIN_H
 
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/Native/NativeRawSymbol.h"
-
 #include "llvm/DebugInfo/PDB/PDBTypes.h"
 
 namespace llvm {
@@ -20,21 +20,23 @@ class NativeSession;
 
 class NativeTypeBuiltin : public NativeRawSymbol {
 public:
-  NativeTypeBuiltin(NativeSession &PDBSession, SymIndexId Id,
-                    codeview::ModifierOptions Mods, PDB_BuiltinType T,
-                    uint64_t L);
-  ~NativeTypeBuiltin() override;
+  LLVM_DEBUGINFOPDB_ABI NativeTypeBuiltin(NativeSession &PDBSession,
+                                          SymIndexId Id,
+                                          codeview::ModifierOptions Mods,
+                                          PDB_BuiltinType T, uint64_t L);
+  LLVM_DEBUGINFOPDB_ABI ~NativeTypeBuiltin() override;
 
-  void dump(raw_ostream &OS, int Indent, PdbSymbolIdField ShowIdFields,
-            PdbSymbolIdField RecurseIdFields) const override;
+  LLVM_DEBUGINFOPDB_ABI void
+  dump(raw_ostream &OS, int Indent, PdbSymbolIdField ShowIdFields,
+       PdbSymbolIdField RecurseIdFields) const override;
 
-  PDB_SymType getSymTag() const override;
+  LLVM_DEBUGINFOPDB_ABI PDB_SymType getSymTag() const override;
 
-  PDB_BuiltinType getBuiltinType() const override;
-  bool isConstType() const override;
-  uint64_t getLength() const override;
-  bool isUnalignedType() const override;
-  bool isVolatileType() const override;
+  LLVM_DEBUGINFOPDB_ABI PDB_BuiltinType getBuiltinType() const override;
+  LLVM_DEBUGINFOPDB_ABI bool isConstType() const override;
+  LLVM_DEBUGINFOPDB_ABI uint64_t getLength() const override;
+  LLVM_DEBUGINFOPDB_ABI bool isUnalignedType() const override;
+  LLVM_DEBUGINFOPDB_ABI bool isVolatileType() const override;
 
 protected:
   NativeSession &Session;

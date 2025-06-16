@@ -13,6 +13,7 @@
 #include "llvm/ADT/StringRef.h"
 #include "llvm/DebugInfo/CodeView/CVRecord.h"
 #include "llvm/DebugInfo/CodeView/DebugSubsectionRecord.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/Native/RawTypes.h"
 #include "llvm/Support/BinaryStreamRef.h"
 #include "llvm/Support/Error.h"
@@ -29,7 +30,7 @@ class DebugSubsection;
 namespace msf {
 class MSFBuilder;
 struct MSFLayout;
-}
+} // namespace msf
 namespace pdb {
 
 // Represents merged or unmerged symbols. Merged symbols can be written to the
@@ -64,16 +65,17 @@ class DbiModuleDescriptorBuilder {
   friend class DbiStreamBuilder;
 
 public:
-  DbiModuleDescriptorBuilder(StringRef ModuleName, uint32_t ModIndex,
-                             msf::MSFBuilder &Msf);
-  ~DbiModuleDescriptorBuilder();
+  LLVM_DEBUGINFOPDB_ABI DbiModuleDescriptorBuilder(StringRef ModuleName,
+                                                   uint32_t ModIndex,
+                                                   msf::MSFBuilder &Msf);
+  LLVM_DEBUGINFOPDB_ABI ~DbiModuleDescriptorBuilder();
 
   DbiModuleDescriptorBuilder(const DbiModuleDescriptorBuilder &) = delete;
   DbiModuleDescriptorBuilder &
   operator=(const DbiModuleDescriptorBuilder &) = delete;
 
-  void setPdbFilePathNI(uint32_t NI);
-  void setObjFileName(StringRef Name);
+  LLVM_DEBUGINFOPDB_ABI void setPdbFilePathNI(uint32_t NI);
+  LLVM_DEBUGINFOPDB_ABI void setObjFileName(StringRef Name);
 
   // Callback to merge one source of unmerged symbols.
   using MergeSymbolsCallback = Error (*)(void *Ctx, void *Symbols,
@@ -88,21 +90,22 @@ public:
     StringTableFixups = std::move(Fixups);
   }
 
-  void setFirstSectionContrib(const SectionContrib &SC);
-  void addSymbol(codeview::CVSymbol Symbol);
-  void addSymbolsInBulk(ArrayRef<uint8_t> BulkSymbols);
+  LLVM_DEBUGINFOPDB_ABI void setFirstSectionContrib(const SectionContrib &SC);
+  LLVM_DEBUGINFOPDB_ABI void addSymbol(codeview::CVSymbol Symbol);
+  LLVM_DEBUGINFOPDB_ABI void addSymbolsInBulk(ArrayRef<uint8_t> BulkSymbols);
 
   // Add symbols of known size which will be merged (rewritten) when committing
   // the PDB to disk.
-  void addUnmergedSymbols(void *SymSrc, uint32_t SymLength);
+  LLVM_DEBUGINFOPDB_ABI void addUnmergedSymbols(void *SymSrc,
+                                                uint32_t SymLength);
 
-  void
+  LLVM_DEBUGINFOPDB_ABI void
   addDebugSubsection(std::shared_ptr<codeview::DebugSubsection> Subsection);
 
-  void
+  LLVM_DEBUGINFOPDB_ABI void
   addDebugSubsection(const codeview::DebugSubsectionRecord &SubsectionContents);
 
-  uint16_t getStreamIndex() const;
+  LLVM_DEBUGINFOPDB_ABI uint16_t getStreamIndex() const;
   StringRef getModuleName() const { return ModuleName; }
   StringRef getObjFileName() const { return ObjFileName; }
 
@@ -110,23 +113,23 @@ public:
 
   ArrayRef<std::string> source_files() const { return SourceFiles; }
 
-  uint32_t calculateSerializedLength() const;
+  LLVM_DEBUGINFOPDB_ABI uint32_t calculateSerializedLength() const;
 
   /// Return the offset within the module symbol stream of the next symbol
   /// record passed to addSymbol. Add four to account for the signature.
   uint32_t getNextSymbolOffset() const { return SymbolByteSize + 4; }
 
-  void finalize();
-  Error finalizeMsfLayout();
+  LLVM_DEBUGINFOPDB_ABI void finalize();
+  LLVM_DEBUGINFOPDB_ABI Error finalizeMsfLayout();
 
   /// Commit the DBI descriptor to the DBI stream.
-  Error commit(BinaryStreamWriter &ModiWriter);
+  LLVM_DEBUGINFOPDB_ABI Error commit(BinaryStreamWriter &ModiWriter);
 
   /// Commit the accumulated symbols to the module symbol stream. Safe to call
   /// in parallel on different DbiModuleDescriptorBuilder objects. Only modifies
   /// the pre-allocated stream in question.
-  Error commitSymbolStream(const msf::MSFLayout &MsfLayout,
-                           WritableBinaryStreamRef MsfBuffer);
+  LLVM_DEBUGINFOPDB_ABI Error commitSymbolStream(
+      const msf::MSFLayout &MsfLayout, WritableBinaryStreamRef MsfBuffer);
 
 private:
   uint32_t calculateC13DebugInfoSize() const;

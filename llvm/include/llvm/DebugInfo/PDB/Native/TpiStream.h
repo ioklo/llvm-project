@@ -10,11 +10,11 @@
 #define LLVM_DEBUGINFO_PDB_NATIVE_TPISTREAM_H
 
 #include "llvm/DebugInfo/CodeView/CVRecord.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/Native/HashTable.h"
 #include "llvm/DebugInfo/PDB/Native/RawConstants.h"
 #include "llvm/Support/BinaryStreamArray.h"
 #include "llvm/Support/BinaryStreamRef.h"
-
 #include "llvm/Support/Error.h"
 
 namespace llvm {
@@ -23,7 +23,7 @@ namespace codeview {
 class TypeIndex;
 struct TypeIndexOffset;
 class LazyRandomTypeCollection;
-}
+} // namespace codeview
 namespace msf {
 class MappedBlockStream;
 }
@@ -35,43 +35,47 @@ class TpiStream {
   friend class TpiStreamBuilder;
 
 public:
+  LLVM_DEBUGINFOPDB_ABI
   TpiStream(PDBFile &File, std::unique_ptr<msf::MappedBlockStream> Stream);
-  ~TpiStream();
-  Error reload();
+  LLVM_DEBUGINFOPDB_ABI ~TpiStream();
+  LLVM_DEBUGINFOPDB_ABI Error reload();
 
-  PdbRaw_TpiVer getTpiVersion() const;
+  LLVM_DEBUGINFOPDB_ABI PdbRaw_TpiVer getTpiVersion() const;
 
-  uint32_t TypeIndexBegin() const;
-  uint32_t TypeIndexEnd() const;
-  uint32_t getNumTypeRecords() const;
-  uint16_t getTypeHashStreamIndex() const;
-  uint16_t getTypeHashStreamAuxIndex() const;
+  LLVM_DEBUGINFOPDB_ABI uint32_t TypeIndexBegin() const;
+  LLVM_DEBUGINFOPDB_ABI uint32_t TypeIndexEnd() const;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getNumTypeRecords() const;
+  LLVM_DEBUGINFOPDB_ABI uint16_t getTypeHashStreamIndex() const;
+  LLVM_DEBUGINFOPDB_ABI uint16_t getTypeHashStreamAuxIndex() const;
 
-  uint32_t getHashKeySize() const;
-  uint32_t getNumHashBuckets() const;
-  FixedStreamArray<support::ulittle32_t> getHashValues() const;
-  FixedStreamArray<codeview::TypeIndexOffset> getTypeIndexOffsets() const;
-  HashTable<support::ulittle32_t> &getHashAdjusters();
+  LLVM_DEBUGINFOPDB_ABI uint32_t getHashKeySize() const;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getNumHashBuckets() const;
+  LLVM_DEBUGINFOPDB_ABI FixedStreamArray<support::ulittle32_t>
+  getHashValues() const;
+  LLVM_DEBUGINFOPDB_ABI FixedStreamArray<codeview::TypeIndexOffset>
+  getTypeIndexOffsets() const;
+  LLVM_DEBUGINFOPDB_ABI HashTable<support::ulittle32_t> &getHashAdjusters();
 
-  codeview::CVTypeRange types(bool *HadError) const;
+  LLVM_DEBUGINFOPDB_ABI codeview::CVTypeRange types(bool *HadError) const;
   const codeview::CVTypeArray &typeArray() const { return TypeRecords; }
 
   codeview::LazyRandomTypeCollection &typeCollection() { return *Types; }
 
-  Expected<codeview::TypeIndex>
+  LLVM_DEBUGINFOPDB_ABI Expected<codeview::TypeIndex>
   findFullDeclForForwardRef(codeview::TypeIndex ForwardRefTI) const;
 
-  std::vector<codeview::TypeIndex> findRecordsByName(StringRef Name) const;
+  LLVM_DEBUGINFOPDB_ABI std::vector<codeview::TypeIndex>
+  findRecordsByName(StringRef Name) const;
 
-  codeview::CVType getType(codeview::TypeIndex Index);
+  LLVM_DEBUGINFOPDB_ABI codeview::CVType getType(codeview::TypeIndex Index);
 
-  BinarySubstreamRef getTypeRecordsSubstream() const;
+  LLVM_DEBUGINFOPDB_ABI BinarySubstreamRef getTypeRecordsSubstream() const;
 
-  Error commit();
+  LLVM_DEBUGINFOPDB_ABI Error commit();
 
-  void buildHashMap();
+  LLVM_DEBUGINFOPDB_ABI void buildHashMap();
 
-  bool supportsTypeLookup() const;
+  LLVM_DEBUGINFOPDB_ABI bool supportsTypeLookup() const;
 
 private:
   PDBFile &Pdb;
@@ -92,7 +96,7 @@ private:
 
   const TpiStreamHeader *Header;
 };
-}
-}
+} // namespace pdb
+} // namespace llvm
 
 #endif

@@ -10,18 +10,19 @@
 #define LLVM_DEBUGINFO_PDB_IPDBTABLE_H
 
 #include "PDBTypes.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 
 namespace llvm {
 namespace pdb {
 class IPDBTable {
 public:
-  virtual ~IPDBTable();
+  LLVM_DEBUGINFOPDB_ABI virtual ~IPDBTable();
 
   virtual std::string getName() const = 0;
   virtual uint32_t getItemCount() const = 0;
   virtual PDB_TableType getTableType() const = 0;
 };
-}
-}
+} // namespace pdb
+} // namespace llvm
 
 #endif // LLVM_DEBUGINFO_PDB_IPDBTABLE_H

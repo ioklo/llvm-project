@@ -12,6 +12,7 @@
 #include "PDBSymbol.h"
 #include "PDBTypes.h"
 #include "llvm/ADT/StringRef.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/Support/Casting.h"
 #include <memory>
 
@@ -24,7 +25,7 @@ class PDBSymbolExe;
 /// debug information from a debug data source (for example, a PDB).
 class IPDBSession {
 public:
-  virtual ~IPDBSession();
+  LLVM_DEBUGINFOPDB_ABI virtual ~IPDBSession();
 
   virtual uint64_t getLoadAddress() const = 0;
   virtual bool setLoadAddress(uint64_t Address) = 0;
@@ -90,8 +91,7 @@ public:
   virtual std::unique_ptr<IPDBEnumSectionContribs>
   getSectionContribs() const = 0;
 
-  virtual std::unique_ptr<IPDBEnumFrameData>
-  getFrameData() const = 0;
+  virtual std::unique_ptr<IPDBEnumFrameData> getFrameData() const = 0;
 };
 } // namespace pdb
 } // namespace llvm

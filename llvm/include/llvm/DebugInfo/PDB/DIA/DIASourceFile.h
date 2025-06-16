@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_PDB_DIA_DIASOURCEFILE_H
 
 #include "DIASupport.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/IPDBSourceFile.h"
 
 namespace llvm {
@@ -18,14 +19,14 @@ class DIASession;
 
 class DIASourceFile : public IPDBSourceFile {
 public:
-  explicit DIASourceFile(const DIASession &Session,
-                         CComPtr<IDiaSourceFile> DiaSourceFile);
+  LLVM_DEBUGINFOPDB_ABI explicit DIASourceFile(
+      const DIASession &Session, CComPtr<IDiaSourceFile> DiaSourceFile);
 
-  std::string getFileName() const override;
-  uint32_t getUniqueId() const override;
-  std::string getChecksum() const override;
-  PDB_Checksum getChecksumType() const override;
-  std::unique_ptr<IPDBEnumChildren<PDBSymbolCompiland>>
+  LLVM_DEBUGINFOPDB_ABI std::string getFileName() const override;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getUniqueId() const override;
+  LLVM_DEBUGINFOPDB_ABI std::string getChecksum() const override;
+  LLVM_DEBUGINFOPDB_ABI PDB_Checksum getChecksumType() const override;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumChildren<PDBSymbolCompiland>>
   getCompilands() const override;
 
   CComPtr<IDiaSourceFile> getDiaFile() const { return SourceFile; }
@@ -34,7 +35,7 @@ private:
   const DIASession &Session;
   CComPtr<IDiaSourceFile> SourceFile;
 };
-}
-}
+} // namespace pdb
+} // namespace llvm
 
 #endif

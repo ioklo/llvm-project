@@ -10,19 +10,20 @@
 #define LLVM_DEBUGINFO_PDB_DIA_DIADATASTREAM_H
 
 #include "DIASupport.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/IPDBDataStream.h"
 
 namespace llvm {
 namespace pdb {
 class DIADataStream : public IPDBDataStream {
 public:
-  explicit DIADataStream(CComPtr<IDiaEnumDebugStreamData> DiaStreamData);
+  LLVM_DEBUGINFOPDB_ABI explicit DIADataStream(CComPtr<IDiaEnumDebugStreamData> DiaStreamData);
 
-  uint32_t getRecordCount() const override;
-  std::string getName() const override;
-  std::optional<RecordType> getItemAtIndex(uint32_t Index) const override;
-  bool getNext(RecordType &Record) override;
-  void reset() override;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getRecordCount() const override;
+  LLVM_DEBUGINFOPDB_ABI std::string getName() const override;
+  LLVM_DEBUGINFOPDB_ABI std::optional<RecordType> getItemAtIndex(uint32_t Index) const override;
+  LLVM_DEBUGINFOPDB_ABI bool getNext(RecordType &Record) override;
+  LLVM_DEBUGINFOPDB_ABI void reset() override;
 
 private:
   CComPtr<IDiaEnumDebugStreamData> StreamData;

@@ -11,6 +11,7 @@
 
 #include "llvm/DebugInfo/CodeView/TypeIndex.h"
 #include "llvm/DebugInfo/CodeView/TypeRecord.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/IPDBRawSymbol.h"
 #include "llvm/DebugInfo/PDB/Native/NativeRawSymbol.h"
 #include "llvm/DebugInfo/PDB/PDBTypes.h"
@@ -22,18 +23,20 @@ class NativeSession;
 class NativeTypeVTShape : public NativeRawSymbol {
 public:
   // Create a pointer record for a non-simple type.
-  NativeTypeVTShape(NativeSession &Session, SymIndexId Id,
-                    codeview::TypeIndex TI, codeview::VFTableShapeRecord SR);
+  LLVM_DEBUGINFOPDB_ABI NativeTypeVTShape(NativeSession &Session, SymIndexId Id,
+                                          codeview::TypeIndex TI,
+                                          codeview::VFTableShapeRecord SR);
 
-  ~NativeTypeVTShape() override;
+  LLVM_DEBUGINFOPDB_ABI ~NativeTypeVTShape() override;
 
-  void dump(raw_ostream &OS, int Indent, PdbSymbolIdField ShowIdFields,
-            PdbSymbolIdField RecurseIdFields) const override;
+  LLVM_DEBUGINFOPDB_ABI void
+  dump(raw_ostream &OS, int Indent, PdbSymbolIdField ShowIdFields,
+       PdbSymbolIdField RecurseIdFields) const override;
 
-  bool isConstType() const override;
-  bool isVolatileType() const override;
-  bool isUnalignedType() const override;
-  uint32_t getCount() const override;
+  LLVM_DEBUGINFOPDB_ABI bool isConstType() const override;
+  LLVM_DEBUGINFOPDB_ABI bool isVolatileType() const override;
+  LLVM_DEBUGINFOPDB_ABI bool isUnalignedType() const override;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getCount() const override;
 
 protected:
   codeview::TypeIndex TI;

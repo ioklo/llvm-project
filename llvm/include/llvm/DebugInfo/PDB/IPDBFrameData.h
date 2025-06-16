@@ -9,6 +9,7 @@
 #ifndef LLVM_DEBUGINFO_PDB_IPDBFRAMEDATA_H
 #define LLVM_DEBUGINFO_PDB_IPDBFRAMEDATA_H
 
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include <cstdint>
 #include <string>
 
@@ -19,7 +20,7 @@ namespace pdb {
 /// code block.
 class IPDBFrameData {
 public:
-  virtual ~IPDBFrameData();
+  LLVM_DEBUGINFOPDB_ABI virtual ~IPDBFrameData();
 
   virtual uint32_t getAddressOffset() const = 0;
   virtual uint32_t getAddressSection() const = 0;

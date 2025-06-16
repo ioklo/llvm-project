@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_PDB_DIA_DIAENUMSECTIONCONTRIBS_H
 
 #include "DIASupport.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/IPDBEnumChildren.h"
 #include "llvm/DebugInfo/PDB/IPDBSectionContrib.h"
 
@@ -19,14 +20,15 @@ class DIASession;
 
 class DIAEnumSectionContribs : public IPDBEnumChildren<IPDBSectionContrib> {
 public:
-  explicit DIAEnumSectionContribs(
+  LLVM_DEBUGINFOPDB_ABI explicit DIAEnumSectionContribs(
       const DIASession &PDBSession,
       CComPtr<IDiaEnumSectionContribs> DiaEnumerator);
 
-  uint32_t getChildCount() const override;
-  ChildTypePtr getChildAtIndex(uint32_t Index) const override;
-  ChildTypePtr getNext() override;
-  void reset() override;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getChildCount() const override;
+  LLVM_DEBUGINFOPDB_ABI ChildTypePtr
+  getChildAtIndex(uint32_t Index) const override;
+  LLVM_DEBUGINFOPDB_ABI ChildTypePtr getNext() override;
+  LLVM_DEBUGINFOPDB_ABI void reset() override;
 
 private:
   const DIASession &Session;

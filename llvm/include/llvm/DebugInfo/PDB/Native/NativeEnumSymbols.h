@@ -9,6 +9,7 @@
 #ifndef LLVM_DEBUGINFO_PDB_NATIVE_NATIVEENUMSYMBOLS_H
 #define LLVM_DEBUGINFO_PDB_NATIVE_NATIVEENUMSYMBOLS_H
 
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/IPDBEnumChildren.h"
 #include "llvm/DebugInfo/PDB/PDBSymbol.h"
 #include "llvm/DebugInfo/PDB/PDBTypes.h"
@@ -22,12 +23,14 @@ class NativeSession;
 
 class NativeEnumSymbols : public IPDBEnumChildren<PDBSymbol> {
 public:
-  NativeEnumSymbols(NativeSession &Session, std::vector<SymIndexId> Symbols);
+  LLVM_DEBUGINFOPDB_ABI NativeEnumSymbols(NativeSession &Session,
+                                          std::vector<SymIndexId> Symbols);
 
-  uint32_t getChildCount() const override;
-  std::unique_ptr<PDBSymbol> getChildAtIndex(uint32_t Index) const override;
-  std::unique_ptr<PDBSymbol> getNext() override;
-  void reset() override;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getChildCount() const override;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<PDBSymbol>
+  getChildAtIndex(uint32_t Index) const override;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<PDBSymbol> getNext() override;
+  LLVM_DEBUGINFOPDB_ABI void reset() override;
 
 private:
   std::vector<SymIndexId> Symbols;

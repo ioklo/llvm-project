@@ -10,6 +10,7 @@
 
 #include "PDBSymbol.h"
 #include "PDBTypes.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 
 namespace llvm {
 
@@ -18,7 +19,7 @@ namespace pdb {
 class PDBSymbolBlock : public PDBSymbol {
   DECLARE_PDB_SYMBOL_CONCRETE_TYPE(PDB_SymType::Block)
 public:
-  void dump(PDBSymDumper &Dumper) const override;
+  LLVM_DEBUGINFOPDB_ABI void dump(PDBSymDumper &Dumper) const override;
 
   FORWARD_SYMBOL_METHOD(getAddressOffset)
   FORWARD_SYMBOL_METHOD(getAddressSection)
@@ -29,7 +30,7 @@ public:
   FORWARD_SYMBOL_METHOD(getRelativeVirtualAddress)
   FORWARD_SYMBOL_METHOD(getVirtualAddress)
 };
-}
-}
+} // namespace pdb
+} // namespace llvm
 
 #endif // LLVM_DEBUGINFO_PDB_PDBSYMBOLBLOCK_H

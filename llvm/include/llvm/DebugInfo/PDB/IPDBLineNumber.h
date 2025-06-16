@@ -9,13 +9,14 @@
 #ifndef LLVM_DEBUGINFO_PDB_IPDBLINENUMBER_H
 #define LLVM_DEBUGINFO_PDB_IPDBLINENUMBER_H
 
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include <cstdint>
 
 namespace llvm {
 namespace pdb {
 class IPDBLineNumber {
 public:
-  virtual ~IPDBLineNumber();
+  LLVM_DEBUGINFOPDB_ABI virtual ~IPDBLineNumber();
 
   virtual uint32_t getLineNumber() const = 0;
   virtual uint32_t getLineNumberEnd() const = 0;
@@ -30,7 +31,7 @@ public:
   virtual uint32_t getCompilandId() const = 0;
   virtual bool isStatement() const = 0;
 };
-}
-}
+} // namespace pdb
+} // namespace llvm
 
 #endif

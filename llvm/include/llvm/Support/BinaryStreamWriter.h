@@ -172,7 +172,8 @@ public:
   }
 
   /// Splits the Writer into two Writers at a given offset.
-  std::pair<BinaryStreamWriter, BinaryStreamWriter> split(uint64_t Off) const;
+  LLVM_SUPPORT_ABI std::pair<BinaryStreamWriter, BinaryStreamWriter>
+  split(uint64_t Off) const;
 
   void setOffset(uint64_t Off) { Offset = Off; }
   uint64_t getOffset() const { return Offset; }

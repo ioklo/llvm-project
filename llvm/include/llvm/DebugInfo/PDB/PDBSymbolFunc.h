@@ -9,6 +9,7 @@
 #ifndef LLVM_DEBUGINFO_PDB_PDBSYMBOLFUNC_H
 #define LLVM_DEBUGINFO_PDB_PDBSYMBOLFUNC_H
 
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/IPDBRawSymbol.h"
 
 #include "PDBSymbol.h"
@@ -26,11 +27,12 @@ template <typename ChildType> class IPDBEnumChildren;
 class PDBSymbolFunc : public PDBSymbol {
   DECLARE_PDB_SYMBOL_CONCRETE_TYPE(PDB_SymType::Function)
 public:
-  void dump(PDBSymDumper &Dumper) const override;
+  LLVM_DEBUGINFOPDB_ABI void dump(PDBSymDumper &Dumper) const override;
 
-  bool isDestructor() const;
+  LLVM_DEBUGINFOPDB_ABI bool isDestructor() const;
 
-  std::unique_ptr<IPDBEnumChildren<PDBSymbolData>> getArguments() const;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumChildren<PDBSymbolData>>
+  getArguments() const;
 
   FORWARD_SYMBOL_METHOD(getAccess)
   FORWARD_SYMBOL_METHOD(getAddressOffset)
@@ -78,8 +80,9 @@ public:
   FORWARD_SYMBOL_METHOD(getVirtualBaseOffset)
   FORWARD_SYMBOL_METHOD(isVolatileType)
 
-  std::unique_ptr<IPDBEnumLineNumbers> getLineNumbers() const;
-  uint32_t getCompilandId() const;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumLineNumbers>
+  getLineNumbers() const;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getCompilandId() const;
 };
 
 } // namespace pdb

@@ -9,6 +9,7 @@
 #ifndef LLVM_DEBUGINFO_PDB_NATIVE_NATIVECOMPILANDSYMBOL_H
 #define LLVM_DEBUGINFO_PDB_NATIVE_NATIVECOMPILANDSYMBOL_H
 
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/Native/DbiModuleDescriptor.h"
 #include "llvm/DebugInfo/PDB/Native/NativeRawSymbol.h"
 
@@ -17,17 +18,19 @@ namespace pdb {
 
 class NativeCompilandSymbol : public NativeRawSymbol {
 public:
-  NativeCompilandSymbol(NativeSession &Session, SymIndexId SymbolId,
-                        DbiModuleDescriptor MI);
+  LLVM_DEBUGINFOPDB_ABI NativeCompilandSymbol(NativeSession &Session,
+                                              SymIndexId SymbolId,
+                                              DbiModuleDescriptor MI);
 
-  void dump(raw_ostream &OS, int Indent, PdbSymbolIdField ShowIdFields,
-            PdbSymbolIdField RecurseIdFields) const override;
+  LLVM_DEBUGINFOPDB_ABI void
+  dump(raw_ostream &OS, int Indent, PdbSymbolIdField ShowIdFields,
+       PdbSymbolIdField RecurseIdFields) const override;
 
-  PDB_SymType getSymTag() const override;
-  bool isEditAndContinueEnabled() const override;
-  SymIndexId getLexicalParentId() const override;
-  std::string getLibraryName() const override;
-  std::string getName() const override;
+  LLVM_DEBUGINFOPDB_ABI PDB_SymType getSymTag() const override;
+  LLVM_DEBUGINFOPDB_ABI bool isEditAndContinueEnabled() const override;
+  LLVM_DEBUGINFOPDB_ABI SymIndexId getLexicalParentId() const override;
+  LLVM_DEBUGINFOPDB_ABI std::string getLibraryName() const override;
+  LLVM_DEBUGINFOPDB_ABI std::string getName() const override;
 
 private:
   DbiModuleDescriptor Module;

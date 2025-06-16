@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_PDB_DIA_DIAENUMSYMBOLS_H
 
 #include "DIASupport.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/IPDBEnumChildren.h"
 #include "llvm/DebugInfo/PDB/PDBSymbol.h"
 
@@ -19,19 +20,20 @@ class DIASession;
 
 class DIAEnumSymbols : public IPDBEnumChildren<PDBSymbol> {
 public:
-  explicit DIAEnumSymbols(const DIASession &Session,
-                          CComPtr<IDiaEnumSymbols> DiaEnumerator);
+  LLVM_DEBUGINFOPDB_ABI explicit DIAEnumSymbols(
+      const DIASession &Session, CComPtr<IDiaEnumSymbols> DiaEnumerator);
 
-  uint32_t getChildCount() const override;
-  std::unique_ptr<PDBSymbol> getChildAtIndex(uint32_t Index) const override;
-  std::unique_ptr<PDBSymbol> getNext() override;
-  void reset() override;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getChildCount() const override;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<PDBSymbol>
+  getChildAtIndex(uint32_t Index) const override;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<PDBSymbol> getNext() override;
+  LLVM_DEBUGINFOPDB_ABI void reset() override;
 
 private:
   const DIASession &Session;
   CComPtr<IDiaEnumSymbols> Enumerator;
 };
-}
-}
+} // namespace pdb
+} // namespace llvm
 
 #endif

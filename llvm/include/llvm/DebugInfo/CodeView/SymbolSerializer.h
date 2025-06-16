@@ -62,8 +62,8 @@ public:
     return Result;
   }
 
-  Error visitSymbolBegin(CVSymbol &Record) override;
-  Error visitSymbolEnd(CVSymbol &Record) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI Error visitSymbolBegin(CVSymbol &Record) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI Error visitSymbolEnd(CVSymbol &Record) override;
 
 #define SYMBOL_RECORD(EnumName, EnumVal, Name)                                 \
   Error visitKnownRecord(CVSymbol &CVR, Name &Record) override {               \

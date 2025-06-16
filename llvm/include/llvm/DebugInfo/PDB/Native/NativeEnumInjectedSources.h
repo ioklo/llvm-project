@@ -9,6 +9,7 @@
 #ifndef LLVM_DEBUGINFO_PDB_NATIVE_NATIVEENUMINJECTEDSOURCES_H
 #define LLVM_DEBUGINFO_PDB_NATIVE_NATIVEENUMINJECTEDSOURCES_H
 
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/IPDBEnumChildren.h"
 #include "llvm/DebugInfo/PDB/IPDBInjectedSource.h"
 #include "llvm/DebugInfo/PDB/Native/InjectedSourceStream.h"
@@ -22,14 +23,15 @@ class PDBStringTable;
 
 class NativeEnumInjectedSources : public IPDBEnumChildren<IPDBInjectedSource> {
 public:
+  LLVM_DEBUGINFOPDB_ABI
   NativeEnumInjectedSources(PDBFile &File, const InjectedSourceStream &IJS,
                             const PDBStringTable &Strings);
 
-  uint32_t getChildCount() const override;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getChildCount() const override;
   std::unique_ptr<IPDBInjectedSource>
-  getChildAtIndex(uint32_t Index) const override;
-  std::unique_ptr<IPDBInjectedSource> getNext() override;
-  void reset() override;
+      LLVM_DEBUGINFOPDB_ABI getChildAtIndex(uint32_t Index) const override;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBInjectedSource> getNext() override;
+  LLVM_DEBUGINFOPDB_ABI void reset() override;
 
 private:
   PDBFile &File;

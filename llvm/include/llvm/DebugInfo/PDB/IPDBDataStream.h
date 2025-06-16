@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_PDB_IPDBDATASTREAM_H
 
 #include "llvm/ADT/SmallVector.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include <cstdint>
 #include <optional>
 #include <string>
@@ -24,7 +25,7 @@ class IPDBDataStream {
 public:
   using RecordType = SmallVector<uint8_t, 32>;
 
-  virtual ~IPDBDataStream();
+  LLVM_DEBUGINFOPDB_ABI virtual ~IPDBDataStream();
 
   virtual uint32_t getRecordCount() const = 0;
   virtual std::string getName() const = 0;

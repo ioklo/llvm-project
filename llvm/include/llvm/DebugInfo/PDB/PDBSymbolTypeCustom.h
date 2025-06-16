@@ -11,6 +11,7 @@
 
 #include "PDBSymbol.h"
 #include "PDBTypes.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 
 namespace llvm {
 
@@ -19,7 +20,7 @@ namespace pdb {
 class PDBSymbolTypeCustom : public PDBSymbol {
   DECLARE_PDB_SYMBOL_CONCRETE_TYPE(PDB_SymType::CustomType)
 public:
-  void dump(PDBSymDumper &Dumper) const override;
+  LLVM_DEBUGINFOPDB_ABI void dump(PDBSymDumper &Dumper) const override;
 
   FORWARD_SYMBOL_METHOD(getOemId)
   FORWARD_SYMBOL_METHOD(getOemSymbolId)

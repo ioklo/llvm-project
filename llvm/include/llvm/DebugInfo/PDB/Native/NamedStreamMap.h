@@ -11,6 +11,7 @@
 
 #include "llvm/ADT/StringMap.h"
 #include "llvm/ADT/StringRef.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/Native/HashTable.h"
 #include "llvm/Support/Error.h"
 #include <cstdint>
@@ -27,31 +28,31 @@ class NamedStreamMap;
 struct NamedStreamMapTraits {
   NamedStreamMap *NS;
 
-  explicit NamedStreamMapTraits(NamedStreamMap &NS);
-  uint16_t hashLookupKey(StringRef S) const;
-  StringRef storageKeyToLookupKey(uint32_t Offset) const;
-  uint32_t lookupKeyToStorageKey(StringRef S);
+  LLVM_DEBUGINFOPDB_ABI explicit NamedStreamMapTraits(NamedStreamMap &NS);
+  LLVM_DEBUGINFOPDB_ABI uint16_t hashLookupKey(StringRef S) const;
+  LLVM_DEBUGINFOPDB_ABI StringRef storageKeyToLookupKey(uint32_t Offset) const;
+  LLVM_DEBUGINFOPDB_ABI uint32_t lookupKeyToStorageKey(StringRef S);
 };
 
 class NamedStreamMap {
   friend class NamedStreamMapBuilder;
 
 public:
-  NamedStreamMap();
+  LLVM_DEBUGINFOPDB_ABI NamedStreamMap();
 
-  Error load(BinaryStreamReader &Stream);
-  Error commit(BinaryStreamWriter &Writer) const;
-  uint32_t calculateSerializedLength() const;
+  LLVM_DEBUGINFOPDB_ABI Error load(BinaryStreamReader &Stream);
+  LLVM_DEBUGINFOPDB_ABI Error commit(BinaryStreamWriter &Writer) const;
+  LLVM_DEBUGINFOPDB_ABI uint32_t calculateSerializedLength() const;
 
-  uint32_t size() const;
-  bool get(StringRef Stream, uint32_t &StreamNo) const;
-  void set(StringRef Stream, uint32_t StreamNo);
+  LLVM_DEBUGINFOPDB_ABI uint32_t size() const;
+  LLVM_DEBUGINFOPDB_ABI bool get(StringRef Stream, uint32_t &StreamNo) const;
+  LLVM_DEBUGINFOPDB_ABI void set(StringRef Stream, uint32_t StreamNo);
 
-  uint32_t appendStringData(StringRef S);
-  StringRef getString(uint32_t Offset) const;
-  uint32_t hashString(uint32_t Offset) const;
+  LLVM_DEBUGINFOPDB_ABI uint32_t appendStringData(StringRef S);
+  LLVM_DEBUGINFOPDB_ABI StringRef getString(uint32_t Offset) const;
+  LLVM_DEBUGINFOPDB_ABI uint32_t hashString(uint32_t Offset) const;
 
-  StringMap<uint32_t> entries() const;
+  LLVM_DEBUGINFOPDB_ABI StringMap<uint32_t> entries() const;
 
 private:
   NamedStreamMapTraits HashTraits;

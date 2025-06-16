@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_PDB_PDBSYMDUMPER_H
 
 #include "PDBTypes.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 
 namespace llvm {
 
@@ -18,61 +19,82 @@ namespace pdb {
 
 class PDBSymDumper {
 public:
-  PDBSymDumper(bool ShouldRequireImpl);
-  virtual ~PDBSymDumper();
+  LLVM_DEBUGINFOPDB_ABI PDBSymDumper(bool ShouldRequireImpl);
+  LLVM_DEBUGINFOPDB_ABI virtual ~PDBSymDumper();
 
-  virtual void dump(const PDBSymbolAnnotation &Symbol);
-  virtual void dump(const PDBSymbolBlock &Symbol);
-  virtual void dump(const PDBSymbolCompiland &Symbol);
-  virtual void dump(const PDBSymbolCompilandDetails &Symbol);
-  virtual void dump(const PDBSymbolCompilandEnv &Symbol);
-  virtual void dump(const PDBSymbolCustom &Symbol);
-  virtual void dump(const PDBSymbolData &Symbol);
-  virtual void dump(const PDBSymbolExe &Symbol);
-  virtual void dump(const PDBSymbolFunc &Symbol);
-  virtual void dump(const PDBSymbolFuncDebugEnd &Symbol);
-  virtual void dump(const PDBSymbolFuncDebugStart &Symbol);
-  virtual void dump(const PDBSymbolLabel &Symbol);
-  virtual void dump(const PDBSymbolPublicSymbol &Symbol);
-  virtual void dump(const PDBSymbolThunk &Symbol);
-  virtual void dump(const PDBSymbolTypeArray &Symbol);
-  virtual void dump(const PDBSymbolTypeBaseClass &Symbol);
-  virtual void dump(const PDBSymbolTypeBuiltin &Symbol);
-  virtual void dump(const PDBSymbolTypeCustom &Symbol);
-  virtual void dump(const PDBSymbolTypeDimension &Symbol);
-  virtual void dump(const PDBSymbolTypeEnum &Symbol);
-  virtual void dump(const PDBSymbolTypeFriend &Symbol);
-  virtual void dump(const PDBSymbolTypeFunctionArg &Symbol);
-  virtual void dump(const PDBSymbolTypeFunctionSig &Symbol);
-  virtual void dump(const PDBSymbolTypeManaged &Symbol);
-  virtual void dump(const PDBSymbolTypePointer &Symbol);
-  virtual void dump(const PDBSymbolTypeTypedef &Symbol);
-  virtual void dump(const PDBSymbolTypeUDT &Symbol);
-  virtual void dump(const PDBSymbolTypeVTable &Symbol);
-  virtual void dump(const PDBSymbolTypeVTableShape &Symbol);
-  virtual void dump(const PDBSymbolUnknown &Symbol);
-  virtual void dump(const PDBSymbolUsingNamespace &Symbol);
+  LLVM_DEBUGINFOPDB_ABI virtual void dump(const PDBSymbolAnnotation &Symbol);
+  LLVM_DEBUGINFOPDB_ABI virtual void dump(const PDBSymbolBlock &Symbol);
+  LLVM_DEBUGINFOPDB_ABI virtual void dump(const PDBSymbolCompiland &Symbol);
+  LLVM_DEBUGINFOPDB_ABI virtual void
+  dump(const PDBSymbolCompilandDetails &Symbol);
+  LLVM_DEBUGINFOPDB_ABI virtual void dump(const PDBSymbolCompilandEnv &Symbol);
+  LLVM_DEBUGINFOPDB_ABI virtual void dump(const PDBSymbolCustom &Symbol);
+  LLVM_DEBUGINFOPDB_ABI virtual void dump(const PDBSymbolData &Symbol);
+  LLVM_DEBUGINFOPDB_ABI virtual void dump(const PDBSymbolExe &Symbol);
+  LLVM_DEBUGINFOPDB_ABI virtual void dump(const PDBSymbolFunc &Symbol);
+  LLVM_DEBUGINFOPDB_ABI virtual void dump(const PDBSymbolFuncDebugEnd &Symbol);
+  LLVM_DEBUGINFOPDB_ABI virtual void
+  dump(const PDBSymbolFuncDebugStart &Symbol);
+  LLVM_DEBUGINFOPDB_ABI virtual void dump(const PDBSymbolLabel &Symbol);
+  LLVM_DEBUGINFOPDB_ABI virtual void dump(const PDBSymbolPublicSymbol &Symbol);
+  LLVM_DEBUGINFOPDB_ABI virtual void dump(const PDBSymbolThunk &Symbol);
+  LLVM_DEBUGINFOPDB_ABI virtual void dump(const PDBSymbolTypeArray &Symbol);
+  LLVM_DEBUGINFOPDB_ABI virtual void dump(const PDBSymbolTypeBaseClass &Symbol);
+  LLVM_DEBUGINFOPDB_ABI virtual void dump(const PDBSymbolTypeBuiltin &Symbol);
+  LLVM_DEBUGINFOPDB_ABI virtual void dump(const PDBSymbolTypeCustom &Symbol);
+  LLVM_DEBUGINFOPDB_ABI virtual void dump(const PDBSymbolTypeDimension &Symbol);
+  LLVM_DEBUGINFOPDB_ABI virtual void dump(const PDBSymbolTypeEnum &Symbol);
+  LLVM_DEBUGINFOPDB_ABI virtual void dump(const PDBSymbolTypeFriend &Symbol);
+  LLVM_DEBUGINFOPDB_ABI virtual void
+  dump(const PDBSymbolTypeFunctionArg &Symbol);
+  LLVM_DEBUGINFOPDB_ABI virtual void
+  dump(const PDBSymbolTypeFunctionSig &Symbol);
+  LLVM_DEBUGINFOPDB_ABI virtual void dump(const PDBSymbolTypeManaged &Symbol);
+  LLVM_DEBUGINFOPDB_ABI virtual void dump(const PDBSymbolTypePointer &Symbol);
+  LLVM_DEBUGINFOPDB_ABI virtual void dump(const PDBSymbolTypeTypedef &Symbol);
+  LLVM_DEBUGINFOPDB_ABI virtual void dump(const PDBSymbolTypeUDT &Symbol);
+  LLVM_DEBUGINFOPDB_ABI virtual void dump(const PDBSymbolTypeVTable &Symbol);
+  LLVM_DEBUGINFOPDB_ABI virtual void
+  dump(const PDBSymbolTypeVTableShape &Symbol);
+  LLVM_DEBUGINFOPDB_ABI virtual void dump(const PDBSymbolUnknown &Symbol);
+  LLVM_DEBUGINFOPDB_ABI virtual void
+  dump(const PDBSymbolUsingNamespace &Symbol);
 
-  virtual void dumpRight(const PDBSymbolTypeArray &Symbol) {}
-  virtual void dumpRight(const PDBSymbolTypeBaseClass &Symbol) {}
-  virtual void dumpRight(const PDBSymbolTypeBuiltin &Symbol) {}
-  virtual void dumpRight(const PDBSymbolTypeCustom &Symbol) {}
-  virtual void dumpRight(const PDBSymbolTypeDimension &Symbol) {}
-  virtual void dumpRight(const PDBSymbolTypeEnum &Symbol) {}
-  virtual void dumpRight(const PDBSymbolTypeFriend &Symbol) {}
-  virtual void dumpRight(const PDBSymbolTypeFunctionArg &Symbol) {}
-  virtual void dumpRight(const PDBSymbolTypeFunctionSig &Symbol) {}
-  virtual void dumpRight(const PDBSymbolTypeManaged &Symbol) {}
-  virtual void dumpRight(const PDBSymbolTypePointer &Symbol) {}
-  virtual void dumpRight(const PDBSymbolTypeTypedef &Symbol) {}
-  virtual void dumpRight(const PDBSymbolTypeUDT &Symbol) {}
-  virtual void dumpRight(const PDBSymbolTypeVTable &Symbol) {}
-  virtual void dumpRight(const PDBSymbolTypeVTableShape &Symbol) {}
+  LLVM_DEBUGINFOPDB_ABI virtual void
+  dumpRight(const PDBSymbolTypeArray &Symbol) {}
+  LLVM_DEBUGINFOPDB_ABI virtual void
+  dumpRight(const PDBSymbolTypeBaseClass &Symbol) {}
+  LLVM_DEBUGINFOPDB_ABI virtual void
+  dumpRight(const PDBSymbolTypeBuiltin &Symbol) {}
+  LLVM_DEBUGINFOPDB_ABI virtual void
+  dumpRight(const PDBSymbolTypeCustom &Symbol) {}
+  LLVM_DEBUGINFOPDB_ABI virtual void
+  dumpRight(const PDBSymbolTypeDimension &Symbol) {}
+  LLVM_DEBUGINFOPDB_ABI virtual void
+  dumpRight(const PDBSymbolTypeEnum &Symbol) {}
+  LLVM_DEBUGINFOPDB_ABI virtual void
+  dumpRight(const PDBSymbolTypeFriend &Symbol) {}
+  LLVM_DEBUGINFOPDB_ABI virtual void
+  dumpRight(const PDBSymbolTypeFunctionArg &Symbol) {}
+  LLVM_DEBUGINFOPDB_ABI virtual void
+  dumpRight(const PDBSymbolTypeFunctionSig &Symbol) {}
+  LLVM_DEBUGINFOPDB_ABI virtual void
+  dumpRight(const PDBSymbolTypeManaged &Symbol) {}
+  LLVM_DEBUGINFOPDB_ABI virtual void
+  dumpRight(const PDBSymbolTypePointer &Symbol) {}
+  LLVM_DEBUGINFOPDB_ABI virtual void
+  dumpRight(const PDBSymbolTypeTypedef &Symbol) {}
+  LLVM_DEBUGINFOPDB_ABI virtual void dumpRight(const PDBSymbolTypeUDT &Symbol) {
+  }
+  LLVM_DEBUGINFOPDB_ABI virtual void
+  dumpRight(const PDBSymbolTypeVTable &Symbol) {}
+  LLVM_DEBUGINFOPDB_ABI virtual void
+  dumpRight(const PDBSymbolTypeVTableShape &Symbol) {}
 
 private:
   bool RequireImpl;
 };
-}
-}
+} // namespace pdb
+} // namespace llvm
 
 #endif

@@ -11,6 +11,7 @@
 
 #include "PDBSymbol.h"
 #include "PDBTypes.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 
 namespace llvm {
 
@@ -21,7 +22,7 @@ namespace pdb {
 class PDBSymbolExe : public PDBSymbol {
   DECLARE_PDB_SYMBOL_CONCRETE_TYPE(PDB_SymType::Exe)
 public:
-  void dump(PDBSymDumper &Dumper) const override;
+  LLVM_DEBUGINFOPDB_ABI void dump(PDBSymDumper &Dumper) const override;
 
   FORWARD_SYMBOL_METHOD(getAge)
   FORWARD_SYMBOL_METHOD(getGuid)
@@ -32,7 +33,7 @@ public:
   FORWARD_SYMBOL_METHOD(getSignature)
   FORWARD_SYMBOL_METHOD(getSymbolsFileName)
 
-  uint32_t getPointerByteSize() const;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getPointerByteSize() const;
 
 private:
   void dumpChildren(raw_ostream &OS, StringRef Label, PDB_SymType ChildType,

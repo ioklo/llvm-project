@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_PDB_PDBSYMBOLUNKNOWN_H
 
 #include "PDBSymbol.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 
 namespace llvm {
 
@@ -20,7 +21,7 @@ class PDBSymbolUnknown : public PDBSymbol {
                                  S->getSymTag() >= PDB_SymType::Max)
 
 public:
-  void dump(PDBSymDumper &Dumper) const override;
+  LLVM_DEBUGINFOPDB_ABI void dump(PDBSymDumper &Dumper) const override;
 };
 
 } // namespace pdb

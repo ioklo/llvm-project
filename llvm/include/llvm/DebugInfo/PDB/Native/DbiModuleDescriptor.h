@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_PDB_NATIVE_DBIMODULEDESCRIPTOR_H
 
 #include "llvm/ADT/StringRef.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/Support/BinaryStreamRef.h"
 #include "llvm/Support/Error.h"
 #include <cstdint>
@@ -28,24 +29,25 @@ public:
   DbiModuleDescriptor(const DbiModuleDescriptor &Info) = default;
   DbiModuleDescriptor &operator=(const DbiModuleDescriptor &Info) = default;
 
-  static Error initialize(BinaryStreamRef Stream, DbiModuleDescriptor &Info);
+  LLVM_DEBUGINFOPDB_ABI static Error initialize(BinaryStreamRef Stream,
+                                                DbiModuleDescriptor &Info);
 
-  bool hasECInfo() const;
-  uint16_t getTypeServerIndex() const;
-  uint16_t getModuleStreamIndex() const;
-  uint32_t getSymbolDebugInfoByteSize() const;
-  uint32_t getC11LineInfoByteSize() const;
-  uint32_t getC13LineInfoByteSize() const;
-  uint32_t getNumberOfFiles() const;
-  uint32_t getSourceFileNameIndex() const;
-  uint32_t getPdbFilePathNameIndex() const;
+  LLVM_DEBUGINFOPDB_ABI bool hasECInfo() const;
+  LLVM_DEBUGINFOPDB_ABI uint16_t getTypeServerIndex() const;
+  LLVM_DEBUGINFOPDB_ABI uint16_t getModuleStreamIndex() const;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getSymbolDebugInfoByteSize() const;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getC11LineInfoByteSize() const;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getC13LineInfoByteSize() const;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getNumberOfFiles() const;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getSourceFileNameIndex() const;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getPdbFilePathNameIndex() const;
 
-  StringRef getModuleName() const;
-  StringRef getObjFileName() const;
+  LLVM_DEBUGINFOPDB_ABI StringRef getModuleName() const;
+  LLVM_DEBUGINFOPDB_ABI StringRef getObjFileName() const;
 
-  uint32_t getRecordLength() const;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getRecordLength() const;
 
-  const SectionContrib &getSectionContrib() const;
+  LLVM_DEBUGINFOPDB_ABI const SectionContrib &getSectionContrib() const;
 
 private:
   StringRef ModuleName;

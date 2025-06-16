@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_PDB_DIA_DIAENUMINJECTEDSOURCES_H
 
 #include "DIASupport.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/IPDBEnumChildren.h"
 #include "llvm/DebugInfo/PDB/IPDBInjectedSource.h"
 
@@ -18,13 +19,14 @@ namespace pdb {
 
 class DIAEnumInjectedSources : public IPDBEnumChildren<IPDBInjectedSource> {
 public:
-  explicit DIAEnumInjectedSources(
+  LLVM_DEBUGINFOPDB_ABI explicit DIAEnumInjectedSources(
       CComPtr<IDiaEnumInjectedSources> DiaEnumerator);
 
-  uint32_t getChildCount() const override;
-  ChildTypePtr getChildAtIndex(uint32_t Index) const override;
-  ChildTypePtr getNext() override;
-  void reset() override;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getChildCount() const override;
+  LLVM_DEBUGINFOPDB_ABI ChildTypePtr
+  getChildAtIndex(uint32_t Index) const override;
+  LLVM_DEBUGINFOPDB_ABI ChildTypePtr getNext() override;
+  LLVM_DEBUGINFOPDB_ABI void reset() override;
 
 private:
   CComPtr<IDiaEnumInjectedSources> Enumerator;

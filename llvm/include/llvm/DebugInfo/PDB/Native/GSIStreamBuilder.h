@@ -12,6 +12,7 @@
 #include "llvm/ADT/DenseSet.h"
 #include "llvm/DebugInfo/CodeView/CVRecord.h"
 #include "llvm/DebugInfo/CodeView/CodeView.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/Native/GlobalsStream.h"
 #include "llvm/DebugInfo/PDB/Native/RawConstants.h"
 #include "llvm/Support/BinaryStreamRef.h"
@@ -46,30 +47,32 @@ struct SymbolDenseMapInfo;
 class GSIStreamBuilder {
 
 public:
-  explicit GSIStreamBuilder(msf::MSFBuilder &Msf);
-  ~GSIStreamBuilder();
+  LLVM_DEBUGINFOPDB_ABI explicit GSIStreamBuilder(msf::MSFBuilder &Msf);
+  LLVM_DEBUGINFOPDB_ABI ~GSIStreamBuilder();
 
   GSIStreamBuilder(const GSIStreamBuilder &) = delete;
   GSIStreamBuilder &operator=(const GSIStreamBuilder &) = delete;
 
-  Error finalizeMsfLayout();
+  LLVM_DEBUGINFOPDB_ABI Error finalizeMsfLayout();
 
-  Error commit(const msf::MSFLayout &Layout, WritableBinaryStreamRef Buffer);
+  LLVM_DEBUGINFOPDB_ABI Error commit(const msf::MSFLayout &Layout,
+                                     WritableBinaryStreamRef Buffer);
 
   uint32_t getPublicsStreamIndex() const { return PublicsStreamIndex; }
   uint32_t getGlobalsStreamIndex() const { return GlobalsStreamIndex; }
   uint32_t getRecordStreamIndex() const { return RecordStreamIndex; }
 
   // Add public symbols in bulk.
-  void addPublicSymbols(std::vector<BulkPublic> &&PublicsIn);
+  LLVM_DEBUGINFOPDB_ABI void
+  addPublicSymbols(std::vector<BulkPublic> &&PublicsIn);
 
-  void addGlobalSymbol(const codeview::ProcRefSym &Sym);
-  void addGlobalSymbol(const codeview::DataSym &Sym);
-  void addGlobalSymbol(const codeview::ConstantSym &Sym);
+  LLVM_DEBUGINFOPDB_ABI void addGlobalSymbol(const codeview::ProcRefSym &Sym);
+  LLVM_DEBUGINFOPDB_ABI void addGlobalSymbol(const codeview::DataSym &Sym);
+  LLVM_DEBUGINFOPDB_ABI void addGlobalSymbol(const codeview::ConstantSym &Sym);
 
   // Add a pre-serialized global symbol record. The caller must ensure that the
   // symbol data remains alive until the global stream is committed to disk.
-  void addGlobalSymbol(const codeview::CVSymbol &Sym);
+  LLVM_DEBUGINFOPDB_ABI void addGlobalSymbol(const codeview::CVSymbol &Sym);
 
 private:
   void finalizePublicBuckets();

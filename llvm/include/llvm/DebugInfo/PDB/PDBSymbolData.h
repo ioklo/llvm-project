@@ -11,6 +11,7 @@
 
 #include "PDBSymbol.h"
 #include "PDBTypes.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/IPDBRawSymbol.h"
 
 namespace llvm {
@@ -22,7 +23,7 @@ class PDBSymDumper;
 class PDBSymbolData : public PDBSymbol {
   DECLARE_PDB_SYMBOL_CONCRETE_TYPE(PDB_SymType::Data)
 public:
-  void dump(PDBSymDumper &Dumper) const override;
+  LLVM_DEBUGINFOPDB_ABI void dump(PDBSymDumper &Dumper) const override;
 
   FORWARD_SYMBOL_METHOD(getAccess)
   FORWARD_SYMBOL_METHOD(getAddressOffset)
@@ -50,8 +51,9 @@ public:
   FORWARD_SYMBOL_METHOD(getVirtualAddress)
   FORWARD_SYMBOL_METHOD(isVolatileType)
 
-  std::unique_ptr<IPDBEnumLineNumbers> getLineNumbers() const;
-  uint32_t getCompilandId() const;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumLineNumbers>
+  getLineNumbers() const;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getCompilandId() const;
 };
 } // namespace pdb
 } // namespace llvm

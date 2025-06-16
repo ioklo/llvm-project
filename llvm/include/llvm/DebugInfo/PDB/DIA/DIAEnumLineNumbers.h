@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_PDB_DIA_DIAENUMLINENUMBERS_H
 
 #include "DIASupport.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/IPDBEnumChildren.h"
 #include "llvm/DebugInfo/PDB/IPDBLineNumber.h"
 
@@ -19,17 +20,19 @@ class IPDBLineNumber;
 
 class DIAEnumLineNumbers : public IPDBEnumChildren<IPDBLineNumber> {
 public:
-  explicit DIAEnumLineNumbers(CComPtr<IDiaEnumLineNumbers> DiaEnumerator);
+  LLVM_DEBUGINFOPDB_ABI explicit DIAEnumLineNumbers(
+      CComPtr<IDiaEnumLineNumbers> DiaEnumerator);
 
-  uint32_t getChildCount() const override;
-  ChildTypePtr getChildAtIndex(uint32_t Index) const override;
-  ChildTypePtr getNext() override;
-  void reset() override;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getChildCount() const override;
+  LLVM_DEBUGINFOPDB_ABI ChildTypePtr
+  getChildAtIndex(uint32_t Index) const override;
+  LLVM_DEBUGINFOPDB_ABI ChildTypePtr getNext() override;
+  LLVM_DEBUGINFOPDB_ABI void reset() override;
 
 private:
   CComPtr<IDiaEnumLineNumbers> Enumerator;
 };
-}
-}
+} // namespace pdb
+} // namespace llvm
 
 #endif

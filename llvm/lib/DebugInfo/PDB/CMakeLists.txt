@@ -153,4 +153,8 @@ add_llvm_component_library(LLVMDebugInfoPDB
   DebugInfoMSF
   )
 
-target_link_libraries(LLVMDebugInfoPDB INTERFACE "${LIBPDB_ADDITIONAL_LIBRARIES}")
+if (BUILD_SHARED_LIBS)
+  target_link_libraries(LLVMDebugInfoPDB PRIVATE "${LIBPDB_ADDITIONAL_LIBRARIES}")
+else()
+  target_link_libraries(LLVMDebugInfoPDB INTERFACE "${LIBPDB_ADDITIONAL_LIBRARIES}")
+endif()

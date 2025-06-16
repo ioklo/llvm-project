@@ -15,6 +15,7 @@
 #include "llvm/DebugInfo/CodeView/Line.h"
 #include "llvm/DebugInfo/CodeView/TypeDeserializer.h"
 #include "llvm/DebugInfo/CodeView/TypeIndex.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/Native/NativeRawSymbol.h"
 #include "llvm/DebugInfo/PDB/Native/NativeSourceFile.h"
 #include "llvm/DebugInfo/PDB/PDBTypes.h"
@@ -86,7 +87,8 @@ class SymbolCache {
     bool IsTerminalEntry;
   };
 
-  std::vector<LineTableEntry> findLineTable(uint16_t Modi) const;
+  LLVM_DEBUGINFOPDB_ABI std::vector<LineTableEntry>
+  findLineTable(uint16_t Modi) const;
   mutable DenseMap<uint16_t, std::vector<LineTableEntry>> LineTable;
 
   SymIndexId createSymbolPlaceholder() const {
@@ -121,7 +123,7 @@ class SymbolCache {
                                                           uint32_t Offset);
 
 public:
-  SymbolCache(NativeSession &Session, DbiStream *Dbi);
+  LLVM_DEBUGINFOPDB_ABI SymbolCache(NativeSession &Session, DbiStream *Dbi);
 
   template <typename ConcreteSymbolT, typename... Args>
   SymIndexId createSymbol(Args &&...ConstructorArgs) const {
@@ -142,21 +144,22 @@ public:
     return Id;
   }
 
-  std::unique_ptr<IPDBEnumSymbols>
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumSymbols>
   createTypeEnumerator(codeview::TypeLeafKind Kind);
 
-  std::unique_ptr<IPDBEnumSymbols>
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumSymbols>
   createTypeEnumerator(std::vector<codeview::TypeLeafKind> Kinds);
 
-  std::unique_ptr<IPDBEnumSymbols>
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumSymbols>
   createGlobalsEnumerator(codeview::SymbolKind Kind);
 
-  SymIndexId findSymbolByTypeIndex(codeview::TypeIndex TI) const;
+  LLVM_DEBUGINFOPDB_ABI SymIndexId
+  findSymbolByTypeIndex(codeview::TypeIndex TI) const;
 
   template <typename ConcreteSymbolT, typename... Args>
   SymIndexId getOrCreateFieldListMember(codeview::TypeIndex FieldListTI,
                                         uint32_t Index,
-                                        Args &&... ConstructorArgs) {
+                                        Args &&...ConstructorArgs) {
     SymIndexId SymId = Cache.size();
     std::pair<codeview::TypeIndex, uint32_t> Key{FieldListTI, Index};
     auto Result = FieldListMembersToSymbolId.try_emplace(Key, SymId);
@@ -168,31 +171,36 @@ public:
     return SymId;
   }
 
-  SymIndexId getOrCreateGlobalSymbolByOffset(uint32_t Offset);
-  SymIndexId getOrCreateInlineSymbol(codeview::InlineSiteSym Sym,
-                                     uint64_t ParentAddr, uint16_t Modi,
-                                     uint32_t RecordOffset) const;
+  LLVM_DEBUGINFOPDB_ABI SymIndexId
+  getOrCreateGlobalSymbolByOffset(uint32_t Offset);
+  LLVM_DEBUGINFOPDB_ABI SymIndexId
+  getOrCreateInlineSymbol(codeview::InlineSiteSym Sym, uint64_t ParentAddr,
+                          uint16_t Modi, uint32_t RecordOffset) const;
 
-  std::unique_ptr<PDBSymbol>
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<PDBSymbol>
   findSymbolBySectOffset(uint32_t Sect, uint32_t Offset, PDB_SymType Type);
 
-  std::unique_ptr<IPDBEnumLineNumbers>
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumLineNumbers>
   findLineNumbersByVA(uint64_t VA, uint32_t Length) const;
 
-  std::unique_ptr<PDBSymbolCompiland> getOrCreateCompiland(uint32_t Index);
-  uint32_t getNumCompilands() const;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<PDBSymbolCompiland>
+  getOrCreateCompiland(uint32_t Index);
+  LLVM_DEBUGINFOPDB_ABI uint32_t getNumCompilands() const;
 
-  std::unique_ptr<PDBSymbol> getSymbolById(SymIndexId SymbolId) const;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<PDBSymbol>
+  getSymbolById(SymIndexId SymbolId) const;
 
-  NativeRawSymbol &getNativeSymbolById(SymIndexId SymbolId) const;
+  LLVM_DEBUGINFOPDB_ABI NativeRawSymbol &
+  getNativeSymbolById(SymIndexId SymbolId) const;
 
   template <typename ConcreteT>
   ConcreteT &getNativeSymbolById(SymIndexId SymbolId) const {
     return static_cast<ConcreteT &>(getNativeSymbolById(SymbolId));
   }
 
-  std::unique_ptr<IPDBSourceFile> getSourceFileById(SymIndexId FileId) const;
-  SymIndexId
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBSourceFile>
+  getSourceFileById(SymIndexId FileId) const;
+  SymIndexId LLVM_DEBUGINFOPDB_ABI
   getOrCreateSourceFile(const codeview::FileChecksumEntry &Checksum) const;
 };
 

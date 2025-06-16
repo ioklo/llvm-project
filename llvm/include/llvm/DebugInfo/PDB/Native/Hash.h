@@ -11,14 +11,15 @@
 
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/ADT/StringRef.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include <cstdint>
 
 namespace llvm {
 namespace pdb {
 
-uint32_t hashStringV1(StringRef Str);
-uint32_t hashStringV2(StringRef Str);
-uint32_t hashBufferV8(ArrayRef<uint8_t> Data);
+LLVM_DEBUGINFOPDB_ABI uint32_t hashStringV1(StringRef Str);
+LLVM_DEBUGINFOPDB_ABI uint32_t hashStringV2(StringRef Str);
+LLVM_DEBUGINFOPDB_ABI uint32_t hashBufferV8(ArrayRef<uint8_t> Data);
 
 } // end namespace pdb
 } // end namespace llvm

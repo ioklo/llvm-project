@@ -42,9 +42,11 @@ public:
   visitMemberEnd(CVMemberRecord &Record) override;
 
 #define TYPE_RECORD(EnumName, EnumVal, Name)                                   \
-  Error visitKnownRecord(CVType &CVR, Name##Record &Record) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI Error visitKnownRecord(                           \
+      CVType &CVR, Name##Record &Record) override;
 #define MEMBER_RECORD(EnumName, EnumVal, Name)                                 \
-  Error visitKnownMember(CVMemberRecord &CVR, Name##Record &Record) override;
+  LLVM_DEBUGINFOCODEVIEW_ABI Error visitKnownMember(                           \
+      CVMemberRecord &CVR, Name##Record &Record) override;
 #define TYPE_RECORD_ALIAS(EnumName, EnumVal, Name, AliasName)
 #define MEMBER_RECORD_ALIAS(EnumName, EnumVal, Name, AliasName)
 #include "llvm/DebugInfo/CodeView/CodeViewTypes.def"

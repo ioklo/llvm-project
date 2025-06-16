@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_PDB_NATIVE_NATIVEINLINESITESYMBOL_H
 
 #include "llvm/DebugInfo/CodeView/SymbolRecord.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/IPDBRawSymbol.h"
 #include "llvm/DebugInfo/PDB/Native/NativeRawSymbol.h"
 #include "llvm/DebugInfo/PDB/PDBTypes.h"
@@ -21,17 +22,19 @@ class NativeSession;
 
 class NativeInlineSiteSymbol : public NativeRawSymbol {
 public:
+  LLVM_DEBUGINFOPDB_ABI
   NativeInlineSiteSymbol(NativeSession &Session, SymIndexId Id,
                          const codeview::InlineSiteSym &Sym,
                          uint64_t ParentAddr);
 
-  ~NativeInlineSiteSymbol() override;
+  LLVM_DEBUGINFOPDB_ABI ~NativeInlineSiteSymbol() override;
 
-  void dump(raw_ostream &OS, int Indent, PdbSymbolIdField ShowIdFields,
-            PdbSymbolIdField RecurseIdFields) const override;
+  LLVM_DEBUGINFOPDB_ABI void
+  dump(raw_ostream &OS, int Indent, PdbSymbolIdField ShowIdFields,
+       PdbSymbolIdField RecurseIdFields) const override;
 
-  std::string getName() const override;
-  std::unique_ptr<IPDBEnumLineNumbers>
+  LLVM_DEBUGINFOPDB_ABI std::string getName() const override;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumLineNumbers>
   findInlineeLinesByVA(uint64_t VA, uint32_t Length) const override;
 
 private:

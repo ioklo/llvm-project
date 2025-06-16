@@ -11,6 +11,7 @@
 
 #include "llvm/ADT/iterator.h"
 #include "llvm/DebugInfo/CodeView/CVRecord.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/Native/RawTypes.h"
 #include "llvm/Support/BinaryStreamArray.h"
 #include "llvm/Support/Endian.h"
@@ -69,12 +70,13 @@ public:
 
 class GlobalsStream {
 public:
-  explicit GlobalsStream(std::unique_ptr<msf::MappedBlockStream> Stream);
-  ~GlobalsStream();
+  LLVM_DEBUGINFOPDB_ABI explicit GlobalsStream(
+      std::unique_ptr<msf::MappedBlockStream> Stream);
+  LLVM_DEBUGINFOPDB_ABI ~GlobalsStream();
   const GSIHashTable &getGlobalsTable() const { return GlobalsTable; }
-  Error reload();
+  LLVM_DEBUGINFOPDB_ABI Error reload();
 
-  std::vector<std::pair<uint32_t, codeview::CVSymbol>>
+  LLVM_DEBUGINFOPDB_ABI std::vector<std::pair<uint32_t, codeview::CVSymbol>>
   findRecordsByName(StringRef Name, const SymbolStream &Symbols) const;
 
 private:
@@ -82,6 +84,6 @@ private:
   std::unique_ptr<msf::MappedBlockStream> Stream;
 };
 } // namespace pdb
-}
+} // namespace llvm
 
 #endif

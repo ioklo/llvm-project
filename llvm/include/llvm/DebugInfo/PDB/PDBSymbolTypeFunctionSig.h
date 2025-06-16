@@ -11,6 +11,7 @@
 
 #include "PDBSymbol.h"
 #include "PDBTypes.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 
 namespace llvm {
 
@@ -20,13 +21,13 @@ namespace pdb {
 class PDBSymbolTypeFunctionSig : public PDBSymbol {
   DECLARE_PDB_SYMBOL_CONCRETE_TYPE(PDB_SymType::FunctionSig)
 public:
-  std::unique_ptr<IPDBEnumSymbols> getArguments() const;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumSymbols> getArguments() const;
 
-  void dump(PDBSymDumper &Dumper) const override;
-  void dumpRight(PDBSymDumper &Dumper) const override;
-  void dumpArgList(raw_ostream &OS) const;
+  LLVM_DEBUGINFOPDB_ABI void dump(PDBSymDumper &Dumper) const override;
+  LLVM_DEBUGINFOPDB_ABI void dumpRight(PDBSymDumper &Dumper) const override;
+  LLVM_DEBUGINFOPDB_ABI void dumpArgList(raw_ostream &OS) const;
 
-  bool isCVarArgs() const;
+  LLVM_DEBUGINFOPDB_ABI bool isCVarArgs() const;
 
   FORWARD_SYMBOL_METHOD(getCallingConvention)
   FORWARD_SYMBOL_ID_METHOD(getClassParent)

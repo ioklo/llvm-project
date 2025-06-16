@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_PDB_IPDBSOURCEFILE_H
 
 #include "PDBTypes.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include <memory>
 #include <string>
 
@@ -22,9 +23,9 @@ namespace pdb {
 /// information are stored in the PDB.
 class IPDBSourceFile {
 public:
-  virtual ~IPDBSourceFile();
+  LLVM_DEBUGINFOPDB_ABI virtual ~IPDBSourceFile();
 
-  void dump(raw_ostream &OS, int Indent) const;
+  LLVM_DEBUGINFOPDB_ABI void dump(raw_ostream &OS, int Indent) const;
 
   virtual std::string getFileName() const = 0;
   virtual uint32_t getUniqueId() const = 0;
@@ -33,7 +34,7 @@ public:
   virtual std::unique_ptr<IPDBEnumChildren<PDBSymbolCompiland>>
   getCompilands() const = 0;
 };
-}
-}
+} // namespace pdb
+} // namespace llvm
 
 #endif

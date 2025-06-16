@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_PDB_NATIVE_NATIVEEXESYMBOL_H
 
 #include "llvm/DebugInfo/CodeView/GUID.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/Native/NativeRawSymbol.h"
 #include "llvm/DebugInfo/PDB/PDBTypes.h"
 
@@ -25,16 +26,16 @@ class NativeExeSymbol : public NativeRawSymbol {
   DbiStream *Dbi = nullptr;
 
 public:
-  NativeExeSymbol(NativeSession &Session, SymIndexId Id);
+  LLVM_DEBUGINFOPDB_ABI NativeExeSymbol(NativeSession &Session, SymIndexId Id);
 
-  std::unique_ptr<IPDBEnumSymbols>
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumSymbols>
   findChildren(PDB_SymType Type) const override;
 
-  uint32_t getAge() const override;
-  std::string getSymbolsFileName() const override;
-  codeview::GUID getGuid() const override;
-  bool hasCTypes() const override;
-  bool hasPrivateSymbols() const override;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getAge() const override;
+  LLVM_DEBUGINFOPDB_ABI std::string getSymbolsFileName() const override;
+  LLVM_DEBUGINFOPDB_ABI codeview::GUID getGuid() const override;
+  LLVM_DEBUGINFOPDB_ABI bool hasCTypes() const override;
+  LLVM_DEBUGINFOPDB_ABI bool hasPrivateSymbols() const override;
 };
 
 } // namespace pdb

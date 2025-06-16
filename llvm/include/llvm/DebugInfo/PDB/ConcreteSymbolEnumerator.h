@@ -9,6 +9,7 @@
 #ifndef LLVM_DEBUGINFO_PDB_CONCRETESYMBOLENUMERATOR_H
 #define LLVM_DEBUGINFO_PDB_CONCRETESYMBOLENUMERATOR_H
 
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/IPDBEnumChildren.h"
 #include "llvm/DebugInfo/PDB/PDBTypes.h"
 #include "llvm/Support/Casting.h"
@@ -43,7 +44,6 @@ public:
   void reset() override { Enumerator->reset(); }
 
 private:
-
   std::unique_ptr<IPDBEnumSymbols> Enumerator;
 };
 

@@ -10,6 +10,7 @@
 #define LLVM_DEBUGINFO_PDB_NATIVE_DBISTREAM_H
 
 #include "llvm/DebugInfo/CodeView/DebugFrameDataSubsection.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/Native/DbiModuleList.h"
 #include "llvm/DebugInfo/PDB/Native/PDBStringTable.h"
 #include "llvm/DebugInfo/PDB/Native/RawConstants.h"
@@ -24,7 +25,7 @@ class BinaryStream;
 namespace object {
 struct FpoData;
 struct coff_section;
-}
+} // namespace object
 namespace msf {
 class MappedBlockStream;
 }
@@ -40,57 +41,63 @@ class DbiStream {
   friend class DbiStreamBuilder;
 
 public:
-  explicit DbiStream(std::unique_ptr<BinaryStream> Stream);
-  ~DbiStream();
-  Error reload(PDBFile *Pdb);
+  LLVM_DEBUGINFOPDB_ABI explicit DbiStream(
+      std::unique_ptr<BinaryStream> Stream);
+  LLVM_DEBUGINFOPDB_ABI ~DbiStream();
+  LLVM_DEBUGINFOPDB_ABI Error reload(PDBFile *Pdb);
 
-  PdbRaw_DbiVer getDbiVersion() const;
-  uint32_t getAge() const;
-  uint16_t getPublicSymbolStreamIndex() const;
-  uint16_t getGlobalSymbolStreamIndex() const;
+  LLVM_DEBUGINFOPDB_ABI PdbRaw_DbiVer getDbiVersion() const;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getAge() const;
+  LLVM_DEBUGINFOPDB_ABI uint16_t getPublicSymbolStreamIndex() const;
+  LLVM_DEBUGINFOPDB_ABI uint16_t getGlobalSymbolStreamIndex() const;
 
-  uint16_t getFlags() const;
-  bool isIncrementallyLinked() const;
-  bool hasCTypes() const;
-  bool isStripped() const;
+  LLVM_DEBUGINFOPDB_ABI uint16_t getFlags() const;
+  LLVM_DEBUGINFOPDB_ABI bool isIncrementallyLinked() const;
+  LLVM_DEBUGINFOPDB_ABI bool hasCTypes() const;
+  LLVM_DEBUGINFOPDB_ABI bool isStripped() const;
 
-  uint16_t getBuildNumber() const;
-  uint16_t getBuildMajorVersion() const;
-  uint16_t getBuildMinorVersion() const;
+  LLVM_DEBUGINFOPDB_ABI uint16_t getBuildNumber() const;
+  LLVM_DEBUGINFOPDB_ABI uint16_t getBuildMajorVersion() const;
+  LLVM_DEBUGINFOPDB_ABI uint16_t getBuildMinorVersion() const;
 
-  uint16_t getPdbDllRbld() const;
-  uint32_t getPdbDllVersion() const;
+  LLVM_DEBUGINFOPDB_ABI uint16_t getPdbDllRbld() const;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getPdbDllVersion() const;
 
-  uint32_t getSymRecordStreamIndex() const;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getSymRecordStreamIndex() const;
 
-  PDB_Machine getMachineType() const;
+  LLVM_DEBUGINFOPDB_ABI PDB_Machine getMachineType() const;
 
   const DbiStreamHeader *getHeader() const { return Header; }
 
-  BinarySubstreamRef getSectionContributionData() const;
-  BinarySubstreamRef getSecMapSubstreamData() const;
-  BinarySubstreamRef getModiSubstreamData() const;
-  BinarySubstreamRef getFileInfoSubstreamData() const;
-  BinarySubstreamRef getTypeServerMapSubstreamData() const;
-  BinarySubstreamRef getECSubstreamData() const;
+  LLVM_DEBUGINFOPDB_ABI BinarySubstreamRef getSectionContributionData() const;
+  LLVM_DEBUGINFOPDB_ABI BinarySubstreamRef getSecMapSubstreamData() const;
+  LLVM_DEBUGINFOPDB_ABI BinarySubstreamRef getModiSubstreamData() const;
+  LLVM_DEBUGINFOPDB_ABI BinarySubstreamRef getFileInfoSubstreamData() const;
+  LLVM_DEBUGINFOPDB_ABI BinarySubstreamRef
+  getTypeServerMapSubstreamData() const;
+  LLVM_DEBUGINFOPDB_ABI BinarySubstreamRef getECSubstreamData() const;
 
   /// If the given stream type is present, returns its stream index. If it is
   /// not present, returns InvalidStreamIndex.
-  uint32_t getDebugStreamIndex(DbgHeaderType Type) const;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getDebugStreamIndex(DbgHeaderType Type) const;
 
-  const DbiModuleList &modules() const;
+  LLVM_DEBUGINFOPDB_ABI const DbiModuleList &modules() const;
 
-  FixedStreamArray<object::coff_section> getSectionHeaders() const;
+  LLVM_DEBUGINFOPDB_ABI FixedStreamArray<object::coff_section>
+  getSectionHeaders() const;
 
-  bool hasOldFpoRecords() const;
-  FixedStreamArray<object::FpoData> getOldFpoRecords() const;
-  bool hasNewFpoRecords() const;
-  const codeview::DebugFrameDataSubsectionRef &getNewFpoRecords() const;
+  LLVM_DEBUGINFOPDB_ABI bool hasOldFpoRecords() const;
+  LLVM_DEBUGINFOPDB_ABI FixedStreamArray<object::FpoData>
+  getOldFpoRecords() const;
+  LLVM_DEBUGINFOPDB_ABI bool hasNewFpoRecords() const;
+  LLVM_DEBUGINFOPDB_ABI const codeview::DebugFrameDataSubsectionRef &
+  getNewFpoRecords() const;
 
-  FixedStreamArray<SecMapEntry> getSectionMap() const;
-  void visitSectionContributions(ISectionContribVisitor &Visitor) const;
+  LLVM_DEBUGINFOPDB_ABI FixedStreamArray<SecMapEntry> getSectionMap() const;
+  LLVM_DEBUGINFOPDB_ABI void
+  visitSectionContributions(ISectionContribVisitor &Visitor) const;
 
-  Expected<StringRef> getECName(uint32_t NI) const;
+  LLVM_DEBUGINFOPDB_ABI Expected<StringRef> getECName(uint32_t NI) const;
 
 private:
   Error initializeSectionContributionData();
@@ -128,13 +135,13 @@ private:
 
   std::unique_ptr<msf::MappedBlockStream> OldFpoStream;
   FixedStreamArray<object::FpoData> OldFpoRecords;
-  
+
   std::unique_ptr<msf::MappedBlockStream> NewFpoStream;
   codeview::DebugFrameDataSubsectionRef NewFpoRecords;
 
   const DbiStreamHeader *Header;
 };
-}
-}
+} // namespace pdb
+} // namespace llvm
 
 #endif

@@ -43,8 +43,8 @@ template <> struct VarStreamArrayExtractor<codeview::FileChecksumEntry> {
 public:
   using ContextType = void;
 
-  Error operator()(BinaryStreamRef Stream, uint32_t &Len,
-                   codeview::FileChecksumEntry &Item);
+  LLVM_DEBUGINFOCODEVIEW_ABI Error operator()(
+      BinaryStreamRef Stream, uint32_t &Len, codeview::FileChecksumEntry &Item);
 };
 
 namespace codeview {

@@ -12,6 +12,7 @@
 #include "PDBSymbol.h"
 #include "PDBTypes.h"
 #include "llvm/ADT/SmallVector.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 
 namespace llvm {
 
@@ -22,12 +23,13 @@ namespace pdb {
 class PDBSymbolCustom : public PDBSymbol {
   DECLARE_PDB_SYMBOL_CONCRETE_TYPE(PDB_SymType::Custom)
 public:
-  void dump(PDBSymDumper &Dumper) const override;
+  LLVM_DEBUGINFOPDB_ABI void dump(PDBSymDumper &Dumper) const override;
 
-  void getDataBytes(llvm::SmallVector<uint8_t, 32> &bytes);
+  LLVM_DEBUGINFOPDB_ABI void
+  getDataBytes(llvm::SmallVector<uint8_t, 32> &bytes);
 };
 
+} // namespace pdb
 } // namespace llvm
-}
 
 #endif // LLVM_DEBUGINFO_PDB_PDBSYMBOLCUSTOM_H

@@ -11,6 +11,7 @@
 
 #include "llvm/ADT/IntervalMap.h"
 #include "llvm/ADT/StringRef.h"
+#include "llvm/DebugInfo/PDB/DebugInfoPDBConfig.h"
 #include "llvm/DebugInfo/PDB/IPDBSession.h"
 #include "llvm/DebugInfo/PDB/Native/SymbolCache.h"
 #include "llvm/DebugInfo/PDB/PDBTypes.h"
@@ -36,88 +37,104 @@ class NativeSession : public IPDBSession {
   };
 
 public:
+  LLVM_DEBUGINFOPDB_ABI
   NativeSession(std::unique_ptr<PDBFile> PdbFile,
                 std::unique_ptr<BumpPtrAllocator> Allocator);
-  ~NativeSession() override;
+  LLVM_DEBUGINFOPDB_ABI ~NativeSession() override;
 
-  static Error createFromPdb(std::unique_ptr<MemoryBuffer> MB,
-                             std::unique_ptr<IPDBSession> &Session);
-  static Error createFromPdbPath(StringRef PdbPath,
-                                 std::unique_ptr<IPDBSession> &Session);
-  static Error createFromExe(StringRef Path,
-                             std::unique_ptr<IPDBSession> &Session);
-  static Expected<std::string> searchForPdb(const PdbSearchOptions &Opts);
+  LLVM_DEBUGINFOPDB_ABI static Error
+  createFromPdb(std::unique_ptr<MemoryBuffer> MB,
+                std::unique_ptr<IPDBSession> &Session);
+  LLVM_DEBUGINFOPDB_ABI static Error
+  createFromPdbPath(StringRef PdbPath, std::unique_ptr<IPDBSession> &Session);
+  LLVM_DEBUGINFOPDB_ABI static Error
+  createFromExe(StringRef Path, std::unique_ptr<IPDBSession> &Session);
+  LLVM_DEBUGINFOPDB_ABI static Expected<std::string>
+  searchForPdb(const PdbSearchOptions &Opts);
 
-  uint64_t getLoadAddress() const override;
-  bool setLoadAddress(uint64_t Address) override;
-  std::unique_ptr<PDBSymbolExe> getGlobalScope() override;
-  std::unique_ptr<PDBSymbol> getSymbolById(SymIndexId SymbolId) const override;
+  LLVM_DEBUGINFOPDB_ABI uint64_t getLoadAddress() const override;
+  LLVM_DEBUGINFOPDB_ABI bool setLoadAddress(uint64_t Address) override;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<PDBSymbolExe> getGlobalScope() override;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<PDBSymbol>
+  getSymbolById(SymIndexId SymbolId) const override;
 
-  bool addressForVA(uint64_t VA, uint32_t &Section,
-                    uint32_t &Offset) const override;
-  bool addressForRVA(uint32_t RVA, uint32_t &Section,
-                     uint32_t &Offset) const override;
+  LLVM_DEBUGINFOPDB_ABI bool addressForVA(uint64_t VA, uint32_t &Section,
+                                          uint32_t &Offset) const override;
+  LLVM_DEBUGINFOPDB_ABI bool addressForRVA(uint32_t RVA, uint32_t &Section,
+                                           uint32_t &Offset) const override;
 
-  std::unique_ptr<PDBSymbol> findSymbolByAddress(uint64_t Address,
-                                                 PDB_SymType Type) override;
-  std::unique_ptr<PDBSymbol> findSymbolByRVA(uint32_t RVA,
-                                             PDB_SymType Type) override;
-  std::unique_ptr<PDBSymbol> findSymbolBySectOffset(uint32_t Sect,
-                                                    uint32_t Offset,
-                                                    PDB_SymType Type) override;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<PDBSymbol>
+  findSymbolByAddress(uint64_t Address, PDB_SymType Type) override;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<PDBSymbol>
+  findSymbolByRVA(uint32_t RVA, PDB_SymType Type) override;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<PDBSymbol>
+  findSymbolBySectOffset(uint32_t Sect, uint32_t Offset,
+                         PDB_SymType Type) override;
 
-  std::unique_ptr<IPDBEnumLineNumbers>
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumLineNumbers>
   findLineNumbers(const PDBSymbolCompiland &Compiland,
                   const IPDBSourceFile &File) const override;
-  std::unique_ptr<IPDBEnumLineNumbers>
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumLineNumbers>
   findLineNumbersByAddress(uint64_t Address, uint32_t Length) const override;
-  std::unique_ptr<IPDBEnumLineNumbers>
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumLineNumbers>
   findLineNumbersByRVA(uint32_t RVA, uint32_t Length) const override;
-  std::unique_ptr<IPDBEnumLineNumbers>
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumLineNumbers>
   findLineNumbersBySectOffset(uint32_t Section, uint32_t Offset,
                               uint32_t Length) const override;
 
-  std::unique_ptr<IPDBEnumSourceFiles>
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumSourceFiles>
   findSourceFiles(const PDBSymbolCompiland *Compiland, llvm::StringRef Pattern,
                   PDB_NameSearchFlags Flags) const override;
-  std::unique_ptr<IPDBSourceFile>
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBSourceFile>
   findOneSourceFile(const PDBSymbolCompiland *Compiland,
                     llvm::StringRef Pattern,
                     PDB_NameSearchFlags Flags) const override;
-  std::unique_ptr<IPDBEnumChildren<PDBSymbolCompiland>>
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumChildren<PDBSymbolCompiland>>
   findCompilandsForSourceFile(llvm::StringRef Pattern,
                               PDB_NameSearchFlags Flags) const override;
-  std::unique_ptr<PDBSymbolCompiland>
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<PDBSymbolCompiland>
   findOneCompilandForSourceFile(llvm::StringRef Pattern,
                                 PDB_NameSearchFlags Flags) const override;
-  std::unique_ptr<IPDBEnumSourceFiles> getAllSourceFiles() const override;
-  std::unique_ptr<IPDBEnumSourceFiles> getSourceFilesForCompiland(
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumSourceFiles>
+  getAllSourceFiles() const override;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumSourceFiles>
+  getSourceFilesForCompiland(
       const PDBSymbolCompiland &Compiland) const override;
-  std::unique_ptr<IPDBSourceFile>
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBSourceFile>
   getSourceFileById(uint32_t FileId) const override;
 
-  std::unique_ptr<IPDBEnumDataStreams> getDebugStreams() const override;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumDataStreams>
+  getDebugStreams() const override;
 
-  std::unique_ptr<IPDBEnumTables> getEnumTables() const override;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumTables>
+  getEnumTables() const override;
 
-  std::unique_ptr<IPDBEnumInjectedSources> getInjectedSources() const override;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumInjectedSources>
+  getInjectedSources() const override;
 
-  std::unique_ptr<IPDBEnumSectionContribs> getSectionContribs() const override;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumSectionContribs>
+  getSectionContribs() const override;
 
-  std::unique_ptr<IPDBEnumFrameData> getFrameData() const override;
+  LLVM_DEBUGINFOPDB_ABI std::unique_ptr<IPDBEnumFrameData>
+  getFrameData() const override;
 
   PDBFile &getPDBFile() { return *Pdb; }
   const PDBFile &getPDBFile() const { return *Pdb; }
 
-  NativeExeSymbol &getNativeGlobalScope() const;
+  LLVM_DEBUGINFOPDB_ABI NativeExeSymbol &getNativeGlobalScope() const;
   SymbolCache &getSymbolCache() { return Cache; }
   const SymbolCache &getSymbolCache() const { return Cache; }
-  uint32_t getRVAFromSectOffset(uint32_t Section, uint32_t Offset) const;
-  uint64_t getVAFromSectOffset(uint32_t Section, uint32_t Offset) const;
-  bool moduleIndexForVA(uint64_t VA, uint16_t &ModuleIndex) const;
-  bool moduleIndexForSectOffset(uint32_t Sect, uint32_t Offset,
-                                uint16_t &ModuleIndex) const;
-  Expected<ModuleDebugStreamRef> getModuleDebugStream(uint32_t Index) const;
+  LLVM_DEBUGINFOPDB_ABI uint32_t getRVAFromSectOffset(uint32_t Section,
+                                                      uint32_t Offset) const;
+  LLVM_DEBUGINFOPDB_ABI uint64_t getVAFromSectOffset(uint32_t Section,
+                                                     uint32_t Offset) const;
+  LLVM_DEBUGINFOPDB_ABI bool moduleIndexForVA(uint64_t VA,
+                                              uint16_t &ModuleIndex) const;
+  LLVM_DEBUGINFOPDB_ABI bool
+  moduleIndexForSectOffset(uint32_t Sect, uint32_t Offset,
+                           uint16_t &ModuleIndex) const;
+  LLVM_DEBUGINFOPDB_ABI Expected<ModuleDebugStreamRef>
+  getModuleDebugStream(uint32_t Index) const;
 
 private:
   void initializeExeSymbol();
