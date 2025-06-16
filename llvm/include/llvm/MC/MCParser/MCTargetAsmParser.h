@@ -13,6 +13,7 @@
 #include "llvm/MC/MCExpr.h"
 #include "llvm/MC/MCParser/MCAsmParserExtension.h"
 #include "llvm/MC/MCParser/MCParsedAsmOperand.h"
+#include "llvm/MC/MCParser/MCParserConfig.h"
 #include "llvm/MC/MCRegister.h"
 #include "llvm/MC/MCTargetOptions.h"
 #include "llvm/Support/SMLoc.h"
@@ -43,21 +44,21 @@ enum AsmRewriteKind {
   AOK_Label,          // Rewrite local labels.
   AOK_EndOfStatement, // Add EndOfStatement (e.g., "\n\t").
   AOK_Skip,           // Skip emission (e.g., offset/type operators).
-  AOK_IntelExpr       // SizeDirective SymDisp [BaseReg + IndexReg * Scale + ImmDisp]
+  AOK_IntelExpr // SizeDirective SymDisp [BaseReg + IndexReg * Scale + ImmDisp]
 };
 
-const char AsmRewritePrecedence [] = {
-  2, // AOK_Align
-  2, // AOK_EVEN
-  2, // AOK_Emit
-  3, // AOK_Input
-  3, // AOK_CallInput
-  3, // AOK_Output
-  5, // AOK_SizeDirective
-  1, // AOK_Label
-  5, // AOK_EndOfStatement
-  2, // AOK_Skip
-  2  // AOK_IntelExpr
+const char AsmRewritePrecedence[] = {
+    2, // AOK_Align
+    2, // AOK_EVEN
+    2, // AOK_Emit
+    3, // AOK_Input
+    3, // AOK_CallInput
+    3, // AOK_Output
+    5, // AOK_SizeDirective
+    1, // AOK_Label
+    5, // AOK_EndOfStatement
+    2, // AOK_Skip
+    2  // AOK_IntelExpr
 };
 
 // Represent the various parts which make up an intel expression,
@@ -109,9 +110,13 @@ public:
     IntelExpRestricted = Restricted;
   }
   AsmRewrite(AsmRewriteKind kind, SMLoc loc, unsigned len, StringRef label)
-    : AsmRewrite(kind, loc, len) { Label = label; }
+      : AsmRewrite(kind, loc, len) {
+    Label = label;
+  }
   AsmRewrite(SMLoc loc, unsigned len, IntelExpr exp)
-    : AsmRewrite(AOK_IntelExpr, loc, len) { IntelExp = exp; }
+      : AsmRewrite(AOK_IntelExpr, loc, len) {
+    IntelExp = exp;
+  }
 };
 
 struct ParseInstructionInfo {
@@ -119,7 +124,7 @@ struct ParseInstructionInfo {
 
   ParseInstructionInfo() = default;
   ParseInstructionInfo(SmallVectorImpl<AsmRewrite> *rewrites)
-    : AsmRewrites(rewrites) {}
+      : AsmRewrites(rewrites) {}
 };
 
 enum OperandMatchResultTy {
@@ -207,7 +212,7 @@ struct DiagnosticPredicate {
                    : DiagnosticPredicateTy::NearMatch) {}
   DiagnosticPredicate(DiagnosticPredicateTy T) : Type(T) {}
   DiagnosticPredicate(const DiagnosticPredicate &) = default;
-  DiagnosticPredicate& operator=(const DiagnosticPredicate &) = default;
+  DiagnosticPredicate &operator=(const DiagnosticPredicate &) = default;
 
   operator bool() const { return Type == DiagnosticPredicateTy::Match; }
   bool isMatch() const { return Type == DiagnosticPredicateTy::Match; }
@@ -289,7 +294,7 @@ public:
 
   // Feature flags required by the instruction, that the current target does
   // not have.
-  const FeatureBitset& getFeatures() const {
+  const FeatureBitset &getFeatures() const {
     assert(Kind == NearMissFeature);
     return Features;
   }
@@ -362,11 +367,12 @@ public:
   };
 
 protected: // Can only create subclasses.
-  MCTargetAsmParser(MCTargetOptions const &, const MCSubtargetInfo &STI,
-                    const MCInstrInfo &MII);
+  LLVM_MCPARSER_ABI MCTargetAsmParser(MCTargetOptions const &,
+                                      const MCSubtargetInfo &STI,
+                                      const MCInstrInfo &MII);
 
   /// Create a copy of STI and return a non-const reference to it.
-  MCSubtargetInfo &copySTI();
+  LLVM_MCPARSER_ABI MCSubtargetInfo &copySTI();
 
   /// AvailableFeatures - The current set of available features.
   FeatureBitset AvailableFeatures;
@@ -390,19 +396,19 @@ public:
   MCTargetAsmParser(const MCTargetAsmParser &) = delete;
   MCTargetAsmParser &operator=(const MCTargetAsmParser &) = delete;
 
-  ~MCTargetAsmParser() override;
+  LLVM_MCPARSER_ABI ~MCTargetAsmParser() override;
 
-  const MCSubtargetInfo &getSTI() const;
+  LLVM_MCPARSER_ABI const MCSubtargetInfo &getSTI() const;
 
-  const FeatureBitset& getAvailableFeatures() const {
+  const FeatureBitset &getAvailableFeatures() const {
     return AvailableFeatures;
   }
-  void setAvailableFeatures(const FeatureBitset& Value) {
+  void setAvailableFeatures(const FeatureBitset &Value) {
     AvailableFeatures = Value;
   }
 
-  bool isParsingMSInlineAsm () { return ParsingMSInlineAsm; }
-  void setParsingMSInlineAsm (bool Value) { ParsingMSInlineAsm = Value; }
+  bool isParsingMSInlineAsm() { return ParsingMSInlineAsm; }
+  void setParsingMSInlineAsm(bool Value) { ParsingMSInlineAsm = Value; }
 
   MCTargetOptions getTargetOptions() const { return MCOptions; }
 
@@ -469,7 +475,7 @@ public:
   /// not target-specific, no tokens should be consumed and NoMatch is returned.
   ///
   /// \param DirectiveID - The token identifying the directive.
-  virtual ParseStatus parseDirective(AsmToken DirectiveID);
+  LLVM_MCPARSER_ABI virtual ParseStatus parseDirective(AsmToken DirectiveID);
 
   /// Recognize a series of operands of a parsed
   /// instruction as an actual MCInst and emit it to the specified MCStreamer.
@@ -513,8 +519,9 @@ public:
   /// Returns whether two operands are registers and are equal. This is used
   /// by the tied-operands checks in the AsmMatcher. This method can be
   /// overridden to allow e.g. a sub- or super-register as the tied operand.
-  virtual bool areEqualRegs(const MCParsedAsmOperand &Op1,
-                            const MCParsedAsmOperand &Op2) const;
+  LLVM_MCPARSER_ABI virtual bool
+  areEqualRegs(const MCParsedAsmOperand &Op1,
+               const MCParsedAsmOperand &Op2) const;
 
   // Return whether this parser uses assignment statements with equals tokens
   virtual bool equalIsAsmAssignment() { return true; };
@@ -535,7 +542,7 @@ public:
 
   // For actions that have to be performed before a label is emitted
   virtual void doBeforeLabelEmit(MCSymbol *Symbol, SMLoc IDLoc) {}
-  
+
   virtual void onLabelParsed(MCSymbol *Symbol) {}
 
   /// Ensure that all previously parsed instructions have been emitted to the

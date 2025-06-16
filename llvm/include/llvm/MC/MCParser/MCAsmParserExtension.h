@@ -12,6 +12,7 @@
 #include "llvm/ADT/STLFunctionalExtras.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/MC/MCParser/MCAsmParser.h"
+#include "llvm/MC/MCParser/MCParserConfig.h"
 #include "llvm/Support/SMLoc.h"
 
 namespace llvm {
@@ -25,14 +26,13 @@ class MCAsmParserExtension {
   MCAsmParser *Parser = nullptr;
 
 protected:
-  MCAsmParserExtension();
+  LLVM_MCPARSER_ABI MCAsmParserExtension();
 
   // Helper template for implementing static dispatch functions.
-  template<typename T, bool (T::*Handler)(StringRef, SMLoc)>
-  static bool HandleDirective(MCAsmParserExtension *Target,
-                              StringRef Directive,
+  template <typename T, bool (T::*Handler)(StringRef, SMLoc)>
+  static bool HandleDirective(MCAsmParserExtension *Target, StringRef Directive,
                               SMLoc DirectiveLoc) {
-    T *Obj = static_cast<T*>(Target);
+    T *Obj = static_cast<T *>(Target);
     return (Obj->*Handler)(Directive, DirectiveLoc);
   }
 
@@ -41,12 +41,12 @@ protected:
 public:
   MCAsmParserExtension(const MCAsmParserExtension &) = delete;
   MCAsmParserExtension &operator=(const MCAsmParserExtension &) = delete;
-  virtual ~MCAsmParserExtension();
+  LLVM_MCPARSER_ABI virtual ~MCAsmParserExtension();
 
   /// Initialize the extension for parsing using the given \p Parser.
   /// The extension should use the AsmParser interfaces to register its
   /// parsing routines.
-  virtual void Initialize(MCAsmParser &Parser);
+  LLVM_MCPARSER_ABI virtual void Initialize(MCAsmParser &Parser);
 
   /// \name MCAsmParser Proxy Interfaces
   /// @{
@@ -60,7 +60,7 @@ public:
 
   MCAsmParser &getParser() { return *Parser; }
   const MCAsmParser &getParser() const {
-    return const_cast<MCAsmParserExtension*>(this)->getParser();
+    return const_cast<MCAsmParserExtension *>(this)->getParser();
   }
 
   SourceMgr &getSourceManager() { return getParser().getSourceManager(); }
@@ -74,13 +74,9 @@ public:
     return getParser().Error(L, Msg, Range);
   }
 
-  void Note(SMLoc L, const Twine &Msg) {
-    getParser().Note(L, Msg);
-  }
+  void Note(SMLoc L, const Twine &Msg) { getParser().Note(L, Msg); }
 
-  bool TokError(const Twine &Msg) {
-    return getParser().TokError(Msg);
-  }
+  bool TokError(const Twine &Msg) { return getParser().TokError(Msg); }
 
   const AsmToken &Lex() { return getParser().Lex(); }
   const AsmToken &getTok() { return getParser().getTok(); }
@@ -98,11 +94,9 @@ public:
     return getParser().parseOptionalToken(T);
   }
 
-  bool parseDirectiveCGProfile(StringRef, SMLoc);
+  LLVM_MCPARSER_ABI bool parseDirectiveCGProfile(StringRef, SMLoc);
 
-  bool check(bool P, const Twine &Msg) {
-    return getParser().check(P, Msg);
-  }
+  bool check(bool P, const Twine &Msg) { return getParser().check(P, Msg); }
 
   bool check(bool P, SMLoc Loc, const Twine &Msg) {
     return getParser().check(P, Loc, Msg);

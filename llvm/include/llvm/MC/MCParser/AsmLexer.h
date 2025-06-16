@@ -15,6 +15,7 @@
 
 #include "llvm/ADT/StringRef.h"
 #include "llvm/MC/MCParser/MCAsmLexer.h"
+#include "llvm/MC/MCParser/MCParserConfig.h"
 #include <string>
 
 namespace llvm {
@@ -37,18 +38,18 @@ protected:
   AsmToken LexToken() override;
 
 public:
-  AsmLexer(const MCAsmInfo &MAI);
+  LLVM_MCPARSER_ABI AsmLexer(const MCAsmInfo &MAI);
   AsmLexer(const AsmLexer &) = delete;
   AsmLexer &operator=(const AsmLexer &) = delete;
-  ~AsmLexer() override;
+  LLVM_MCPARSER_ABI ~AsmLexer() override;
 
-  void setBuffer(StringRef Buf, const char *ptr = nullptr,
-                 bool EndStatementAtEOF = true);
+  LLVM_MCPARSER_ABI void setBuffer(StringRef Buf, const char *ptr = nullptr,
+                                   bool EndStatementAtEOF = true);
 
-  StringRef LexUntilEndOfStatement() override;
+  LLVM_MCPARSER_ABI StringRef LexUntilEndOfStatement() override;
 
-  size_t peekTokens(MutableArrayRef<AsmToken> Buf,
-                    bool ShouldSkipSpace = true) override;
+  LLVM_MCPARSER_ABI size_t peekTokens(MutableArrayRef<AsmToken> Buf,
+                                      bool ShouldSkipSpace = true) override;
 
   const MCAsmInfo &getMAI() const { return MAI; }
 

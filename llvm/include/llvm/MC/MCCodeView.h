@@ -228,7 +228,7 @@ public:
 
   /// Add something to the string table.  Returns the final string as well as
   /// offset into the string table.
-  std::pair<StringRef, unsigned> addToStringTable(StringRef S);
+  LLVM_MC_ABI std::pair<StringRef, unsigned> addToStringTable(StringRef S);
 
 private:
   MCContext *MCCtx;

@@ -12,6 +12,7 @@
 #include "llvm/ADT/ArrayRef.h"
 #include "llvm/ADT/SmallVector.h"
 #include "llvm/MC/MCAsmMacro.h"
+#include "llvm/MC/MCParser/MCParserConfig.h"
 #include <cassert>
 #include <cstddef>
 #include <string>
@@ -30,7 +31,6 @@ public:
   /// newline for single-line comments.
   virtual void HandleComment(SMLoc Loc, StringRef CommentText) = 0;
 };
-
 
 /// Generic assembler lexer interface, for use by target specific assembly
 /// lexers.
@@ -58,7 +58,7 @@ protected: // Can only create subclasses.
   bool LexHLASMStrings = false;
   AsmCommentConsumer *CommentConsumer = nullptr;
 
-  MCAsmLexer();
+  LLVM_MCPARSER_ABI MCAsmLexer();
 
   virtual AsmToken LexToken() = 0;
 
@@ -70,7 +70,7 @@ protected: // Can only create subclasses.
 public:
   MCAsmLexer(const MCAsmLexer &) = delete;
   MCAsmLexer &operator=(const MCAsmLexer &) = delete;
-  virtual ~MCAsmLexer();
+  LLVM_MCPARSER_ABI virtual ~MCAsmLexer();
 
   /// Consume the next token from the input stream and return it.
   ///
@@ -100,12 +100,10 @@ public:
   virtual StringRef LexUntilEndOfStatement() = 0;
 
   /// Get the current source location.
-  SMLoc getLoc() const;
+  LLVM_MCPARSER_ABI SMLoc getLoc() const;
 
   /// Get the current (last) lexed token.
-  const AsmToken &getTok() const {
-    return CurTok[0];
-  }
+  const AsmToken &getTok() const { return CurTok[0]; }
 
   /// Look ahead at the next token to be lexed.
   const AsmToken peekTok(bool ShouldSkipSpace = true) {
@@ -125,14 +123,10 @@ public:
                             bool ShouldSkipSpace = true) = 0;
 
   /// Get the current error location
-  SMLoc getErrLoc() {
-    return ErrLoc;
-  }
+  SMLoc getErrLoc() { return ErrLoc; }
 
   /// Get the current error string
-  const std::string &getErr() {
-    return Err;
-  }
+  const std::string &getErr() { return Err; }
 
   /// Get the kind of current token.
   AsmToken::TokenKind getKind() const { return getTok().getKind(); }

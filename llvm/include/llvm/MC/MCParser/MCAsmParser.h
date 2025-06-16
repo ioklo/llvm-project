@@ -15,6 +15,7 @@
 #include "llvm/ADT/StringRef.h"
 #include "llvm/ADT/Twine.h"
 #include "llvm/MC/MCAsmMacro.h"
+#include "llvm/MC/MCParser/MCParserConfig.h"
 #include "llvm/Support/SMLoc.h"
 #include <cstdint>
 #include <string>
@@ -35,10 +36,10 @@ class SourceMgr;
 
 struct InlineAsmIdentifierInfo {
   enum IdKind {
-    IK_Invalid,  // Initial state. Unexpected after a successful parsing.
-    IK_Label,    // Function/Label reference.
-    IK_EnumVal,  // Value of enumeration type.
-    IK_Var       // Variable.
+    IK_Invalid, // Initial state. Unexpected after a successful parsing.
+    IK_Label,   // Function/Label reference.
+    IK_EnumVal, // Value of enumeration type.
+    IK_Var      // Variable.
   };
   // Represents an Enum value
   struct EnumIdentifier {
@@ -107,7 +108,7 @@ struct AsmFieldInfo {
 /// Generic Sema callback for assembly parser.
 class MCAsmParserSemaCallback {
 public:
-  virtual ~MCAsmParserSemaCallback();
+  LLVM_MCPARSER_ABI virtual ~MCAsmParserSemaCallback();
 
   virtual void LookupInlineAsmIdentifier(StringRef &LineBuf,
                                          InlineAsmIdentifierInfo &Info,
@@ -122,9 +123,9 @@ public:
 /// assembly parsers.
 class MCAsmParser {
 public:
-  using DirectiveHandler = bool (*)(MCAsmParserExtension*, StringRef, SMLoc);
+  using DirectiveHandler = bool (*)(MCAsmParserExtension *, StringRef, SMLoc);
   using ExtensionDirectiveHandler =
-      std::pair<MCAsmParserExtension*, DirectiveHandler>;
+      std::pair<MCAsmParserExtension *, DirectiveHandler>;
 
   struct MCPendingError {
     SMLoc Loc;
@@ -136,7 +137,7 @@ private:
   MCTargetAsmParser *TargetParser = nullptr;
 
 protected: // Can only create subclasses.
-  MCAsmParser();
+  LLVM_MCPARSER_ABI MCAsmParser();
 
   SmallVector<MCPendingError, 0> PendingErrors;
 
@@ -148,7 +149,7 @@ protected: // Can only create subclasses.
 public:
   MCAsmParser(const MCAsmParser &) = delete;
   MCAsmParser &operator=(const MCAsmParser &) = delete;
-  virtual ~MCAsmParser();
+  LLVM_MCPARSER_ABI virtual ~MCAsmParser();
 
   virtual void addDirectiveHandler(StringRef Directive,
                                    ExtensionDirectiveHandler Handler) = 0;
@@ -159,7 +160,7 @@ public:
 
   virtual MCAsmLexer &getLexer() = 0;
   const MCAsmLexer &getLexer() const {
-    return const_cast<MCAsmParser*>(this)->getLexer();
+    return const_cast<MCAsmParser *>(this)->getLexer();
   }
 
   virtual MCContext &getContext() = 0;
@@ -168,10 +169,10 @@ public:
   virtual MCStreamer &getStreamer() = 0;
 
   MCTargetAsmParser &getTargetParser() const { return *TargetParser; }
-  void setTargetParser(MCTargetAsmParser &P);
+  LLVM_MCPARSER_ABI void setTargetParser(MCTargetAsmParser &P);
 
-  virtual unsigned getAssemblerDialect() { return 0;}
-  virtual void setAssemblerDialect(unsigned i) { }
+  virtual unsigned getAssemblerDialect() { return 0; }
+  virtual void setAssemblerDialect(unsigned i) {}
 
   bool getShowParsedOperands() const { return ShowParsedOperands; }
   void setShowParsedOperands(bool Value) { ShowParsedOperands = Value; }
@@ -223,7 +224,8 @@ public:
   ///
   /// \return The return value is always true, as an idiomatic convenience to
   /// clients.
-  bool Error(SMLoc L, const Twine &Msg, SMRange Range = std::nullopt);
+  LLVM_MCPARSER_ABI bool Error(SMLoc L, const Twine &Msg,
+                               SMRange Range = std::nullopt);
 
   /// Emit an error at the location \p L, with the message \p Msg.
   ///
@@ -245,35 +247,38 @@ public:
 
   void clearPendingErrors() { PendingErrors.clear(); }
 
-  bool addErrorSuffix(const Twine &Suffix);
+  LLVM_MCPARSER_ABI bool addErrorSuffix(const Twine &Suffix);
 
   /// Get the next AsmToken in the stream, possibly handling file
   /// inclusion first.
   virtual const AsmToken &Lex() = 0;
 
   /// Get the current AsmToken from the stream.
-  const AsmToken &getTok() const;
+  LLVM_MCPARSER_ABI const AsmToken &getTok() const;
 
   /// Report an error at the current lexer location.
-  bool TokError(const Twine &Msg, SMRange Range = std::nullopt);
+  LLVM_MCPARSER_ABI bool TokError(const Twine &Msg,
+                                  SMRange Range = std::nullopt);
 
-  bool parseTokenLoc(SMLoc &Loc);
-  bool parseToken(AsmToken::TokenKind T, const Twine &Msg = "unexpected token");
+  LLVM_MCPARSER_ABI bool parseTokenLoc(SMLoc &Loc);
+  LLVM_MCPARSER_ABI bool parseToken(AsmToken::TokenKind T,
+                                    const Twine &Msg = "unexpected token");
   /// Attempt to parse and consume token, returning true on
   /// success.
-  bool parseOptionalToken(AsmToken::TokenKind T);
+  LLVM_MCPARSER_ABI bool parseOptionalToken(AsmToken::TokenKind T);
 
   bool parseComma() { return parseToken(AsmToken::Comma, "expected comma"); }
   bool parseRParen() { return parseToken(AsmToken::RParen, "expected ')'"); }
-  bool parseEOL();
-  bool parseEOL(const Twine &ErrMsg);
+  LLVM_MCPARSER_ABI bool parseEOL();
+  LLVM_MCPARSER_ABI bool parseEOL(const Twine &ErrMsg);
 
-  bool parseMany(function_ref<bool()> parseOne, bool hasComma = true);
+  LLVM_MCPARSER_ABI bool parseMany(function_ref<bool()> parseOne,
+                                   bool hasComma = true);
 
-  bool parseIntToken(int64_t &V, const Twine &ErrMsg);
+  LLVM_MCPARSER_ABI bool parseIntToken(int64_t &V, const Twine &ErrMsg);
 
-  bool check(bool P, const Twine &Msg);
-  bool check(bool P, SMLoc Loc, const Twine &Msg);
+  LLVM_MCPARSER_ABI bool check(bool P, const Twine &Msg);
+  LLVM_MCPARSER_ABI bool check(bool P, SMLoc Loc, const Twine &Msg);
 
   /// Parse an identifier or string (as a quoted identifier) and set \p
   /// Res to the identifier contents.
@@ -301,7 +306,7 @@ public:
   /// on error.
   /// \return - False on success.
   virtual bool parseExpression(const MCExpr *&Res, SMLoc &EndLoc) = 0;
-  bool parseExpression(const MCExpr *&Res);
+  LLVM_MCPARSER_ABI bool parseExpression(const MCExpr *&Res);
 
   /// Parse a primary expression.
   ///
@@ -343,16 +348,21 @@ public:
                                      SMLoc &EndLoc) = 0;
 
   /// Parse a .gnu_attribute.
-  bool parseGNUAttribute(SMLoc L, int64_t &Tag, int64_t &IntegerValue);
+  LLVM_MCPARSER_ABI bool parseGNUAttribute(SMLoc L, int64_t &Tag,
+                                           int64_t &IntegerValue);
 };
 
 /// Create an MCAsmParser instance for parsing assembly similar to gas syntax
-MCAsmParser *createMCAsmParser(SourceMgr &, MCContext &, MCStreamer &,
-                               const MCAsmInfo &, unsigned CB = 0);
+LLVM_MCPARSER_ABI MCAsmParser *createMCAsmParser(SourceMgr &, MCContext &,
+                                                 MCStreamer &,
+                                                 const MCAsmInfo &,
+                                                 unsigned CB = 0);
 
 /// Create an MCAsmParser instance for parsing Microsoft MASM-style assembly
-MCAsmParser *createMCMasmParser(SourceMgr &, MCContext &, MCStreamer &,
-                                const MCAsmInfo &, struct tm, unsigned CB = 0);
+LLVM_MCPARSER_ABI MCAsmParser *createMCMasmParser(SourceMgr &, MCContext &,
+                                                  MCStreamer &,
+                                                  const MCAsmInfo &, struct tm,
+                                                  unsigned CB = 0);
 
 } // end namespace llvm
 

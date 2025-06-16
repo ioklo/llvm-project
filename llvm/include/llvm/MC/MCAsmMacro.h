@@ -12,6 +12,7 @@
 #include "llvm/ADT/APInt.h"
 #include "llvm/ADT/StringRef.h"
 #include "llvm/MC/MCConfig.h"
+#include "llvm/MC/MCParser/MCParserConfig.h"
 #include "llvm/Support/Debug.h"
 #include "llvm/Support/SMLoc.h"
 #include <vector>
@@ -129,9 +130,9 @@ public:
   bool is(TokenKind K) const { return Kind == K; }
   bool isNot(TokenKind K) const { return Kind != K; }
 
-  LLVM_MC_ABI SMLoc getLoc() const;
-  LLVM_MC_ABI SMLoc getEndLoc() const;
-  LLVM_MC_ABI SMRange getLocRange() const;
+  LLVM_MCPARSER_ABI SMLoc getLoc() const;
+  LLVM_MCPARSER_ABI SMLoc getEndLoc() const;
+  LLVM_MCPARSER_ABI SMRange getLocRange() const;
 
   /// Get the contents of a string token (without quotes).
   StringRef getStringContents() const {
@@ -170,7 +171,7 @@ public:
     return IntVal;
   }
 
-  LLVM_MC_ABI void dump(raw_ostream &OS) const;
+  LLVM_MCPARSER_ABI void dump(raw_ostream &OS) const;
 };
 
 struct MCAsmMacroParameter {
